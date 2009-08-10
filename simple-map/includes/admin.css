@@ -1,0 +1,26 @@
+.radio-thumbnail {
+	float: left;
+	text-align: center;
+	margin: 1px;
+	padding: 10px;
+}
+
+.radio-thumbnail:hover {
+	margin: 0;
+	background-color: #eaf2fa;
+	border: 1px solid #93d8e2;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.radio-thumbnail-current {
+	margin: 0;
+	background-color: #ffffe0;
+	border: 1px solid #e6db55;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	border-radius: 4px;
+}
