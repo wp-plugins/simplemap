@@ -11,7 +11,9 @@ SimpleMap is an easy-to-use and easy-to-manage store locator plugin that uses Go
 
 == Description ==
 
-SimpleMap is a *powerful* and *easy-to-use* store locator plugin. Key features include:
+SimpleMap is a *powerful* and *easy-to-use* store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
+
+Key features include:
 
 * Manage an unlimited number of locations
 * Put a Google Map on any page or post that gives instant results to users
@@ -29,11 +31,11 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 == Installation ==
 
-1. Upload the entire `simple-map` folder to your `/wp-content/plugins/` folder.
+1. Upload the entire `simplemap` folder to your `/wp-content/plugins/` folder.
 2. Go to the 'Plugins' page in the menu and activate the plugin.
 3. Go to [Google Maps](http://code.google.com/apis/maps/signup.html) to sign up for an API key for your domain.
 4. Enter the API key in the 'General Options' page of SimpleMap.
-5. Type `[simple-map]` into any Post or Page you want SimpleMap to be displayed in.
+5. Type `[simplemap]` into any Post or Page you want SimpleMap to be displayed in.
 6. Enter some locations in the database and start enjoying the plugin!
 
 == Screenshots ==
@@ -68,6 +70,9 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.0.1 =
+* Fixed a folder structure problem where an auto-install from within WordPress would give a missing header error.
+
 = 1.0 =
 * Initial release
 
@@ -85,7 +90,7 @@ To suggest any new features, please visit [the SimpleMap home page](http://simpl
 
 = Making Your Own Theme =
 
-To upload your own SimpleMap theme, make a directory in your `plugins` folder called `simple-map-styles`. Upload your theme's CSS file here.
+To upload your own SimpleMap theme, make a directory in your `plugins` folder called `simplemap-styles`. Upload your theme's CSS file here.
 
 To give it a name that shows up in the **Theme** drop-down menu (instead of the filename), use the following markup at the beginning of the CSS file:
 
