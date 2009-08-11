@@ -226,6 +226,18 @@ Theme Name: THEME_NAME_HERE
 			</td>
 		</tr>
 		
+		<tr valign="middle">
+			<th scope="row"><label for="powered_by">SimpleMap Link</label></th>
+			<td>
+				<?php
+				$powered_by_checked = '';
+				if ($powered_by == 'show')
+					$powered_by_checked = ' checked="checked"';
+				?>
+				<label for="powered_by"><input type="checkbox" name="powered_by" id="powered_by" value="1"<?php echo $powered_by_checked; ?> /> Show the "Powered by SimpleMap" link</label>
+			</td>
+		</tr>
+		
 		</table>
 		
 		<input type="hidden" name="page_options" value="new_option_name,some_other_option,option_etc" />

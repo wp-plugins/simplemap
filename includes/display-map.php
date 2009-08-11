@@ -27,6 +27,10 @@ display-map.php: Displays the Google Map and search results
 
 <h4>Please enter a name, address, city or zip code in the search box above.</h4>
 
+<?php if ($options['powered_by'] == 'show') { ?>
+<div id="powered_by_simplemap">Powered by <a href="http://simplemap-plugin.com/" target="_blank">SimpleMap</a></div>
+<?php } ?>
+
 <div id="map" style="width: <?php echo $options['map_width']; ?>; height: <?php echo $options['map_height']; ?>;"></div>
 
 <div id="results" style="width: <?php echo $options['map_width']; ?>;"></div>

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.0.2
+Version: 1.0.3
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
@@ -67,7 +67,8 @@ class SimpleMap {
 			'default_state' => 'AL',
 			'map_stylesheet' => 'simplemap/styles/light.css',
 			'units' => 'mi',
-			'autoload' => ''
+			'autoload' => '',
+			'powered_by' => 'show'
 		);
 		
 		$saved = get_option($this->db_option);
@@ -115,6 +116,10 @@ class SimpleMap {
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
 			$options['autoload'] = $_POST['autoload'];
 			$options['units'] = $_POST['units'];
+			if ($_POST['powered_by'])
+				$options['powered_by'] = 'show';
+			else
+				$options['powered_by'] = 'hide';
 			
 			update_option($this->db_option, $options);
 			
@@ -145,6 +150,7 @@ class SimpleMap {
 		$map_stylesheet = $options['map_stylesheet'];
 		$autoload = $options['autoload'];
 		$units = $options['units'];
+		$powered_by = $options['powered_by'];
 		
 		$action_url = $_SERVER['REQUEST_URI'];
 		

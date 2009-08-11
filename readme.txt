@@ -59,6 +59,9 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.0.3 =
+* Added optional "Powered by SimpleMap" link to map display
+
 = 1.0.2 =
 * Fixed bug that was showing ".svn" in the drop-down list of themes
 * Added the ability to automatically load the map results from a given location
