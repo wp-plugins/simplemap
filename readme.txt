@@ -47,17 +47,6 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 5. Adding a new location
 6. Import/export CSV feature
 
-== License ==
-
-SimpleMap - the easy store locator for WordPress.
-Copyright (C) 2009 Aliso the Geek.
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 == Frequently Asked Questions ==
 
 = Can I suggest a feature for SimpleMap? =
@@ -69,6 +58,13 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.0.2 =
+* Fixed bug that was showing ".svn" in the drop-down list of themes
+* Added the ability to automatically load the map results from a given location
+* Added the ability to change the default search radius
+* Fixed invalid markup in search form
+* Fixed invalid markup in Google Maps script call
 
 = 1.0.1 =
 * Fixed a folder structure problem where an auto-install from within WordPress would give a missing header error.
@@ -97,3 +93,14 @@ To give it a name that shows up in the **Theme** drop-down menu (instead of the 
 `/*
 Theme Name: YOUR_THEME_NAME_HERE
 */`
+
+== License ==
+
+SimpleMap - the easy store locator for WordPress.
+Copyright (C) 2009 Aliso the Geek.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
