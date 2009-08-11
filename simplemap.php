@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.0.1
+Version: 1.0.2
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
@@ -49,6 +49,7 @@ class SimpleMap {
 	
 	function display() {
 		$options = $this->get_options();
+		include('includes/search-radii-array.php');
 		include('includes/display-map.php');
 	}
 	
@@ -60,10 +61,13 @@ class SimpleMap {
 			'default_lat' => '44.968684',
 			'default_lng' => '-93.215561',
 			'zoom_level' => '10',
+			'default_radius' => '10',
 			'map_type' => 'G_NORMAL_MAP',
 			'special_text' => '',
 			'default_state' => 'AL',
-			'map_stylesheet' => 'simplemap/styles/light.css'
+			'map_stylesheet' => 'simplemap/styles/light.css',
+			'units' => 'mi',
+			'autoload' => ''
 		);
 		
 		$saved = get_option($this->db_option);
@@ -104,10 +108,13 @@ class SimpleMap {
 			$options['default_lat'] = $_POST['default_lat'];
 			$options['default_lng'] = $_POST['default_lng'];
 			$options['zoom_level'] = (int)$_POST['zoom_level'];
+			$options['default_radius'] = (int)$_POST['default_radius'];
 			$options['map_type'] = $_POST['map_type'];
 			$options['special_text'] = $_POST['special_text'];
 			$options['default_state'] = $_POST['default_state'];
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
+			$options['autoload'] = $_POST['autoload'];
+			$options['units'] = $_POST['units'];
 			
 			update_option($this->db_option, $options);
 			
@@ -125,6 +132,10 @@ class SimpleMap {
 		unset($selected_zoom);
 		$selected_zoom[$zoom_level] = ' selected="selected"';
 		
+		$default_radius = $options['default_radius'];
+		unset($selected_radius);
+		$selected_radius[$default_radius] = ' selected="selected"';
+		
 		$map_type = $options['map_type'];
 		unset($selected_type);
 		$selected_type[$map_type] = ' checked="checked"';
@@ -132,6 +143,8 @@ class SimpleMap {
 		
 		$special_text = $options['special_text'];
 		$map_stylesheet = $options['map_stylesheet'];
+		$autoload = $options['autoload'];
+		$units = $options['units'];
 		
 		$action_url = $_SERVER['REQUEST_URI'];
 		
