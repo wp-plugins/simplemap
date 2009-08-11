@@ -80,19 +80,7 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 = 1.0 =
 * Initial release
 
-== Other Notes ==
-
-Planned for future releases:
-
-* Localization (kilometers/miles, also any translations I can get my hands on)
-* Changing the search radius options and setting your own default
-* Custom map markers
-
-If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
-
-To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
-
-= Making Your Own Theme =
+== Making Your Own Theme ==
 
 To upload your own SimpleMap theme, make a directory in your `plugins` folder called `simplemap-styles`. Upload your theme's CSS file here.
 
@@ -101,6 +89,21 @@ To give it a name that shows up in the **Theme** drop-down menu (instead of the 
 `/*
 Theme Name: YOUR_THEME_NAME_HERE
 */`
+
+== Other Notes ==
+
+Planned for future releases:
+
+* Localization (any translations I can get my hands on)
+* Support for non-US locations
+* Custom map markers
+* Different map markers for different types of locations
+* Ability to rate/review locations
+* Adding descriptions and images to locations
+
+If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
+
+To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
 
 == License ==
 
