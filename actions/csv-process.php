@@ -1,6 +1,11 @@
 <?php
+/*
+SimpleMap Plugin
+csv-process.php: Imports/exports a CSV file to/from the database
+*/
 
 include "../includes/connect-db.php";
+include "../includes/sminc.php";
 
 if (isset($_POST['action'])) {
 
@@ -97,7 +102,7 @@ if (isset($_POST['action'])) {
 				$linearray[9] = '0';
 			
 			define("MAPS_HOST", "maps.google.com");
-			define("KEY", "ABQIAAAARUPnkmQVF3Ef2h5dPDdAsRS6FfcgL6tnWKCG0XjBSWt-JgDDsxSLDKMNN7ubiz7zLUE44CpmKACm9g");
+			define("KEY", $options['api_key']);
 			
 			$geocodeAddress = $linearray[1].', '.$linearray[3].', '.$linearray[4];
 			//echo '<br/>';
@@ -106,7 +111,9 @@ if (isset($_POST['action'])) {
 			
 			$base_url = "http://" . MAPS_HOST . "/maps/geo?output=xml" . "&key=" . KEY;
 			$request_url = $base_url . "&q=" . urlencode($geocodeAddress);
-			$xml = simplexml_load_file($request_url) or die("url not loading");
+			//$xml = simplexml_load_file($request_url) or die("url not loading");
+			$request_string = curl_get_contents($request_url);
+			$xml = simplexml_load_string($request_string) or die("URL not loading");
 			
 			$status = $xml->Response->Status->code;
 			if (strcmp($status, "200") == 0) {
@@ -153,7 +160,7 @@ if (isset($_POST['action'])) {
 		if ($lines == 1)
 			$message = urlencode("$lines record imported successfully.");
 		else
-			$message = urlencode(($lines - 2)." records imported successfully.");
+			$message = urlencode("$lines records imported successfully.");
 		
 		//echo "Found a total of $lines records in this csv file.\n";
 		header("Location: ../../../../wp-admin/admin.php?page=Manage%20Database&message=$message");
