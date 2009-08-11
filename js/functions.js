@@ -29,7 +29,13 @@ function searchLocations() {
 }
 
 function searchLocationsNear(center, homeAddress) {
- var radius = document.getElementById('radiusSelect').value;
+	if (units == 'mi') {
+	  	var radius = parseInt(document.getElementById('radiusSelect').value);
+	}
+	else if (units == 'km') {
+	  	var radius = parseInt(document.getElementById('radiusSelect').value) / 1.609344;
+	}
+ 
  var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress;
  GDownloadUrl(searchUrl, function(data) {
    var xml = GXml.parse(data);
@@ -102,7 +108,12 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, d
   html += '<div class="result_name">';
   html += '<h3>' + name;
   if (distance.toFixed(1) != 'NaN') {
-  	html+= ' <small>' + distance.toFixed(1) + ' miles</small>';
+  	if (units == 'mi') {
+	  	html+= ' <small>' + distance.toFixed(1) + ' miles</small>';
+	}
+  	else if (units == 'km') {
+	  	html+= ' <small>' + (distance * 1.609344).toFixed(1) + ' km</small>';
+	}
   }
   html += '</h3></div>';
   

@@ -14,7 +14,7 @@ function readStyles($dir) {
 	$themes = array();
 	if ($handle = opendir($dir)) {
 	    while (false !== ($file = readdir($handle))) {
-	        if ($file != "." && $file != "..") {
+	        if ($file != "." && $file != ".." && $file != ".svn") {
 	        	$theme_data = implode('', file($dir.'/'.$file));
 	
 				$name = '';
@@ -80,6 +80,35 @@ function readStyles($dir) {
 				<label for="default_lng" style="display: inline-block; width: 60px;">Longitude: </label>
 				<input type="text" name="default_lng" id="default_lng" size="13" value="<?php echo $default_lng; ?>" />
 				<p><small><em>Enter the location the map should open to by default, when no location has been searched for. For example, if your locations are mostly in the same city, you might want to start centered on that city. <a href="http://www.getlatlon.com/" target="_blank">Click here</a> to find the latitude and longitude of an address.</em></small></p>
+			</td>
+		</tr>
+		
+		<tr valign="top">
+			<th scope="row"><label for="units">Distance Units</label></th>
+			<td>
+				<select name="units" id="units">
+					<?php
+					unset($selected_units);
+					$selected_units[$units] = ' selected="selected"';
+					?>
+					<option value="mi"<?php echo $selected_units['mi']; ?>>Miles</option>
+					<option value="km"<?php echo $selected_units['km']; ?>>Kilometers</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr valign="top">
+			<th scope="row"><label for="default_radius">Default Search Radius</label></th>
+			<td>
+				<select name="default_radius" id="default_radius">
+					<?php
+					include ("../wp-content/plugins/simplemap/includes/search-radii-array.php");
+					foreach ($search_radii as $value) {
+						$r = (int)$value;
+						echo "<option value='$value'".$selected_radius[$r].">$value $units</option>\n";
+					}
+					?>
+				</select>
 			</td>
 		</tr>
 		
@@ -157,6 +186,14 @@ function readStyles($dir) {
 		</tr>
 		
 		<tr valign="top">
+			<th scope="row"><label for="autoload">Autoload Address</label></th>
+			<td>
+				<input type="text" name="autoload" id="autoload" size="30" value="<?php echo $autoload; ?>" /><br />
+				<small><em>Enter an address, city, or zip code here if you want the map to automatically show all locations in that area.</em></small>
+			</td>
+		</tr>
+		
+		<tr valign="top">
 			<th scope="row"><label for="map_stylesheet">Theme</label></th>
 			<td>
 				<select name="map_stylesheet" id="map_stylesheet">
@@ -186,6 +223,18 @@ function readStyles($dir) {
 Theme Name: THEME_NAME_HERE
 */</pre>
 
+			</td>
+		</tr>
+		
+		<tr valign="middle">
+			<th scope="row"><label for="powered_by">SimpleMap Link</label></th>
+			<td>
+				<?php
+				$powered_by_checked = '';
+				if ($powered_by == 'show')
+					$powered_by_checked = ' checked="checked"';
+				?>
+				<label for="powered_by"><input type="checkbox" name="powered_by" id="powered_by" value="1"<?php echo $powered_by_checked; ?> /> Show the "Powered by SimpleMap" link</label>
 			</td>
 		</tr>
 		
