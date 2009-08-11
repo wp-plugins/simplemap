@@ -66,6 +66,7 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 * Added support for both miles and kilometers
 * Fixed invalid markup in search form
 * Fixed invalid markup in Google Maps script call
+* Fixed bug appearing on certain servers when trying to access remote file created by Google Maps
 
 = 1.0.1 =
 * Fixed a folder structure problem where an auto-install from within WordPress would give a missing header error.
