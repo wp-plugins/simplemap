@@ -34,11 +34,11 @@ function readStyles($dir) {
 
 <div class="wrap">
 
-	<h2>General Options</h2>
+	<h2><?php _e('General Options'); ?></h2>
 
 	<?php
 	if ($options['api_key'] == '')
-		echo '<div class="error"><p>You must enter an API key for your domain. <a href="http://code.google.com/apis/maps/signup.html" target="_blank">Click here to sign up for a Google Maps API key.</a></p></div>';
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.').' <a href="http://code.google.com/apis/maps/signup.html" target="_blank">'.__('Click here to sign up for a Google Maps API key.').'</a></p></div>';
 	?>
 	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" style="float: right;">
 		<input type="hidden" name="cmd" value="_s-xclick">
@@ -54,51 +54,51 @@ function readStyles($dir) {
 		<table class="form-table">
 		
 		<tr valign="top">
-			<th scope="row"><label for="api_key">Google Maps API Key</label></th>
+			<th scope="row"><label for="api_key"><?php _e('Google Maps API Key'); ?></label></th>
 			<td>
 				<input type="text" name="api_key" id="api_key" size="60" value="<?php echo $api_key; ?>" /><br />
-				<small><em><a href="http://code.google.com/apis/maps/signup.html" title="Sign up for a Google Maps API key" target="_blank">Click here</a> to sign up for a Google Maps API key for your domain.</em></small>
+				<small><em><a href="http://code.google.com/apis/maps/signup.html" title="Sign up for a Google Maps API key" target="_blank"><?php _e('Click here'); ?></a> <?php _e('to sign up for a Google Maps API key for your domain.'); ?></em></small>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="map_width">Map Size</label></th>
+			<th scope="row"><label for="map_width"><?php _e('Map Size'); ?></label></th>
 			<td>
-				<label for="map_width" style="display: inline-block; width: 60px;">Width: </label>
+				<label for="map_width" style="display: inline-block; width: 60px;"><?php _e('Width:'); ?> </label>
 				<input type="text" name="map_width" id="map_width" size="13" value="<?php echo $map_width; ?>" /><br />
-				<label for="map_height" style="display: inline-block; width: 60px;">Height: </label>
+				<label for="map_height" style="display: inline-block; width: 60px;"><?php _e('Height:'); ?> </label>
 				<input type="text" name="map_height" id="map_height" size="13" value="<?php echo $map_height; ?>" /><br />
-				<small><em>Enter a numeric value with CSS units, such as </em><strong>100%</strong><em> or </em><strong>500px</strong><em>.</em></small>
+				<small><em><?php _e('Enter a numeric value with CSS units, such as'); ?> </em><strong>100%</strong><em> <?php _e('or'); ?> </em><strong>500px</strong><em>.</em></small>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="default_lat">Starting Location</label></th>
+			<th scope="row"><label for="default_lat"><?php _e('Starting Location'); ?></label></th>
 			<td>
-				<label for="default_lat" style="display: inline-block; width: 60px;">Latitude: </label>
+				<label for="default_lat" style="display: inline-block; width: 60px;"><?php _e('Latitude:'); ?> </label>
 				<input type="text" name="default_lat" id="default_lat" size="13" value="<?php echo $default_lat; ?>" /><br />
-				<label for="default_lng" style="display: inline-block; width: 60px;">Longitude: </label>
+				<label for="default_lng" style="display: inline-block; width: 60px;"><?php _e('Longitude:'); ?> </label>
 				<input type="text" name="default_lng" id="default_lng" size="13" value="<?php echo $default_lng; ?>" />
-				<p><small><em>Enter the location the map should open to by default, when no location has been searched for. For example, if your locations are mostly in the same city, you might want to start centered on that city. <a href="http://www.getlatlon.com/" target="_blank">Click here</a> to find the latitude and longitude of an address.</em></small></p>
+				<p><small><em><?php _e('Enter the location the map should open to by default, when no location has been searched for. For example, if your locations are mostly in the same city, you might want to start centered on that city.'); ?> <a href="http://www.getlatlon.com/" target="_blank"><?php _e('Click here'); ?></a> <?php _e('to find the latitude and longitude of an address.'); ?></em></small></p>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="units">Distance Units</label></th>
+			<th scope="row"><label for="units"><?php _e('Distance Units'); ?></label></th>
 			<td>
 				<select name="units" id="units">
 					<?php
 					unset($selected_units);
 					$selected_units[$units] = ' selected="selected"';
 					?>
-					<option value="mi"<?php echo $selected_units['mi']; ?>>Miles</option>
-					<option value="km"<?php echo $selected_units['km']; ?>>Kilometers</option>
+					<option value="mi"<?php echo $selected_units['mi']; ?>><?php _e('Miles'); ?></option>
+					<option value="km"<?php echo $selected_units['km']; ?>><?php _e('Kilometers'); ?></option>
 				</select>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="default_radius">Default Search Radius</label></th>
+			<th scope="row"><label for="default_radius"><?php _e('Default Search Radius'); ?></label></th>
 			<td>
 				<select name="default_radius" id="default_radius">
 					<?php
@@ -113,7 +113,7 @@ function readStyles($dir) {
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="zoom_level">Default Zoom Level</label></th>
+			<th scope="row"><label for="zoom_level"><?php _e('Default Zoom Level'); ?></label></th>
 			<td>
 				<select name="zoom_level" id="zoom_level">
 					<?php
@@ -122,37 +122,37 @@ function readStyles($dir) {
 					}
 					?>
 				</select>&nbsp;
-				<small><em>1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in.</em></small>
+				<small><em><?php _e('1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in.'); ?></em></small>
 			</td>
 		</tr>
 
 		<tr valign="top">
-			<th scope="row"><label for="map_type">Default Map Type</label></th>
+			<th scope="row"><label for="map_type"><?php _e('Default Map Type'); ?></label></th>
 			<td>
 				<div class="radio-thumbnail<?php echo $selected_type_div["G_NORMAL_MAP"]; ?>">
 					<label style="display: block;" for="map_type_normal">
-						<img src="<?php echo $this->plugin_url; ?>images/map-type-normal.jpg" width="100" height="100" style="border: 1px solid #999;" /><br />Normal map<br />
+						<img src="<?php echo $this->plugin_url; ?>images/map-type-normal.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Normal map'); ?><br />
 						<input type="radio" name="map_type" id="map_type_normal" value="G_NORMAL_MAP"<?php echo $selected_type["G_NORMAL_MAP"]; ?> />
 					</label>
 				</div>
 				
 				<div class="radio-thumbnail<?php echo $selected_type_div["G_SATELLITE_MAP"]; ?>">
 					<label style="display: block;" for="map_type_satellite">
-						<img src="<?php echo $this->plugin_url; ?>images/map-type-satellite.jpg" width="100" height="100" style="border: 1px solid #999;" /><br />Satellite map<br />
+						<img src="<?php echo $this->plugin_url; ?>images/map-type-satellite.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Satellite map'); ?><br />
 						<input type="radio" name="map_type" id="map_type_satellite" value="G_SATELLITE_MAP"<?php echo $selected_type["G_SATELLITE_MAP"]; ?> />
 					</label>
 				</div>
 				
 				<div class="radio-thumbnail<?php echo $selected_type_div["G_HYBRID_MAP"]; ?>">
 					<label style="display: block;" for="map_type_hybrid">
-						<img src="<?php echo $this->plugin_url; ?>images/map-type-hybrid.jpg" width="100" height="100" style="border: 1px solid #999;" /><br />Hybrid map<br />
+						<img src="<?php echo $this->plugin_url; ?>images/map-type-hybrid.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Hybrid map'); ?><br />
 						<input type="radio" name="map_type" id="map_type_hybrid" value="G_HYBRID_MAP"<?php echo $selected_type["G_HYBRID_MAP"]; ?> />
 					</label>
 				</div>
 				
 				<div class="radio-thumbnail<?php echo $selected_type_div["G_PHYSICAL_MAP"]; ?>">
 					<label style="display: block;" for="map_type_terrain">
-						<img src="<?php echo $this->plugin_url; ?>images/map-type-terrain.jpg" width="100" height="100" style="border: 1px solid #999;" /><br />Terrain map<br />
+						<img src="<?php echo $this->plugin_url; ?>images/map-type-terrain.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Terrain map'); ?><br />
 						<input type="radio" name="map_type" id="map_type_terrain" value="G_PHYSICAL_MAP"<?php echo $selected_type["G_PHYSICAL_MAP"]; ?> />
 					</label>
 				</div>
@@ -160,7 +160,7 @@ function readStyles($dir) {
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="default_state">Default Location State</label></th>
+			<th scope="row"><label for="default_state"><?php _e('Default Location State'); ?></label></th>
 			<td>
 				<select name="default_state" id="default_state">
 					<?php
@@ -173,35 +173,35 @@ function readStyles($dir) {
 					}
 					?>
 				</select><br />
-				<small><em>If most of your locations are in the same state, choose that state here to make adding new locations easier.</em></small>
+				<small><em><?php _e('If most of your locations are in the same state, choose that state here to make adding new locations easier.'); ?></em></small>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="special_text">Special Location Label</label></th>
+			<th scope="row"><label for="special_text"><?php _e('Special Location Label'); ?></label></th>
 			<td>
 				<input type="text" name="special_text" id="special_text" size="30" value="<?php echo $special_text; ?>" /><br />
-				<small><em>If you want to distinguish certain locations (i.e. Ten-Year Members, Most Popular, etc.) then enter the label for them here. Leave it blank to disable this feature.</em></small>
+				<small><em><?php _e('If you want to distinguish certain locations (i.e. Ten-Year Members, Most Popular, etc.) then enter the label for them here. Leave it blank to disable this feature.'); ?></em></small>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="autoload">Autoload Address</label></th>
+			<th scope="row"><label for="autoload"><?php _e('Autoload Address'); ?></label></th>
 			<td>
 				<input type="text" name="autoload" id="autoload" size="30" value="<?php echo $autoload; ?>" /><br />
-				<small><em>Enter an address, city, or zip code here if you want the map to automatically show all locations in that area.</em></small>
+				<small><em><?php _e('Enter an address, city, or zip code here if you want the map to automatically show all locations in that area.'); ?></em></small>
 			</td>
 		</tr>
 		
 		<tr valign="top">
-			<th scope="row"><label for="map_stylesheet">Theme</label></th>
+			<th scope="row"><label for="map_stylesheet"><?php _e('Theme'); ?></label></th>
 			<td>
 				<select name="map_stylesheet" id="map_stylesheet">
 					<?php
 					unset($selected_style);
 					$selected_style[$map_stylesheet] = ' selected="selected"';
 					
-					echo '<optgroup label="Default Themes">'."\n";
+					echo '<optgroup label="'.__('Default Themes').'">'."\n";
 					foreach ($themes1 as $file => $name) {
 						$file_full = 'simplemap/styles/'.$file;
 						echo '<option value="'.$file_full.'"'.$selected_style[$file_full].'>'.$name.'</option>'."\n";
@@ -209,7 +209,7 @@ function readStyles($dir) {
 					echo '</optgroup>'."\n";
 					
 					if (!empty($themes2)) {
-						echo '<optgroup label="Custom Themes">'."\n";
+						echo '<optgroup label="'.__('Custom Themes').'">'."\n";
 						foreach ($themes2 as $file => $name) {
 							$file_full = 'simplemap-styles/'.$file;
 							echo '<option value="'.$file_full.'"'.$selected_style[$file_full].'>'.$name.'</option>'."\n";
@@ -218,7 +218,7 @@ function readStyles($dir) {
 					}
 					?>
 				</select><br />
-				<small><em>To add your own theme, upload your own CSS file to a new directory in your plugins folder called </em><strong>simplemap-styles</strong><em>. To give it a name, use the following header in the top of your stylesheet:</em></small><br />
+				<small><em><?php _e('To add your own theme, upload your own CSS file to a new directory in your plugins folder called'); ?> </em><strong>simplemap-styles</strong><em>. <?php _e('To give it a name, use the following header in the top of your stylesheet:'); ?></em></small><br />
 <pre style="color: #060;">/*
 Theme Name: THEME_NAME_HERE
 */</pre>
@@ -227,14 +227,14 @@ Theme Name: THEME_NAME_HERE
 		</tr>
 		
 		<tr valign="middle">
-			<th scope="row"><label for="powered_by">SimpleMap Link</label></th>
+			<th scope="row"><label for="powered_by"><?php _e('SimpleMap Link'); ?></label></th>
 			<td>
 				<?php
 				$powered_by_checked = '';
 				if ($powered_by == 'show')
 					$powered_by_checked = ' checked="checked"';
 				?>
-				<label for="powered_by"><input type="checkbox" name="powered_by" id="powered_by" value="1"<?php echo $powered_by_checked; ?> /> Show the "Powered by SimpleMap" link</label>
+				<label for="powered_by"><input type="checkbox" name="powered_by" id="powered_by" value="1"<?php echo $powered_by_checked; ?> /> <?php _e('Show the "Powered by SimpleMap" link'); ?></label>
 			</td>
 		</tr>
 		

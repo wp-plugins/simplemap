@@ -7,14 +7,12 @@ Author: Alison Barrett
 Author URI: http://alisothegeek.com/
 Description: An easy-to-use and easy-to-manage store locator plugin that uses Google Maps to display information directly on your WordPress site.
 */
-
-global $wp_version;
-
-$exit_msg = 'SimpleMap requires WordPress 2.7 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>';
-
+	
+		
+$exit_msg = __('SimpleMap requires WordPress 2.7 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>');
 if (version_compare($wp_version, "2.7", "<"))
 	exit($exit_msg);
-	
+
 // Avoid name collisions
 if (!class_exists('SimpleMap')) :
 
@@ -23,10 +21,14 @@ class SimpleMap {
 	var $plugin_url;
 	var $table;
 	var $db_option = 'SimpleMap_options';
+	var $plugin_domain = 'SimpleMap';
 	
 	// Initialize the plugin
 	function SimpleMap() {
+		
 		$this->plugin_url = trailingslashit(WP_PLUGIN_URL.'/'.dirname(plugin_basename(__FILE__)));
+
+		$this->handle_load_domain();
 		
 		global $wpdb;
 		$this->table = $wpdb->prefix . 'simple_map';
@@ -90,11 +92,11 @@ class SimpleMap {
 	}
 	
 	function add_admin_pages() {
-		add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
-		add_submenu_page(__FILE__, 'SimpleMap: General Options', 'General Options', 10, __FILE__, array(&$this, 'menu_general_options'));
-		add_submenu_page(__FILE__, 'SimpleMap: Manage Database', 'Manage Database', 10, 'Manage Database', array(&$this, 'menu_manage_database'));
-		add_submenu_page(__FILE__, 'SimpleMap: Add Location', 'Add Location', 10, 'Add Location', array(&$this, 'menu_add_location'));
-		add_submenu_page(__FILE__, 'SimpleMap: Import/Export', 'Import/Export', 10, 'Import/Export', array(&$this, 'menu_import_export'));
+		add_menu_page(__('SimpleMap Options'), 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
+		add_submenu_page(__FILE__, __('SimpleMap: General Options'), __('General Options'), 10, __FILE__, array(&$this, 'menu_general_options'));
+		add_submenu_page(__FILE__, __('SimpleMap: Manage Database'), __('Manage Database'), 10, __('Manage Database'), array(&$this, 'menu_manage_database'));
+		add_submenu_page(__FILE__, __('SimpleMap: Add Location'), __('Add Location'), 10, __('Add Location'), array(&$this, 'menu_add_location'));
+		add_submenu_page(__FILE__, __('SimpleMap: Import/Export'), __('Import/Export'), 10, __('Import/Export'), array(&$this, 'menu_import_export'));
 	}
 	
 	function menu_general_options() {
@@ -123,7 +125,7 @@ class SimpleMap {
 			
 			update_option($this->db_option, $options);
 			
-			echo '<div class="updated fade"><p>SimpleMap settings saved.</p></div>';
+			echo '<div class="updated fade"><p>'.__('SimpleMap settings saved.').'</p></div>';
 		}
 		
 		$api_key = $options['api_key'];
@@ -172,11 +174,17 @@ class SimpleMap {
 		include 'admin/import-export.php';
 	}
 	
+	function handle_load_domain() {
+		$locale = get_locale();
+		$mofile = $this->plugin_url.'/lang/'.$this->plugin_domain.'-'.$locale.'.mo';
+		load_textdomain($this->plugin_domain, $mofile);
+	}
+	
 }
 
 else :
 
-	exit("Class SimpleMap already declared!");
+	exit(__("Class SimpleMap already declared!"));
 
 endif;
 
