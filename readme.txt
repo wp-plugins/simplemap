@@ -59,6 +59,9 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.0.5 =
+* Changed required WordPress version to 2.8
+
 = 1.0.4 =
 * Added support for localization
 * Fixed bug causing fatal error when trying to activate the plugin
