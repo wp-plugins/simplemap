@@ -3,7 +3,7 @@
 Contributors: aliso
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7382728
 Tags: map, store locator, database, locations, stores, Google maps
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 2.8.3
 Stable tag: trunk
 
@@ -47,17 +47,6 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 5. Adding a new location
 6. Import/export CSV feature
 
-== License ==
-
-SimpleMap - the easy store locator for WordPress.
-Copyright (C) 2009 Aliso the Geek.
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 == Frequently Asked Questions ==
 
 = Can I suggest a feature for SimpleMap? =
@@ -70,25 +59,29 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.0.4 =
+* Added support for localization
+* Fixed bug causing fatal error when trying to activate the plugin
+
+= 1.0.3 =
+* Added optional "Powered by SimpleMap" link to map display
+
+= 1.0.2 =
+* Fixed bug that was showing ".svn" in the drop-down list of themes
+* Added the ability to automatically load the map results from a given location
+* Added the ability to change the default search radius
+* Added support for both miles and kilometers
+* Fixed invalid markup in search form
+* Fixed invalid markup in Google Maps script call
+* Fixed bug appearing on certain servers when trying to access remote file created by Google Maps
+
 = 1.0.1 =
 * Fixed a folder structure problem where an auto-install from within WordPress would give a missing header error.
 
 = 1.0 =
 * Initial release
 
-== Other Notes ==
-
-Planned for future releases:
-
-* Localization (kilometers/miles, also any translations I can get my hands on)
-* Changing the search radius options and setting your own default
-* Custom map markers
-
-If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
-
-To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
-
-= Making Your Own Theme =
+== Making Your Own Theme ==
 
 To upload your own SimpleMap theme, make a directory in your `plugins` folder called `simplemap-styles`. Upload your theme's CSS file here.
 
@@ -97,3 +90,29 @@ To give it a name that shows up in the **Theme** drop-down menu (instead of the 
 `/*
 Theme Name: YOUR_THEME_NAME_HERE
 */`
+
+== Other Notes ==
+
+Planned for future releases:
+
+* Localization (any translations I can get my hands on)
+* Support for non-US locations
+* Custom map markers
+* Different map markers for different types of locations
+* Ability to rate/review locations
+* Adding descriptions and images to locations
+
+If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
+
+To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
+
+== License ==
+
+SimpleMap - the easy store locator for WordPress.
+Copyright (C) 2009 Aliso the Geek.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.

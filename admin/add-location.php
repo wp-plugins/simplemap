@@ -6,17 +6,17 @@ add-location.php: Displays the Add Location admin page
 ?>
 
 <div class="wrap">
-	<h2>SimpleMap: Add Location</h2>
+	<h2><?php _e('SimpleMap: Add Location'); ?></h2>
 	
 	<?php
 	if ($options['api_key'] == '')
-		echo '<div class="error"><p>You must enter an API key for your domain. <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">Enter a key on the General Options page.</a></p></div>';
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.').'</a></p></div>';
 	?>
 	
 	<?php
 	if (isset($_GET['added'])) {
 		$added = stripslashes($_GET['added']);
-		echo '<div id="message" class="updated fade"><p><strong>'.$added.'</strong> added successfully.</p></div>';
+		echo '<div id="message" class="updated fade"><p><strong>'.$added.'</strong> '.__('added successfully.').'</p></div>';
 	}
 	?>
 	<form method="post" action="<?php echo $this->plugin_url; ?>actions/location-process.php">
@@ -26,18 +26,18 @@ add-location.php: Displays the Add Location admin page
 		<table class="form-table">
 		
 		<tr valign="top">
-			<th scope="row"><label for="store_name">Name</label></th>
+			<th scope="row"><label for="store_name"><?php _e('Name'); ?></label></th>
 			<td><input type="text" name="store_name" id="store_name" size="27" value="" /></td>
 		</tr>
 		 
 		<tr valign="top">
-			<th scope="row"><label for="store_address">Address</label></th>
+			<th scope="row"><label for="store_address"><?php _e('Address'); ?></label></th>
 			<td><input type="text" name="store_address" id="store_address" size="27" value="" />
 			<br /><input type="text" name="store_address2" size="27" value="" /></td>
 		</tr>
 		 
 		<tr valign="top">
-			<th scope="row"><label for="store_city">City, State, Zip</label></th>
+			<th scope="row"><label for="store_city"><?php _e('City, State, Zip'); ?></label></th>
 			<td><input type="text" name="store_city" id="store_city" value="" size="13" />
 			<select name="store_state">
 				<?php
@@ -53,14 +53,14 @@ add-location.php: Displays the Add Location admin page
 		</tr>
 		 
 		<tr valign="top">
-			<th scope="row"><label for="store_phone1">Phone</label></th>
+			<th scope="row"><label for="store_phone1"><?php _e('Phone'); ?></label></th>
 			<td><input type="text" id="store_phone1" name="store_phone1" size="4" maxlength="3" value="" />
 			<input type="text" name="store_phone2" size="4" maxlength="3" value="" />
 			<input type="text" name="store_phone3" size="5" maxlength="4" value="" /></td>
 		</tr>
 		 
 		<tr valign="top">
-			<th scope="row"><label for="store_fax1">Fax</label></th>
+			<th scope="row"><label for="store_fax1"><?php _e('Fax'); ?></label></th>
 			<td><input type="text" name="store_fax1" id="store_fax1" size="4" maxlength="3" value="" />
 			<input type="text" name="store_fax2" size="4" maxlength="3" value="" />
 			<input type="text" name="store_fax3" size="5" maxlength="4" value="" /></td>
@@ -69,7 +69,7 @@ add-location.php: Displays the Add Location admin page
 		<tr valign="top">
 			<th scope="row"><label for="store_url">URL</label></th>
 			<td><input type="text" name="store_url" id="store_url" size="27" value="" />
-			<br />Please include the <strong>http://</strong></td>
+			<br /><?php _e('Please include the'); ?> <strong>http://</strong></td>
 		</tr>
 		
 		<?php if ($options['special_text'] != '') { ?>

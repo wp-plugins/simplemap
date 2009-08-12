@@ -20,11 +20,11 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 <script src="<?php echo $this->plugin_url; ?>js/inline-edit-stores.js" type="text/javascript"></script>
 <script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.form.js" type="text/javascript"></script>
 <div class="wrap">
-	<h2>SimpleMap: Manage Database</h2>
+	<h2><?php _e('SimpleMap: Manage Database'); ?></h2>
 	
 	<?php
 	if ($options['api_key'] == '')
-		echo '<div class="error"><p>You must enter an API key for your domain. <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">Enter a key on the General Options page.</a></p></div>';
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.').'</a></p></div>';
 	?>
 		
 	<?php
@@ -39,7 +39,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 	else
 		$end = $start + 15;
 	?>
-	<div class="tablenav-pages"><span class="displaying-num">Displaying <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
+	<div class="tablenav-pages"><span class="displaying-num"><?php _e('Displaying'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 	<?php
 	if ($paged > 1)
 		echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
@@ -60,10 +60,10 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;">Name</th>
-				<th scope="col" class="manage-column" style="">Address</th>
-				<th scope="col" class="manage-column" style="">Phone/Fax</th>
-				<th scope="col" class="manage-column" style="">URL</th>
+				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Address'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('URL'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -75,10 +75,10 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="">Name</th>
-				<th scope="col" class="manage-column" style="">Address</th>
-				<th scope="col" class="manage-column" style="">Phone/Fax</th>
-				<th scope="col" class="manage-column" style="">URL</th>
+				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Address'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('URL'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -107,8 +107,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 					<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $name; ?></span></strong>
 						<div class="row-actions">
-							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline">Quick Edit</a> | </span>
-							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('Do you really want to delete \'<?php echo addslashes($name); ?>\'?');">Delete</a></span>
+							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline"><?php _e('Quick Edit'); ?></a> | </span>
+							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('Do you really want to delete \'<?php echo addslashes($name); ?>\'?');"><?php _e('Delete'); ?></a></span>
 						</div>
 						<div class="hidden" id="inline_<?php echo $row['id']; ?>">
 						<div class="store_id"><?php echo $row['id']; ?></div>
@@ -158,9 +158,9 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		}
 		else {
 			if ($options['special_text'] != '')
-				echo '<tr><td colspan="5">No records found.</td></tr>';
+				echo '<tr><td colspan="5">'.__('No records found.').'</td></tr>';
 			else
-				echo '<tr><td colspan="4">No records found.</td></tr>';
+				echo '<tr><td colspan="4">'.__('No records found.').'</td></tr>';
 		}
 	
 	?>
@@ -173,7 +173,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 	else
 		$end = $start + 15;
 	?>
-	<div class="tablenav-pages"><span class="displaying-num">Displaying <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
+	<div class="tablenav-pages"><span class="displaying-num"><?php _e('Displaying'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 	<?php
 	if ($paged > 1)
 		echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
@@ -205,7 +205,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 			<fieldset style="width: 26%;"><div class="inline-edit-col">
 				<label>
-					<span class="title">Name</span><br />
+					<span class="title"><?php _e('Name'); ?></span><br />
 				</label>
 					<span class="input-text-wrap"><input type="text" name="store_name" class="ptitle" value="" /></span>
 			</div></fieldset>
@@ -213,7 +213,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col">
 				<label>
-					<span class="title">Address</span><br />
+					<span class="title"><?php _e('Address'); ?></span><br />
 				</label>
 					<span class="input-text-wrap"><input type="text" name="store_address" value="" /></span><br />
 					<span class="input-text-wrap"><input type="text" name="store_address2" value="" /></span><br />
@@ -231,16 +231,16 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col"><br />
-					<span class="title" style="display: block; float: left; width: 4em;">Phone</span>
+					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Phone'); ?></span>
 						<input type="text" name="store_phone1" size="4" maxlength="3" value="" /><input type="text" name="store_phone2" size="4" maxlength="3" value="" /><input type="text" name="store_phone3" size="5" maxlength="4" value="" /><br />
-					<span class="title" style="display: block; float: left; width: 4em;">Fax</span>
+					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Fax'); ?></span>
 						<input type="text" name="store_fax1" size="4" maxlength="3" value="" /><input type="text" name="store_fax2" size="4" maxlength="3" value="" /><input type="text" name="store_fax3" size="5" maxlength="4" value="" />
 			</div></fieldset>
 		
 		
 			<fieldset style="width: 30%;"><div class="inline-edit-col"><br />
 				<label>
-					<span class="title">URL</span>
+					<span class="title"><?php _e('URL'); ?></span>
 				</label>
 				<span class="input-text-wrap"><input type="text" name="store_url" value="" /></span>
 				
@@ -253,8 +253,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 			</div></fieldset>
 		
 			<p class="submit inline-edit-save">
-				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft">Cancel</a>
-				<input type="hidden" id="_inline_edit" name="_inline_edit" value="58a915a1fb" /><a accesskey="s" href="#inline-edit" title="Update" class="button-primary save alignright">Update Location</a>
+				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft"><?php _e('Cancel'); ?></a>
+				<input type="hidden" id="_inline_edit" name="_inline_edit" value="58a915a1fb" /><a accesskey="s" href="#inline-edit" title="Update" class="button-primary save alignright"><?php _e('Update Location'); ?></a>
 					<img class="waiting" style="display:none;" src="images/loading.gif" alt="" />
 						<input type="hidden" name="post_view" value="list" />
 				<br class="clear" />
@@ -271,7 +271,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 	$(document).ready(function(){
 		$('#doaction, #doaction2').click(function(){
 			if ( $('select[name^="action"]').val() == 'delete' ) {
-				var m = 'You are about to delete the selected posts.\n  \'Cancel\' to stop, \'OK\' to delete.';
+				var m = '<?php _e('You are about to delete the selected posts. "Cancel" to stop, "OK" to delete.'); ?>';
 				return showNotice.warn(m);
 			}
 		});
