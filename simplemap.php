@@ -10,8 +10,8 @@ Description: An easy-to-use and easy-to-manage store locator plugin that uses Go
 	
 global $wp_version;
 		
-$exit_msg = __('SimpleMap requires WordPress 2.7 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>');
-if (version_compare($wp_version, "2.7", "<"))
+$exit_msg = __('SimpleMap requires WordPress 2.8 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>');
+if (version_compare($wp_version, "2.8", "<"))
 	exit($exit_msg);
 
 // Avoid name collisions
