@@ -3,7 +3,7 @@
 Contributors: aliso
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7382728
 Tags: map, store locator, database, locations, stores, Google maps
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 2.8.3
 Stable tag: trunk
 
