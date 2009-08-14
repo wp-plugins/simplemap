@@ -18,6 +18,15 @@ if ($bcl_action == 'delete') {
 
 }
 
+else if ($bcl_action == 'delete_all') {
+
+	$query = "DELETE FROM ".$table;
+	$result = mysql_query($query) or die (mysql_error());
+	header("Location: {$_SERVER['HTTP_REFERER']}");
+	exit();
+	
+}
+
 else {
 
 	define("MAPS_HOST", "maps.google.com");

@@ -20,50 +20,102 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 <script src="<?php echo $this->plugin_url; ?>js/inline-edit-stores.js" type="text/javascript"></script>
 <script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.form.js" type="text/javascript"></script>
 <div class="wrap">
-	<h2><?php _e('SimpleMap: Manage Database'); ?></h2>
+	<h2><?php _e('SimpleMap: Manage Database', 'SimpleMap'); ?></h2>
 	
 	<?php
 	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.').'</a></p></div>';
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
 	?>
 		
 	<?php
 	if (isset($_GET['message'])) {
-		echo '<div id="message" class="updated fade">'.$_GET['message'].'</p></div>';
+		echo '<div id="message" class="updated fade"><p>'.$_GET['message'].'</p></div>';
 	}
 	?>
-	<div class="tablenav">
+	<?php if ($count > 0) { ?>
+		<form action="<?php echo $this->plugin_url; ?>actions/location-process.php" method="post" style="float: left; margin: 15px 0;">
+			<input type="hidden" name="action" value="delete_all" />
+			<input type="submit" class="button-primary" value="<?php _e('Delete Database', 'SimpleMap'); ?>" onclick="javascript:return confirm('Do you really want to delete all locations in your database?');" /> <small><?php _e('Delete all entries in database', 'SimpleMap'); ?></small>
+		</form>
+	<?php } else { ?>
+		<div style="height: 30px;"></div>
+	<?php } ?>
+	
+	
 	<?php
 	if ($start + 15 > $count)
 		$end = $count;
 	else
 		$end = $start + 15;
+		
+	$dots1 = '';
+	$dots2 = '';
+	$number_of_pages = $count / 15 + 1;
+	if ($number_of_pages > 10) {
+		
+		// at the beginning
+		if ($paged - 5 < 1) {
+			$dots2 = '&hellip;';
+			$page_numbers_start = 1;
+			$page_numbers_end = 9;
+		}
+		// at the end
+		else if ($paged + 5 > $number_of_pages) {
+			$dots1 = '&hellip;';
+			$page_numbers_start = $number_of_pages - 9;
+			$page_numbers_end = $number_of_pages;
+		}
+		// in the middle
+		else {
+			$dots1 = '&hellip;';
+			$dots2 = '&hellip;';
+			$page_numbers_start = $paged - 4;
+			$page_numbers_end = $paged + 4;
+		}
+		
+	}
+	else {
+		$page_numbers_start = 1;
+		$page_numbers_end = $number_of_pages;
+	}
 	?>
-	<div class="tablenav-pages"><span class="displaying-num"><?php _e('Displaying'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
-	<?php
-	if ($paged > 1)
-		echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
-	for($i = 1; $i <= ($count / 15 + 1); $i++) {
-			
-		if ($i == $paged)
-			echo "<span class='page-numbers current'>$i</span>\n";
-		else
-			echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
-	}	
-	if ($paged < ($count / 15))
-		echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
-	?>
-	</div></div>
+	
+	<?php if ($count > 0) { ?>
+		<div class="tablenav">
+			<div class="tablenav-pages">
+				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
+				<?php
+				if ($paged > 1)
+					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
+					
+				echo $dots1.' ';
+				
+				for($i = (int)$page_numbers_start; $i <= (int)$page_numbers_end; $i++) {
+						
+					if ($i == $paged)
+						echo "<span class='page-numbers current'>$i</span>\n";
+					else
+						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
+				}
+				
+				echo $dots2.' ';
+				
+				if ($paged < $number_of_pages - 1)
+					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
+				?>
+			</div>
+		</div>
+	<?php } ?>
 	
 	
 	<table class="widefat post fixed" cellspacing="0">
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Address'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('URL'); ?></th>
+				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('URL', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -75,10 +127,10 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Address'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('URL'); ?></th>
+				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('URL', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -107,8 +159,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 					<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $name; ?></span></strong>
 						<div class="row-actions">
-							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline"><?php _e('Quick Edit'); ?></a> | </span>
-							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('Do you really want to delete \'<?php echo addslashes($name); ?>\'?');"><?php _e('Delete'); ?></a></span>
+							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline"><?php _e('Quick Edit', 'SimpleMap'); ?></a> | </span>
+							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('Do you really want to delete \'<?php echo addslashes($name); ?>\'?');"><?php _e('Delete', 'SimpleMap'); ?></a></span>
 						</div>
 						<div class="hidden" id="inline_<?php echo $row['id']; ?>">
 						<div class="store_id"><?php echo $row['id']; ?></div>
@@ -158,36 +210,40 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		}
 		else {
 			if ($options['special_text'] != '')
-				echo '<tr><td colspan="5">'.__('No records found.').'</td></tr>';
+				echo '<tr><td colspan="5">'.__('No records found.', 'SimpleMap').'</td></tr>';
 			else
-				echo '<tr><td colspan="4">'.__('No records found.').'</td></tr>';
+				echo '<tr><td colspan="4">'.__('No records found.', 'SimpleMap').'</td></tr>';
 		}
 	
 	?>
 		</tbody>
 	</table>
-	<div class="tablenav">
-	<?php
-	if ($start + 15 > $count)
-		$end = $count;
-	else
-		$end = $start + 15;
-	?>
-	<div class="tablenav-pages"><span class="displaying-num"><?php _e('Displaying'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
-	<?php
-	if ($paged > 1)
-		echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
-	for($i = 1; $i <= ($count / 15 + 1); $i++) {
-			
-		if ($i == $paged)
-			echo "<span class='page-numbers current'>$i</span>\n";
-		else
-			echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
-	}	
-	if ($paged < ($count / 15))
-		echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
-	?>
-	</div></div>
+	<?php if ($count > 0) { ?>
+		<div class="tablenav">
+			<div class="tablenav-pages">
+				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
+				<?php
+				if ($paged > 1)
+					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
+					
+				echo $dots1.' ';
+				
+				for($i = (int)$page_numbers_start; $i <= (int)$page_numbers_end; $i++) {
+						
+					if ($i == $paged)
+						echo "<span class='page-numbers current'>$i</span>\n";
+					else
+						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
+				}
+				
+				echo $dots2.' ';
+				
+				if ($paged < $number_of_pages - 1)
+					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
+				?>
+			</div>
+		</div>
+	<?php } ?>
 </div>
 <p></p>
 
@@ -205,7 +261,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 			<fieldset style="width: 26%;"><div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e('Name'); ?></span><br />
+					<span class="title"><?php _e('Name', 'SimpleMap'); ?></span><br />
 				</label>
 					<span class="input-text-wrap"><input type="text" name="store_name" class="ptitle" value="" /></span>
 			</div></fieldset>
@@ -213,7 +269,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col">
 				<label>
-					<span class="title"><?php _e('Address'); ?></span><br />
+					<span class="title"><?php _e('Address', 'SimpleMap'); ?></span><br />
 				</label>
 					<span class="input-text-wrap"><input type="text" name="store_address" value="" /></span><br />
 					<span class="input-text-wrap"><input type="text" name="store_address2" value="" /></span><br />
@@ -231,16 +287,16 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col"><br />
-					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Phone'); ?></span>
+					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Phone', 'SimpleMap'); ?></span>
 						<input type="text" name="store_phone1" size="4" maxlength="3" value="" /><input type="text" name="store_phone2" size="4" maxlength="3" value="" /><input type="text" name="store_phone3" size="5" maxlength="4" value="" /><br />
-					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Fax'); ?></span>
+					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Fax', 'SimpleMap'); ?></span>
 						<input type="text" name="store_fax1" size="4" maxlength="3" value="" /><input type="text" name="store_fax2" size="4" maxlength="3" value="" /><input type="text" name="store_fax3" size="5" maxlength="4" value="" />
 			</div></fieldset>
 		
 		
 			<fieldset style="width: 30%;"><div class="inline-edit-col"><br />
 				<label>
-					<span class="title"><?php _e('URL'); ?></span>
+					<span class="title"><?php _e('URL', 'SimpleMap'); ?></span>
 				</label>
 				<span class="input-text-wrap"><input type="text" name="store_url" value="" /></span>
 				
@@ -253,8 +309,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 			</div></fieldset>
 		
 			<p class="submit inline-edit-save">
-				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft"><?php _e('Cancel'); ?></a>
-				<input type="hidden" id="_inline_edit" name="_inline_edit" value="58a915a1fb" /><a accesskey="s" href="#inline-edit" title="Update" class="button-primary save alignright"><?php _e('Update Location'); ?></a>
+				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft"><?php _e('Cancel', 'SimpleMap'); ?></a>
+				<input type="hidden" id="_inline_edit" name="_inline_edit" value="58a915a1fb" /><a accesskey="s" href="#inline-edit" title="Update" class="button-primary save alignright"><?php _e('Update Location', 'SimpleMap'); ?></a>
 					<img class="waiting" style="display:none;" src="images/loading.gif" alt="" />
 						<input type="hidden" name="post_view" value="list" />
 				<br class="clear" />
@@ -271,7 +327,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 	$(document).ready(function(){
 		$('#doaction, #doaction2').click(function(){
 			if ( $('select[name^="action"]').val() == 'delete' ) {
-				var m = '<?php _e('You are about to delete the selected posts. "Cancel" to stop, "OK" to delete.'); ?>';
+				var m = '<?php _e('You are about to delete the selected posts. "Cancel" to stop, "OK" to delete.', 'SimpleMap'); ?>';
 				return showNotice.warn(m);
 			}
 		});

@@ -45,6 +45,8 @@ text-decoration: underline;
 
 div.markertext h3 {
 margin-top: 0;
+text-align: left !important;
+line-height: 1.2em !important;
 }
 
 div#results {

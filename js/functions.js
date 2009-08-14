@@ -87,7 +87,7 @@ function createMarker(point, name, address, address2, city, state, zip, homeAddr
   }
   html += '<p><a href="http://google.com/maps?q=' + homeAddress + ' to ' + address + ',' + city + ',' + state + '" target="_blank">Get Directions</a></p></div>';
   GEvent.addListener(marker, 'click', function() {
-    marker.openInfoWindowHtml(html);
+    marker.openInfoWindowHtml(html, maxwidth = 200);
     window.location = '#map_top';
   });
   return marker;

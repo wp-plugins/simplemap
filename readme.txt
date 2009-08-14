@@ -4,7 +4,7 @@ Contributors: aliso
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7382728
 Tags: map, store locator, database, locations, stores, Google maps
 Requires at least: 2.8
-Tested up to: 2.8.3
+Tested up to: 2.8.4
 Stable tag: trunk
 
 SimpleMap is an easy-to-use and easy-to-manage store locator plugin that uses Google Maps to display information directly on your WordPress site.
@@ -59,6 +59,15 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.0.6 =
+* Fixed bug that was causing map to always appear at the top of a page or post
+* Modified CSV importing function to be more flexible about quotation marks
+* Modified paging in the Manage Database screen to better accomodate a large number of pages
+* Added button to Manage Database screen to clear entire database
+* Added German & Spanish translations
+* Fixed some tiny cosmetic errors
+* Removed some redundant code in the Manage Database screen
+
 = 1.0.5 =
 * Changed required WordPress version to 2.8
 
@@ -108,6 +117,11 @@ Planned for future releases:
 If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
 
 To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
+
+== Credits ==
+
+* German translation by Thorsten at <http://www.numinose.com>
+* Spanish translation by Fernando at [Dixit](http://www.dixit.es)
 
 == License ==
 

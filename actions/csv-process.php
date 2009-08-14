@@ -11,14 +11,7 @@ if (isset($_POST['action'])) {
 
 	// EXPORT to CSV file
 	if ($_POST['action'] == 'export') {
-			
-		/*
-		$result = mysql_query("SHOW COLUMNS FROM $table");
-		while ($row = mysql_fetch_assoc($result)) {
-			$csv_output .= $row['Field'].',';
-		}
-		$csv_output = substr($csv_output, 0, -1)."\n";
-		*/
+	
 		$csv_output = "name,address,address2,city,state,zip,phone,fax,url,special\n";
 		
 		$values = mysql_query("SELECT name, address, address2, city, state, zip, phone, fax, url, special FROM $table ORDER BY name");
@@ -27,7 +20,7 @@ if (isset($_POST['action'])) {
 		}
 		
 		header("Content-type: application");
-		header("Content-disposition: csv; filename=" . date("Y-m-d") . "_".$table.".csv; size=".strlen($csv_output));
+		header("Content-disposition: csv; filename=SimpleMap_".date("Y-m-d").".csv; size=".strlen($csv_output));
 		
 		print $csv_output;
 		
@@ -48,8 +41,12 @@ if (isset($_POST['action'])) {
 		$addauto = 0;
 		
 		$csvcontent = file_get_contents($_FILES['uploadedfile']['tmp_name']);
-
-		$fieldseparator = '","';
+	
+		if (strpos($csvcontent, '","') === false)
+			$fieldseparator = ',';
+		else
+			$fieldseparator = '","';
+		
 		$lineseparator = "\n";
 		
 		$linescontent = split($lineseparator, $csvcontent);
