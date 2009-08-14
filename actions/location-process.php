@@ -7,6 +7,7 @@ location-process.php: Adds/edits/deletes a location from the database
 import_request_variables('pg', 'bcl_');
 
 include "../includes/connect-db.php";
+include "../includes/sminc.php";
 
 if ($bcl_action == 'delete') {
 
@@ -15,6 +16,15 @@ if ($bcl_action == 'delete') {
 	header("Location: {$_SERVER['HTTP_REFERER']}");
 	exit();
 
+}
+
+else if ($bcl_action == 'delete_all') {
+
+	$query = "DELETE FROM ".$table;
+	$result = mysql_query($query) or die (mysql_error());
+	header("Location: {$_SERVER['HTTP_REFERER']}");
+	exit();
+	
 }
 
 else {
@@ -37,7 +47,9 @@ else {
 	
 	$base_url = "http://" . MAPS_HOST . "/maps/geo?output=xml" . "&key=" . KEY;
 	$request_url = $base_url . "&q=" . urlencode($geocodeAddress);
-	$xml = simplexml_load_file($request_url) or die("url not loading");
+	//$xml = simplexml_load_file($request_url) or die("url not loading"); // THROWING URL FILE-ACCESS ERROR FOR REMOTE FILES
+	$request_string = curl_get_contents($request_url);
+	$xml = simplexml_load_string($request_string) or die("URL not loading");
 	
 	$status = $xml->Response->Status->code;
 	if (strcmp($status, "200") == 0) {

@@ -1,19 +1,17 @@
 <?php
+/*
+SimpleMap Plugin
+csv-process.php: Imports/exports a CSV file to/from the database
+*/
 
 include "../includes/connect-db.php";
+include "../includes/sminc.php";
 
 if (isset($_POST['action'])) {
 
 	// EXPORT to CSV file
 	if ($_POST['action'] == 'export') {
-			
-		/*
-		$result = mysql_query("SHOW COLUMNS FROM $table");
-		while ($row = mysql_fetch_assoc($result)) {
-			$csv_output .= $row['Field'].',';
-		}
-		$csv_output = substr($csv_output, 0, -1)."\n";
-		*/
+	
 		$csv_output = "name,address,address2,city,state,zip,phone,fax,url,special\n";
 		
 		$values = mysql_query("SELECT name, address, address2, city, state, zip, phone, fax, url, special FROM $table ORDER BY name");
@@ -22,7 +20,7 @@ if (isset($_POST['action'])) {
 		}
 		
 		header("Content-type: application");
-		header("Content-disposition: csv; filename=" . date("Y-m-d") . "_".$table.".csv; size=".strlen($csv_output));
+		header("Content-disposition: csv; filename=SimpleMap_".date("Y-m-d").".csv; size=".strlen($csv_output));
 		
 		print $csv_output;
 		
@@ -43,8 +41,12 @@ if (isset($_POST['action'])) {
 		$addauto = 0;
 		
 		$csvcontent = file_get_contents($_FILES['uploadedfile']['tmp_name']);
-
-		$fieldseparator = '","';
+	
+		if (strpos($csvcontent, '","') === false)
+			$fieldseparator = ',';
+		else
+			$fieldseparator = '","';
+		
 		$lineseparator = "\n";
 		
 		$linescontent = split($lineseparator, $csvcontent);
@@ -97,7 +99,7 @@ if (isset($_POST['action'])) {
 				$linearray[9] = '0';
 			
 			define("MAPS_HOST", "maps.google.com");
-			define("KEY", "ABQIAAAARUPnkmQVF3Ef2h5dPDdAsRS6FfcgL6tnWKCG0XjBSWt-JgDDsxSLDKMNN7ubiz7zLUE44CpmKACm9g");
+			define("KEY", $options['api_key']);
 			
 			$geocodeAddress = $linearray[1].', '.$linearray[3].', '.$linearray[4];
 			//echo '<br/>';
@@ -106,7 +108,9 @@ if (isset($_POST['action'])) {
 			
 			$base_url = "http://" . MAPS_HOST . "/maps/geo?output=xml" . "&key=" . KEY;
 			$request_url = $base_url . "&q=" . urlencode($geocodeAddress);
-			$xml = simplexml_load_file($request_url) or die("url not loading");
+			//$xml = simplexml_load_file($request_url) or die("url not loading");
+			$request_string = curl_get_contents($request_url);
+			$xml = simplexml_load_string($request_string) or die("URL not loading");
 			
 			$status = $xml->Response->Status->code;
 			if (strcmp($status, "200") == 0) {
@@ -153,7 +157,7 @@ if (isset($_POST['action'])) {
 		if ($lines == 1)
 			$message = urlencode("$lines record imported successfully.");
 		else
-			$message = urlencode(($lines - 2)." records imported successfully.");
+			$message = urlencode("$lines records imported successfully.");
 		
 		//echo "Found a total of $lines records in this csv file.\n";
 		header("Location: ../../../../wp-admin/admin.php?page=Manage%20Database&message=$message");

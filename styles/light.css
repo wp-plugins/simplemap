@@ -6,6 +6,20 @@ Theme Name: Light
 border: 1px solid #999;
 }
 
+#powered_by_simplemap {
+font-size: 0.75em;
+text-align: right;
+color: #999;
+}
+
+#powered_by_simplemap a {
+color: #999;
+}
+
+#powered_by_simplemap a:hover {
+color: #666;
+}
+
 #searchForm {
 text-align: left;
 }
@@ -31,6 +45,8 @@ text-decoration: underline;
 
 div.markertext h3 {
 margin-top: 0;
+text-align: left !important;
+line-height: 1.2em !important;
 }
 
 div#results {
