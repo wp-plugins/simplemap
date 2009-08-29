@@ -220,10 +220,29 @@ else :
 endif;
 
 
-//echo 'outside of class<br />';
+// Add info box under plugin on plugins page
+add_action('after_plugin_row', 'add_plugin_row', 10, 2);
+
+function add_plugin_row($links, $file) {
+	static $this_plugin;
+	global $wp_version;
+	if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
+	
+	if ($file == $this_plugin ) {
+		$current = get_option('update_plugins');
+		if (!isset($current->response[$file])) return false;
+		
+		$columns = substr($wp_version, 0, 3) == "2.8" ? 3 : 5;
+		$url = "http://alisothegeek.com/simplemap-update.txt";
+		$update = wp_remote_fopen($url);
+		echo '<td colspan="'.$columns.'">';
+		echo $update;
+		echo '</td>';
+	}
+}
 
 	
-// Add settings link on plugin page
+// Add settings link on plugins page
 function simplemap_settings_link($links) {
 	$plugin = plugin_basename(__FILE__);
 	$settings_link = sprintf('<a href="admin.php?page=%s">%s</a>', $plugin, __('Settings'));
