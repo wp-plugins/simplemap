@@ -11,6 +11,7 @@ elseif (file_exists("../../../../../../../wp-config.php")){include("../../../../
 elseif (file_exists("../../../../../../../../wp-config.php")){include("../../../../../../../../wp-config.php");}
 
 $table = $table_prefix."simple_map";
+$cat_table = $table_prefix."simple_map_cats";
 
 $username=DB_USER;
 $password=DB_PASSWORD;
