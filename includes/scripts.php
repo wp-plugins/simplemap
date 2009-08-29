@@ -3,7 +3,7 @@
 SimpleMap Plugin
 scripts.php: Contains scripts to insert into <head>
 */
-
+echo '<!-- SimpleMap version 1.1 ======================== -->'."\n";
 echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/'.$options['map_stylesheet'].'" type="text/css" />'."\n";
 echo '<link rel="stylesheet" href="'.$this->plugin_url.'includes/admin.css" type="text/css" />'."\n";
 //include $this->plugin_url.'js/functions.js.php';
@@ -43,5 +43,6 @@ if ($options['api_key'] != '') {
 		echo '<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key='.$options['api_key'].'&sensor=false" type="text/javascript"></script>'."\n";
 	else
 		echo '<script src="http://maps.google.co.uk/maps?file=api&amp;v=2&amp;key='.$options['api_key'].'&sensor=false" type="text/javascript"></script>'."\n";
+echo '<!-- End of SimpleMap scripts ======================== -->'."\n";
 }
 ?>
