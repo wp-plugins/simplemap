@@ -1,3 +1,38 @@
+select option span.hidden {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+span.title, label span.title {
+	display: inline-block;
+	width: 5em;
+}
+
+span.title.title_long, label.long span.title.title_long {
+	width: 8em;
+}
+
+input.fix_width, select.fix_width, textarea.fix_width {
+	width: 200px;
+}
+
+input.full_width, select.full_width, textarea.full_width {
+	width: 70%;
+}
+
+.postbox .sub {
+	color: rgb(119, 119, 119);
+	font-family: Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif;
+	font-size: 13px;
+	font-style: italic;
+	padding: 5px 10px 15px;
+	margin: 0;
+}
+
+.postbox h3 {
+	cursor: default !important;
+}
+
 .radio-thumbnail {
 	float: left;
 	text-align: center;

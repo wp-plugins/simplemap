@@ -3,10 +3,12 @@
 SimpleMap Plugin
 display-map.php: Displays the Google Map and search results
 */
+$to_display = '';
 
-$to_display = '
+if ($options['display_search'] == 'show') {
+$to_display .= '
 <div id="map_search" style="width: '.$options['map_width'].';">
-	<a name="map_top"></a>
+	<!-- <a name="map_top"></a> -->
 	<form onsubmit="searchLocations(); return false;" name="searchForm" id="searchForm" action="http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">
 		<input type="text" id="addressInput" name="addressInput" class="address" />&nbsp;
 		<select name="radiusSelect" id="radiusSelect">';
@@ -23,13 +25,12 @@ $to_display = '
 $to_display .= '	
 		</select>&nbsp;
 		<input type="submit" value="Search" id="addressSubmit" class="submit" />
+		<p>'.__('Please enter a name, address, city or zip/postal code in the search box above.', 'SimpleMap').'</p>
 	</form>
-</div>
-
-<h4>'.__('Please enter a name, address, city or zip code in the search box above.').'</h4>';
-
+</div>';
+}
 if ($options['powered_by'] == 'show') {
-	$to_display .= '<div id="powered_by_simplemap">'.__('Powered by').' <a href="http://simplemap-plugin.com/" target="_blank">SimpleMap</a></div>';
+	$to_display .= '<div id="powered_by_simplemap">'.sprintf(__('Powered by %s SimpleMap', 'SimpleMap'),'<a href="http://simplemap-plugin.com/" target="_blank">').'</a></div>';
 }
 
 $to_display .= '
@@ -43,8 +44,8 @@ $to_display .= '
 		load();';
 		
 		if ($options['autoload'] != '') {
-			$to_display .= 'document.getElementById(\'addressInput\').value = \''.$options['autoload'].'\';
-			searchLocations();';
+			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng());';
 		}
 		
 $to_display .= '

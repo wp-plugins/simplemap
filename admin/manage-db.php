@@ -8,6 +8,7 @@ $current_page = $_SERVER['SCRIPT_NAME'];
 
 global $wpdb;
 $db_table_name = $this->table;
+$db_cat_table_name = $this->cat_table;
 if (isset($_GET['paged']))
 	$paged = $_GET['paged'];
 else
@@ -16,18 +17,18 @@ $start = ($paged - 1) * 15;
 
 $result = $wpdb->get_results("SELECT * FROM $db_table_name ORDER BY name LIMIT $start, 15", ARRAY_A);
 $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
+$categories = $wpdb->get_results("SELECT * FROM $db_cat_table_name ORDER BY name", ARRAY_A);
+include "../wp-content/plugins/simplemap/includes/states-array.php";
 ?>
 <script src="<?php echo $this->plugin_url; ?>js/inline-edit-stores.js" type="text/javascript"></script>
 <script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.form.js" type="text/javascript"></script>
 <div class="wrap">
 	<h2><?php _e('SimpleMap: Manage Database', 'SimpleMap'); ?></h2>
-	
+		
 	<?php
 	if ($options['api_key'] == '')
 		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
-	?>
-		
-	<?php
+	
 	if (isset($_GET['message'])) {
 		echo '<div id="message" class="updated fade"><p>'.$_GET['message'].'</p></div>';
 	}
@@ -50,25 +51,25 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		
 	$dots1 = '';
 	$dots2 = '';
-	$number_of_pages = $count / 15 + 1;
+	$number_of_pages = (int)($count / 15 + ($count % 15 == 0 ? 0 : 1));
 	if ($number_of_pages > 10) {
 		
 		// at the beginning
 		if ($paged - 5 < 1) {
-			$dots2 = '&hellip;';
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages'>$number_of_pages</a>\n";
 			$page_numbers_start = 1;
 			$page_numbers_end = 9;
 		}
 		// at the end
 		else if ($paged + 5 > $number_of_pages) {
-			$dots1 = '&hellip;';
+			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1'>1</a>&nbsp;&hellip;\n";
 			$page_numbers_start = $number_of_pages - 9;
 			$page_numbers_end = $number_of_pages;
 		}
 		// in the middle
 		else {
-			$dots1 = '&hellip;';
-			$dots2 = '&hellip;';
+			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1'>1</a>&nbsp;&hellip;\n";
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages'>$number_of_pages</a>\n";
 			$page_numbers_start = $paged - 4;
 			$page_numbers_end = $paged + 4;
 		}
@@ -112,10 +113,11 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><?php _e('Name', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('URL', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax/URL', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -127,10 +129,11 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Name', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><?php _e('Name', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('URL', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax/URL', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
@@ -148,6 +151,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 				$address = stripslashes($row['address']);
 				$address2 = stripslashes($row['address2']);
 				$city = stripslashes($row['city']);
+				$category = stripslashes($row['category']);
+				$description = stripslashes($row['description']);
 				$i++;
 				if ($i % 2 == 0)
 					$altclass = 'alternate ';
@@ -157,6 +162,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 				
 				<tr id='post-<?php echo $row['id']; ?>' class='<?php echo $altclass; ?>author-self status-publish iedit' valign="top">
 					<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
+					
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $name; ?></span></strong>
 						<div class="row-actions">
 							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline"><?php _e('Quick Edit', 'SimpleMap'); ?></a> | </span>
@@ -171,32 +177,46 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 						<div class="store_city"><?php echo $city; ?></div>
 						<div class="store_state"><?php echo $row['state']; ?></div>
 						<div class="store_zip"><?php echo $row['zip']; ?></div>
-						<div class="store_phone1"><?php echo substr($row['phone'], 1, 3); ?></div>
-						<div class="store_phone2"><?php echo substr($row['phone'], 6, 3); ?></div>
-						<div class="store_phone3"><?php echo substr($row['phone'], -4); ?></div>
-						<div class="store_fax1"><?php echo substr($row['fax'], 1, 3); ?></div>
-						<div class="store_fax2"><?php echo substr($row['fax'], 6, 3); ?></div>
-						<div class="store_fax3"><?php echo substr($row['fax'], -4); ?></div>
+						<div class="store_country"><?php echo $row['country']; ?></div>
+						<div class="store_phone"><?php echo $row['phone']; ?></div>
+						<div class="store_fax"><?php echo $row['fax']; ?></div>
 						<div class="store_url"><?php echo $row['url']; ?></div>
+						<div class="store_description"><?php echo $row['description']; ?></div>
+						<div class="store_category"><?php echo $row['category']; ?></div>
+						<div class="store_lat"><?php echo $row['lat']; ?></div>
+						<div class="store_lng"><?php echo $row['lng']; ?></div>
 						
 						<?php if ($options['special_text'] != '') { ?>
 							<div class="store_special"><?php echo $row['special']; ?></div></div>
 						<?php } ?>
 					</td>
+					
 					<td>
 						<span class="row_address"><?php echo $row['address']."</span>";
 						if ($row['address2'])
 							echo "<br /><span class='row_address2'>".$row['address2']."</span>";
-						echo "<br /><span class='row_city'>{$row['city']}<span>, 
-						<span class='row_state'>{$row['state']}</span> 
-						<span class='row_zip'>{$row['zip']}</span>"; ?>
+						echo "<br /><span class='row_city'>".$row['city']."<span> ";
+						if ($row['state'] != 'none')
+							echo "<span class='row_state'>".$row['state']."</span> ";
+						echo "<span class='row_zip'>".$row['zip']."</span>";
+						echo "<br /><span class='row_country'>".strtoupper($country_list[$row['country']])."</span>"; ?>
 					</td>
+					
 					<td><span class="row_phone">
 						<?php echo $row['phone']."</span>";
 						if ($row['fax'])
-							echo "<br/>Fax: <span class='row_fax'>".$row['fax']."</span>"; ?>
+							echo "<br/>".__('Fax:', 'SimpleMap')." <span class='row_fax'>".$row['fax']."</span>";
+						if ($row['url'])
+							echo "<br/><span class='row_url'>".$row['url']."</span>"; ?>
 					</td>
-					<td><span class="row_url"><?php echo $row['url']; ?></span></td>
+					
+					<td>
+						<span class="row_category"><?php echo $row['category']; ?></span>
+					</td>
+					
+					<td>
+						<span class="row_description"><?php echo nl2br(html_entity_decode($row['description'])); ?></span>
+					</td>
 					
 					<?php if ($options['special_text'] != '') { ?>
 						<td><span class="row_special">
@@ -257,53 +277,94 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 			<input type="hidden" name="action" value="edit" />
 		
 			<input type="hidden" name="store_id" value="" />
+			<input type="hidden" name="store_lat" value="" />
+			<input type="hidden" name="store_lng" value="" />
 			<input type="hidden" name="altclass" value="" />
+			<input type="hidden" name="api_key" value="<?php echo $options['api_key']; ?>" />
 		
 			<fieldset style="width: 26%;"><div class="inline-edit-col">
-				<label>
-					<span class="title"><?php _e('Name', 'SimpleMap'); ?></span><br />
+				<label for="store_name">
+					<span class="title" class="long"><?php _e('Name', 'SimpleMap'); ?></span><br />
 				</label>
-					<span class="input-text-wrap"><input type="text" name="store_name" class="ptitle" value="" /></span>
+					<span class="input-text-wrap"><input type="text" id="store_name" name="store_name" class="ptitle" value="" /></span>
 			</div></fieldset>
 		
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col">
-				<label>
-					<span class="title"><?php _e('Address', 'SimpleMap'); ?></span><br />
-				</label>
-					<span class="input-text-wrap"><input type="text" name="store_address" value="" /></span><br />
-					<span class="input-text-wrap"><input type="text" name="store_address2" value="" /></span><br />
-					<span class=""><input type="text" name="store_city" size="13" value="" />
-					<select class="" name="store_state">
+				<label for="store_address"><span class="title title_long"><?php _e('Address', 'SimpleMap'); ?></span></label>
+					<span class="input-text-wrap"><input type="text" id="store_address" name="store_address" value="" /></span><br />
+					<span class="input-text-wrap"><input type="text" id="store_address2" name="store_address2" value="" /></span><br />
+					
+				<label for="store_city" class="long"><span class="title title_long"><?php _e('City', 'SimpleMap'); ?></span></label>
+					<input type="text" id="store_city" name="store_city" size="20" value="" class="fix_width" /><br />
+				
+				<label for="store_state" class="long"><span class="title title_long"><?php _e('State/Province', 'SimpleMap'); ?></span></label>
+				<select name="store_state" id="store_state" class="fix_width">
+					<option value="none">&mdash;</option>
+					<optgroup label="United States">
+						<?php
+						foreach ($states_list as $key => $value) {
+							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						}
+						?>
+					</optgroup>
+					<optgroup label="Canada">
+						<?php
+						foreach ($canada_list as $key => $value) {
+							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						}
+						?>
+					</optgroup>
+					<optgroup label="Australia">
+						<?php
+						foreach ($australia_list as $key => $value) {
+							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						}
+						?>
+					</optgroup>
+				</select><br />
+				
+				<label for="store_zip" class="long"><span class="title title_long"><?php _e('ZIP/Postal Code', 'SimpleMap'); ?></span></label>
+					<input type="text" id="store_zip" name="store_zip" size="13" maxlength="20" value="" class="fix_width" /><br />
+				
+				<label for="store_country" class="long"><span class="title title_long"><?php _e('Country', 'SimpleMap'); ?></span></label>
+				<select name="store_country" id="store_country" class="fix_width">
 					<?php
-					include ("../wp-content/plugins/simplemap/includes/states-array.php");
-					foreach ($state_list as $key => $value) {
-						echo "<option value='$key'>$key</option>\n";
+					foreach ($country_list as $key => $value) {
+						echo '<option value="'.$key.'">'.$value.'</option>'."\n";
 					}
 					?>
-					</select>
-					<input type="text" name="store_zip" size="6" maxlength="5" value="" /></span>
+				</select>
 			</div></fieldset>
 		
 		
 			<fieldset style="width: 22%;"><div class="inline-edit-col"><br />
-					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Phone', 'SimpleMap'); ?></span>
-						<input type="text" name="store_phone1" size="4" maxlength="3" value="" /><input type="text" name="store_phone2" size="4" maxlength="3" value="" /><input type="text" name="store_phone3" size="5" maxlength="4" value="" /><br />
-					<span class="title" style="display: block; float: left; width: 4em;"><?php _e('Fax', 'SimpleMap'); ?></span>
-						<input type="text" name="store_fax1" size="4" maxlength="3" value="" /><input type="text" name="store_fax2" size="4" maxlength="3" value="" /><input type="text" name="store_fax3" size="5" maxlength="4" value="" />
+				<label for="store_phone"><span class="title"><?php _e('Phone', 'SimpleMap'); ?></span></label>
+					<input type="text" class="full_width" name="store_phone" size="20" maxlength="28" value="" /><br />
+				<label for="store_fax"><span class="title"><?php _e('Fax', 'SimpleMap'); ?></span></label>
+					<input type="text" class="full_width" name="store_fax" size="20" maxlength="28" value="" /><br />
+				<label for="store_url"><span class="title"><?php _e('URL', 'SimpleMap'); ?></span></label>
+					<input type="text" class="full_width" id="store_url" name="store_url" value="" />
 			</div></fieldset>
 		
 		
 			<fieldset style="width: 30%;"><div class="inline-edit-col"><br />
-				<label>
-					<span class="title"><?php _e('URL', 'SimpleMap'); ?></span>
-				</label>
-				<span class="input-text-wrap"><input type="text" name="store_url" value="" /></span>
+			
+				<label for="store_category" class="long"><span class="title title_long"><?php _e('Category', 'SimpleMap'); ?></span></label>
+					<select name="store_category" id="store_category" class="full_width">
+						<?php
+						foreach ($categories as $cat) {
+							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name'])."</option>\n";
+						}
+						?>
+					</select>
+				
+				<label for="store_description" class="long"><span class="title title_long"><?php _e('Description', 'SimpleMap'); ?></span></label>
+				<textarea class="full_width" id="store_description" name="store_description" rows="5"></textarea><br />
 				
 				<?php if ($options['special_text'] != '') { ?>
-					<label>
-						<input type="checkbox" id="store_special" name="store_special" />&nbsp;&nbsp;<span class="title" style="width: auto; float: none; display: inline; vertical-align: text-top;"><?php echo $options['special_text']; ?></span>
-					</label>
+						<input type="checkbox" id="store_special" name="store_special" />&nbsp;&nbsp;<label for="store_special" style="display: inline;"><span style="width: auto; float: none; clear: none; display: inline; vertical-align: text-top; font-style: italic; font-family: Georgia;"><?php echo $options['special_text']; ?></span></label>
+						<input type="hidden" name="special_text_exists" value="1" />
 				<?php } ?>
 				
 			</div></fieldset>

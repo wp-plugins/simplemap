@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SimpleMap\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-13 21:05-0600\n"
+"POT-Creation-Date: 2009-08-29 15:58-0600\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Alison Barrett <alison@alisothegeek.com>\n"
 "Language-Team: \n"
@@ -26,345 +26,498 @@ msgid "SimpleMap Options"
 msgstr ""
 
 #: simplemap.php:107
+#: admin/general-options.php:48
 msgid "SimpleMap: General Options"
 msgstr ""
 
 #: simplemap.php:107
-#: admin/general-options.php:37
 msgid "General Options"
 msgstr ""
 
 #: simplemap.php:108
-#: admin/manage-db.php:23
-msgid "SimpleMap: Manage Database"
-msgstr ""
-
-#: simplemap.php:108
-msgid "Manage Database"
-msgstr ""
-
-#: simplemap.php:109
-#: admin/add-location.php:9
+#: admin/add-location.php:25
 msgid "SimpleMap: Add Location"
 msgstr ""
 
-#: simplemap.php:109
-#: admin/add-location.php:87
+#: simplemap.php:108
+#: admin/add-location.php:242
+#: admin/add-location.php:243
 msgid "Add Location"
 msgstr ""
 
+#: simplemap.php:109
+#: admin/manage-db.php:26
+msgid "SimpleMap: Manage Database"
+msgstr ""
+
+#: simplemap.php:109
+msgid "Manage Database"
+msgstr ""
+
 #: simplemap.php:110
+#: admin/manage-categories.php:23
+msgid "SimpleMap: Manage Categories"
+msgstr ""
+
+#: simplemap.php:110
+msgid "Manage Categories"
+msgstr ""
+
+#: simplemap.php:111
 msgid "SimpleMap: Import/Export"
 msgstr ""
 
-#: simplemap.php:110
+#: simplemap.php:111
 msgid "Import/Export"
 msgstr ""
 
-#: simplemap.php:147
+#: simplemap.php:157
 msgid "SimpleMap settings saved."
 msgstr ""
 
-#: simplemap.php:200
+#: simplemap.php:218
 msgid "Class SimpleMap already declared!"
 msgstr ""
 
-#: simplemap.php:211
+#: simplemap.php:229
 msgid "Settings"
 msgstr ""
 
-#: admin/add-location.php:13
-#: admin/general-options.php:41
-#: admin/import-export.php:15
-#: admin/manage-db.php:27
-msgid "You must enter an API key for your domain."
+#: actions/location-process.php:17
+msgid "Record deleted."
 msgstr ""
 
-#: admin/add-location.php:13
-#: admin/import-export.php:15
-#: admin/manage-db.php:27
-msgid "Enter a key on the General Options page."
+#: actions/location-process.php:26
+msgid "Database cleared."
 msgstr ""
 
-#: admin/add-location.php:19
-msgid "added successfully."
-msgstr ""
-
-#: admin/add-location.php:29
-#: admin/manage-db.php:115
-#: admin/manage-db.php:130
-#: admin/manage-db.php:264
-msgid "Name"
-msgstr ""
-
-#: admin/add-location.php:34
-#: admin/manage-db.php:116
-#: admin/manage-db.php:131
-#: admin/manage-db.php:272
-msgid "Address"
-msgstr ""
-
-#: admin/add-location.php:40
-msgid "City, State, Zip"
-msgstr ""
-
-#: admin/add-location.php:56
-#: admin/manage-db.php:290
-msgid "Phone"
-msgstr ""
-
-#: admin/add-location.php:63
-#: admin/manage-db.php:292
-msgid "Fax"
-msgstr ""
-
-#: admin/add-location.php:72
-msgid "Please include the"
-msgstr ""
-
-#: admin/general-options.php:41
-msgid "Click here to sign up for a Google Maps API key."
-msgstr ""
-
-#: admin/general-options.php:57
-msgid "Google Maps API Key"
-msgstr ""
-
-#: admin/general-options.php:60
-#: admin/general-options.php:82
-msgid "Click here"
-msgstr ""
-
-#: admin/general-options.php:60
-msgid "to sign up for a Google Maps API key for your domain."
-msgstr ""
-
-#: admin/general-options.php:65
-msgid "Map Size"
-msgstr ""
-
-#: admin/general-options.php:67
-msgid "Width:"
-msgstr ""
-
-#: admin/general-options.php:69
-msgid "Height:"
-msgstr ""
-
-#: admin/general-options.php:71
-msgid "Enter a numeric value with CSS units, such as"
-msgstr ""
-
-#: admin/general-options.php:71
-msgid "or"
-msgstr ""
-
-#: admin/general-options.php:76
-msgid "Starting Location"
-msgstr ""
-
-#: admin/general-options.php:78
-msgid "Latitude:"
-msgstr ""
-
-#: admin/general-options.php:80
-msgid "Longitude:"
-msgstr ""
-
-#: admin/general-options.php:82
-msgid "Enter the location the map should open to by default, when no location has been searched for. For example, if your locations are mostly in the same city, you might want to start centered on that city."
-msgstr ""
-
-#: admin/general-options.php:82
-msgid "to find the latitude and longitude of an address."
-msgstr ""
-
-#: admin/general-options.php:87
-msgid "Distance Units"
-msgstr ""
-
-#: admin/general-options.php:94
-msgid "Miles"
-msgstr ""
-
-#: admin/general-options.php:95
-msgid "Kilometers"
-msgstr ""
-
-#: admin/general-options.php:101
-msgid "Default Search Radius"
-msgstr ""
-
-#: admin/general-options.php:116
-msgid "Default Zoom Level"
-msgstr ""
-
-#: admin/general-options.php:125
-msgid "1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in."
-msgstr ""
-
-#: admin/general-options.php:130
-msgid "Default Map Type"
-msgstr ""
-
-#: admin/general-options.php:134
-msgid "Normal map"
-msgstr ""
-
-#: admin/general-options.php:141
-msgid "Satellite map"
-msgstr ""
-
-#: admin/general-options.php:148
-msgid "Hybrid map"
-msgstr ""
-
-#: admin/general-options.php:155
-msgid "Terrain map"
-msgstr ""
-
-#: admin/general-options.php:163
-msgid "Default Location State"
-msgstr ""
-
-#: admin/general-options.php:176
-msgid "If most of your locations are in the same state, choose that state here to make adding new locations easier."
-msgstr ""
-
-#: admin/general-options.php:181
-msgid "Special Location Label"
-msgstr ""
-
-#: admin/general-options.php:184
-msgid "If you want to distinguish certain locations (i.e. Ten-Year Members, Most Popular, etc.) then enter the label for them here. Leave it blank to disable this feature."
-msgstr ""
-
-#: admin/general-options.php:189
-msgid "Autoload Address"
-msgstr ""
-
-#: admin/general-options.php:192
-msgid "Enter an address, city, or zip code here if you want the map to automatically show all locations in that area."
-msgstr ""
-
-#: admin/general-options.php:197
-msgid "Theme"
-msgstr ""
-
-#: admin/general-options.php:204
-msgid "Default Themes"
-msgstr ""
-
-#: admin/general-options.php:212
-msgid "Custom Themes"
-msgstr ""
-
-#: admin/general-options.php:221
-msgid "To add your own theme, upload your own CSS file to a new directory in your plugins folder called"
-msgstr ""
-
-#: admin/general-options.php:221
-msgid "To give it a name, use the following header in the top of your stylesheet:"
-msgstr ""
-
-#: admin/general-options.php:230
-msgid "SimpleMap Link"
-msgstr ""
-
-#: admin/general-options.php:237
-msgid "Show the \"Powered by SimpleMap\" link"
-msgstr ""
-
-#: admin/general-options.php:246
-msgid "Save Options"
-msgstr ""
-
-#: admin/import-export.php:11
-msgid "SimpleMap: Import/Export CSV"
-msgstr ""
-
-#: admin/import-export.php:22
-msgid "Import From File"
-msgstr ""
-
-#: admin/import-export.php:23
-msgid "Importing a file may take several seconds; please be patient."
-msgstr ""
-
-#: admin/import-export.php:25
-msgid "To ensure that you have the correct column structure, please download an export of your database below, even if it is empty, and compare your column order to what is in the export. If you are using a spreadsheet application, be sure to remove any double quotation marks (\") from your data before you export the CSV."
-msgstr ""
-
-#: admin/import-export.php:27
-msgid "File to import:"
-msgstr ""
-
-#: admin/import-export.php:29
-msgid "Import"
-msgstr ""
-
-#: admin/import-export.php:37
-msgid "Export To File"
-msgstr ""
-
-#: admin/import-export.php:40
-msgid "Export Database"
-msgstr ""
-
-#: admin/manage-db.php:38
-msgid "Delete Database"
-msgstr ""
-
-#: admin/manage-db.php:38
-msgid "Delete all entries in database"
-msgstr ""
-
-#: admin/manage-db.php:86
-#: admin/manage-db.php:224
-msgid "Displaying"
-msgstr ""
-
-#: admin/manage-db.php:117
-#: admin/manage-db.php:132
-msgid "Phone/Fax"
-msgstr ""
-
-#: admin/manage-db.php:118
-#: admin/manage-db.php:133
-#: admin/manage-db.php:299
-msgid "URL"
-msgstr ""
-
-#: admin/manage-db.php:162
+#: actions/location-process.php:112
+#: admin/manage-categories.php:143
+#: admin/manage-db.php:168
 msgid "Quick Edit"
 msgstr ""
 
-#: admin/manage-db.php:163
+#: actions/location-process.php:113
+#: admin/manage-categories.php:144
+#: admin/manage-db.php:169
 msgid "Delete"
 msgstr ""
 
-#: admin/manage-db.php:213
-#: admin/manage-db.php:215
+#: actions/location-process.php:152
+#: admin/manage-db.php:208
+msgid "Fax:"
+msgstr ""
+
+#: admin/add-location.php:29
+#: admin/general-options.php:52
+#: admin/import-export.php:20
+#: admin/manage-categories.php:27
+#: admin/manage-db.php:30
+msgid "You must enter an API key for your domain."
+msgstr ""
+
+#: admin/add-location.php:29
+#: admin/import-export.php:20
+#: admin/manage-categories.php:27
+#: admin/manage-db.php:30
+msgid "Enter a key on the General Options page."
+msgstr ""
+
+#: admin/add-location.php:33
+msgid "added successfully."
+msgstr ""
+
+#: admin/add-location.php:49
+msgid "Name and Description"
+msgstr ""
+
+#: admin/add-location.php:57
+#: admin/manage-db.php:116
+#: admin/manage-db.php:132
+#: admin/manage-db.php:287
+msgid "Name"
+msgstr ""
+
+#: admin/add-location.php:62
+#: admin/manage-db.php:120
+#: admin/manage-db.php:136
+#: admin/manage-db.php:362
+msgid "Description"
+msgstr ""
+
+#: admin/add-location.php:67
+#: admin/manage-categories.php:113
+#: admin/manage-categories.php:121
+#: admin/manage-db.php:119
+#: admin/manage-db.php:135
+#: admin/manage-db.php:353
+msgid "Category"
+msgstr ""
+
+#: admin/add-location.php:78
+#, php-format
+msgid "You can add categories from the %s General Options screen.%s"
+msgstr ""
+
+#: admin/add-location.php:96
+msgid "Geographic Location"
+msgstr ""
+
+#: admin/add-location.php:99
+msgid "You must enter either an address or a latitude/longitude. If you enter both, the address will override the latitude/longitude."
+msgstr ""
+
+#: admin/add-location.php:105
+#: admin/manage-db.php:117
+#: admin/manage-db.php:133
+#: admin/manage-db.php:294
+msgid "Address"
+msgstr ""
+
+#: admin/add-location.php:111
+msgid "City/Town"
+msgstr ""
+
+#: admin/add-location.php:116
+#: admin/manage-db.php:301
+msgid "State/Province"
+msgstr ""
+
+#: admin/add-location.php:155
+msgid "Zip/Postal Code"
+msgstr ""
+
+#: admin/add-location.php:160
+#: admin/manage-db.php:330
+msgid "Country"
+msgstr ""
+
+#: admin/add-location.php:176
+msgid "Latitude/Longitude"
+msgstr ""
+
+#: admin/add-location.php:204
+msgid "Miscellaneous Information"
+msgstr ""
+
+#: admin/add-location.php:212
+#: admin/manage-db.php:342
+msgid "Phone"
+msgstr ""
+
+#: admin/add-location.php:217
+#: admin/manage-db.php:344
+msgid "Fax"
+msgstr ""
+
+#: admin/add-location.php:222
+#: admin/manage-db.php:346
+msgid "URL"
+msgstr ""
+
+#: admin/add-location.php:224
+msgid "Please include"
+msgstr ""
+
+#: admin/general-options.php:52
+msgid "Click here to sign up for a Google Maps API key."
+msgstr ""
+
+#: admin/general-options.php:69
+msgid "Location Defaults"
+msgstr ""
+
+#: admin/general-options.php:72
+msgid "If most of your locations are in the same area, choose the country and state/province here to make adding new locations easier."
+msgstr ""
+
+#: admin/general-options.php:78
+msgid "Default Country"
+msgstr ""
+
+#: admin/general-options.php:94
+msgid "Default State/Province"
+msgstr ""
+
+#: admin/general-options.php:137
+#: admin/general-options.php:239
+#: admin/general-options.php:374
+msgid "Save Options"
+msgstr ""
+
+#: admin/general-options.php:150
+msgid "Map Configuration"
+msgstr ""
+
+#: admin/general-options.php:158
+msgid "Google Maps API Key"
+msgstr ""
+
+#: admin/general-options.php:161
+#, php-format
+msgid "%s Click here%s to sign up for a Google Maps API key for your domain."
+msgstr ""
+
+#: admin/general-options.php:165
+msgid "Starting Location"
+msgstr ""
+
+#: admin/general-options.php:167
+msgid "Latitude:"
+msgstr ""
+
+#: admin/general-options.php:169
+msgid "Longitude:"
+msgstr ""
+
+#: admin/general-options.php:171
+msgid "Enter the location the map should open to by default, when no location has been searched for. If you don't know the latitude and longitude of your starting location, enter the address below and press \"Geocode Address.\""
+msgstr ""
+
+#: admin/general-options.php:177
+msgid "Distance Units"
+msgstr ""
+
+#: admin/general-options.php:184
+msgid "Miles"
+msgstr ""
+
+#: admin/general-options.php:185
+msgid "Kilometers"
+msgstr ""
+
+#: admin/general-options.php:191
+msgid "Default Search Radius"
+msgstr ""
+
+#: admin/general-options.php:205
+msgid "Default Zoom Level"
+msgstr ""
+
+#: admin/general-options.php:214
+msgid "1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in."
+msgstr ""
+
+#: admin/general-options.php:219
+msgid "Special Location Label"
+msgstr ""
+
+#: admin/general-options.php:222
+msgid "If you want to flag certain locations, then enter the label for them here."
+msgstr ""
+
+#: admin/general-options.php:227
+msgid "Auto-Load Locations"
+msgstr ""
+
+#: admin/general-options.php:229
+msgid "Display locations automatically on page load"
+msgstr ""
+
+#: admin/general-options.php:230
+msgid "The locations will load based on the default location and default search radius set above."
+msgstr ""
+
+#: admin/general-options.php:262
+msgid "Map Style Defaults"
+msgstr ""
+
+#: admin/general-options.php:270
+msgid "Map Size"
+msgstr ""
+
+#: admin/general-options.php:272
+msgid "Width:"
+msgstr ""
+
+#: admin/general-options.php:274
+msgid "Height:"
+msgstr ""
+
+#: admin/general-options.php:276
+#, php-format
+msgid "Enter a numeric value with CSS units, such as %s or %s."
+msgstr ""
+
+#: admin/general-options.php:281
+msgid "Default Map Type"
+msgstr ""
+
+#: admin/general-options.php:285
+msgid "Road map"
+msgstr ""
+
+#: admin/general-options.php:292
+msgid "Satellite map"
+msgstr ""
+
+#: admin/general-options.php:299
+msgid "Hybrid map"
+msgstr ""
+
+#: admin/general-options.php:306
+msgid "Terrain map"
+msgstr ""
+
+#: admin/general-options.php:314
+msgid "Theme"
+msgstr ""
+
+#: admin/general-options.php:321
+msgid "Default Themes"
+msgstr ""
+
+#: admin/general-options.php:329
+msgid "Custom Themes"
+msgstr ""
+
+#: admin/general-options.php:338
+#, php-format
+msgid "To add your own theme, upload your own CSS file to a new directory in your plugins folder called %s simplemap-styles%s.  To give it a name, use the following header in the top of your stylesheet:"
+msgstr ""
+
+#: admin/general-options.php:347
+msgid "Display Search Form"
+msgstr ""
+
+#: admin/general-options.php:354
+msgid "Show the search form above the map"
+msgstr ""
+
+#: admin/general-options.php:359
+msgid "SimpleMap Link"
+msgstr ""
+
+#: admin/general-options.php:366
+msgid "Show the \"Powered by SimpleMap\" link"
+msgstr ""
+
+#: admin/import-export.php:17
+msgid "SimpleMap: Import/Export CSV"
+msgstr ""
+
+#: admin/import-export.php:34
+msgid "Import From File"
+msgstr ""
+
+#: admin/import-export.php:38
+msgid "Preparing Your CSV File"
+msgstr ""
+
+#: admin/import-export.php:40
+msgid "The best way to correctly format your CSV file:"
+msgstr ""
+
+#: admin/import-export.php:48
+#, php-format
+msgid "%s Importing large CSV files may stall your server. To prevent this, please only import 200 records at a time.%s If you need to split up your data, create multiple CSV files with no more than 200 lines each and upload them one at a time."
+msgstr ""
+
+#: admin/import-export.php:50
+msgid "If you are using a spreadsheet application, be sure to remove any double quotation marks (\") from your data before you export the CSV from the application."
+msgstr ""
+
+#: admin/import-export.php:52
+msgid "Importing a file may take several seconds; please be patient."
+msgstr ""
+
+#: admin/import-export.php:58
+msgid "File to import:"
+msgstr ""
+
+#: admin/import-export.php:60
+msgid "Import"
+msgstr ""
+
+#: admin/import-export.php:74
+msgid "Export To File"
+msgstr ""
+
+#: admin/import-export.php:81
+msgid "Export Database"
+msgstr ""
+
+#: admin/manage-categories.php:36
+msgid "Delete All Categories"
+msgstr ""
+
+#: admin/manage-categories.php:36
+msgid "Delete all categories in database"
+msgstr ""
+
+#: admin/manage-categories.php:84
+#: admin/manage-categories.php:167
+#, php-format
+msgid "Displaying %d&#8211;%d of %d"
+msgstr ""
+
+#: admin/manage-categories.php:158
+#: admin/manage-db.php:233
+#: admin/manage-db.php:235
 msgid "No records found."
 msgstr ""
 
-#: admin/manage-db.php:312
+#: admin/manage-categories.php:207
+msgid "Category Name"
+msgstr ""
+
+#: admin/manage-categories.php:213
+#: admin/manage-db.php:373
 msgid "Cancel"
 msgstr ""
 
-#: admin/manage-db.php:313
+#: admin/manage-categories.php:214
+msgid "Update Category"
+msgstr ""
+
+#: admin/manage-categories.php:231
+msgid "You are about to delete the selected categories. \"Cancel\" to stop, \"OK\" to delete."
+msgstr ""
+
+#: admin/manage-categories.php:245
+msgid "Add Category"
+msgstr ""
+
+#: admin/manage-db.php:39
+msgid "Delete Database"
+msgstr ""
+
+#: admin/manage-db.php:39
+msgid "Delete all entries in database"
+msgstr ""
+
+#: admin/manage-db.php:87
+#: admin/manage-db.php:244
+msgid "Displaying"
+msgstr ""
+
+#: admin/manage-db.php:118
+#: admin/manage-db.php:134
+msgid "Phone/Fax/URL"
+msgstr ""
+
+#: admin/manage-db.php:298
+msgid "City"
+msgstr ""
+
+#: admin/manage-db.php:327
+msgid "ZIP/Postal Code"
+msgstr ""
+
+#: admin/manage-db.php:374
 msgid "Update Location"
 msgstr ""
 
-#: admin/manage-db.php:330
+#: admin/manage-db.php:391
 msgid "You are about to delete the selected posts. \"Cancel\" to stop, \"OK\" to delete."
 msgstr ""
 
-#: includes/display-map.php:29
-msgid "Please enter a name, address, city or zip code in the search box above."
+#: includes/display-map.php:28
+msgid "Please enter a name, address, city or zip/postal code in the search box above."
 msgstr ""
 
-#: includes/display-map.php:32
-msgid "Powered by"
+#: includes/display-map.php:33
+#, php-format
+msgid "Powered by %s SimpleMap"
 msgstr ""
 

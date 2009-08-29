@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.0.6
+Version: 1.1
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
-Description: An easy-to-use and easy-to-manage store locator plugin that uses Google Maps to display information directly on your WordPress site.
+Description: An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 */
 	
 global $wp_version;
@@ -67,20 +67,20 @@ class SimpleMap {
 	
 	function get_options() {
 		$options = array(
-			'api_key' => '',
 			'map_width' => '100%',
 			'map_height' => '350px',
 			'default_lat' => '44.968684',
 			'default_lng' => '-93.215561',
 			'zoom_level' => '10',
 			'default_radius' => '10',
-			'map_type' => 'G_NORMAL_MAP',
+			'map_type' => 'ROADMAP',
 			'special_text' => '',
-			'default_state' => 'AL',
+			'default_state' => 'none',
 			'map_stylesheet' => 'simplemap/styles/light.css',
 			'units' => 'mi',
-			'autoload' => '',
-			'powered_by' => 'show'
+			'autoload' => '1',
+			'powered_by' => 'show',
+			'display_search' => 'show'
 		);
 		
 		$saved = get_option($this->db_option);
@@ -105,8 +105,9 @@ class SimpleMap {
 	function add_admin_pages() {
 		add_menu_page(__('SimpleMap Options', 'SimpleMap'), 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
 		add_submenu_page(__FILE__, __('SimpleMap: General Options', 'SimpleMap'), __('General Options', 'SimpleMap'), 10, __FILE__, array(&$this, 'menu_general_options'));
-		add_submenu_page(__FILE__, __('SimpleMap: Manage Database', 'SimpleMap'), __('Manage Database', 'SimpleMap'), 10, __('Manage Database', 'SimpleMap'), array(&$this, 'menu_manage_database'));
 		add_submenu_page(__FILE__, __('SimpleMap: Add Location', 'SimpleMap'), __('Add Location', 'SimpleMap'), 10, __('Add Location', 'SimpleMap'), array(&$this, 'menu_add_location'));
+		add_submenu_page(__FILE__, __('SimpleMap: Manage Database', 'SimpleMap'), __('Manage Database', 'SimpleMap'), 10, __('Manage Database', 'SimpleMap'), array(&$this, 'menu_manage_database'));
+		add_submenu_page(__FILE__, __('SimpleMap: Manage Categories', 'SimpleMap'), __('Manage Categories', 'SimpleMap'), 10, __('Manage Categories', 'SimpleMap'), array(&$this, 'menu_manage_categories'));
 		add_submenu_page(__FILE__, __('SimpleMap: Import/Export', 'SimpleMap'), __('Import/Export', 'SimpleMap'), 10, __('Import/Export', 'SimpleMap'), array(&$this, 'menu_import_export'));
 		/*
 add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
@@ -135,12 +136,21 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 			$options['special_text'] = $_POST['special_text'];
 			$options['default_state'] = $_POST['default_state'];
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
-			$options['autoload'] = $_POST['autoload'];
 			$options['units'] = $_POST['units'];
+			if ($_POST['autoload'])
+				$options['autoload'] = 1;
+			else
+				$options['autoload'] = 0;
+				
 			if ($_POST['powered_by'])
 				$options['powered_by'] = 'show';
 			else
 				$options['powered_by'] = 'hide';
+				
+			if ($_POST['display_search'])
+				$options['display_search'] = 'show';
+			else
+				$options['display_search'] = 'hide';
 			
 			update_option($this->db_option, $options);
 			
@@ -148,7 +158,6 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 		}
 		
 		$api_key = $options['api_key'];
-		//echo $api_key;
 		$map_width = $options['map_width'];
 		$map_height = $options['map_height'];
 		$default_lat = $options['default_lat'];
@@ -172,10 +181,19 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 		$autoload = $options['autoload'];
 		$units = $options['units'];
 		$powered_by = $options['powered_by'];
+		$display_search = $options['display_search'];
 		
-		$action_url = $_SERVER['REQUEST_URI'];
+		$action_url = 'admin.php?page=simplemap/simplemap.php';
 		
+		include 'includes/search-radii-array.php';
+		include 'includes/states-array.php';
 		include 'admin/general-options.php';
+	}
+	
+	function menu_add_location() {
+		$options = $this->get_options();
+		include 'includes/states-array.php';
+		include 'admin/add-location.php';
 	}
 	
 	function menu_manage_database() {
@@ -183,9 +201,9 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 		include 'admin/manage-db.php';
 	}
 	
-	function menu_add_location() {
+	function menu_manage_categories() {
 		$options = $this->get_options();
-		include 'admin/add-location.php';
+		include 'admin/manage-categories.php';
 	}
 	
 	function menu_import_export() {
@@ -197,7 +215,7 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 
 else :
 
-	exit(__('Class SimpleMap already declared!', 'SimpleMap'));
+	exit('<p>'.__('Class SimpleMap already declared!', 'SimpleMap').'</p>');
 
 endif;
 

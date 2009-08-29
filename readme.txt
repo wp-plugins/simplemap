@@ -2,22 +2,23 @@
 
 Contributors: aliso
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7382728
-Tags: map, store locator, database, locations, stores, Google maps
+Tags: map, store locator, database, locations, stores, Google maps, locator
 Requires at least: 2.8
 Tested up to: 2.8.4
 Stable tag: trunk
 
-SimpleMap is an easy-to-use and easy-to-manage store locator plugin that uses Google Maps to display information directly on your WordPress site.
+SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
 == Description ==
 
-SimpleMap is a *powerful* and *easy-to-use* store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
+SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
 Key features include:
 
+* Manage locations from any country supported by Google Maps
 * Manage an unlimited number of locations
 * Put a Google Map on any page or post that gives instant results to users
-* Users can enter a street address, city, state, zip code, or even the name of a location to search the database
+* Users can enter a street address, city, state, or even the name of a location to search the database
 * Customize the appearance of the map and results with your own themes
 * Use a familiar interface that fits seamlessly into the WordPress admin area
 * Import and export your database as a CSV file
@@ -40,12 +41,11 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 == Screenshots ==
 
-1. Example of the map and results ('Light' theme)
-2. Example of the map and results ('Dark' theme)
-3. General Options page
-4. Managing the database (using Quick Edit for updating locations)
-5. Adding a new location
-6. Import/export CSV feature
+1. Example of the map and results
+2. Location with an image tag in the description
+3. Location with HTML formatting in the description
+4. General Options page
+5. Managing the database
 
 == Frequently Asked Questions ==
 
@@ -58,6 +58,17 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.1 =
+* New Feature: Support for international locations
+* New Feature: HTML descriptions for locations
+* New Feature: Custom categories for locations
+* New Feature: Choose to show or hide the search box with the map
+* New Feature: Geocode your default location right in the Admin section
+* Simplified Autoload feature: automatically loads at the default location
+* Improved Admin interface
+* Slightly improved CSV compatibility (in regards to quotation marks)
+* Fixed bug causing map overlays to display strangely when a background color was applied to images in that WordPress theme
 
 = 1.0.6 =
 * Fixed bug that was causing map to always appear at the top of a page or post
@@ -100,28 +111,24 @@ To upload your own SimpleMap theme, make a directory in your `plugins` folder ca
 To give it a name that shows up in the **Theme** drop-down menu (instead of the filename), use the following markup at the beginning of the CSS file:
 
 `/*
-Theme Name: YOUR_THEME_NAME_HERE
+Theme Name: YOUR THEME NAME HERE
 */`
 
 == Other Notes ==
 
 Planned for future releases:
 
-* Localization (any translations I can get my hands on)
-* Support for non-US locations
-* Custom map markers
-* Different map markers for different types of locations
-* Ability to rate/review locations
-* Adding descriptions and images to locations
-
-If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated!
+* Custom map markers (that can vary by category)
 
 To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
 
-== Credits ==
+== Translation Credits ==
 
-* German translation by Thorsten at <http://www.numinose.com>
-* Spanish translation by Fernando at [Dixit](http://www.dixit.es)
+* German: Thorsten at [.numinose](http://www.numinose.com)
+* Spanish: Fernando at [Dixit](http://www.dixit.es)
+* Portugese (Brazil): Rodolfo Rodrigues at [ChEngineer Place](http://chengineer.com/)
+
+If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated! The updated `.POT` file is always included in every release, in the `lang` folder.
 
 == License ==
 
