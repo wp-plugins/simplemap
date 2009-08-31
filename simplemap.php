@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.1
+Version: 1.1.1
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
@@ -28,9 +28,6 @@ class SimpleMap {
 	// Initialize the plugin
 	function SimpleMap() {
 		
-		//$this->sm_handle_load_domain();
-		//load_plugin_textdomain($this->plugin_domain, false, '/simplemap/lang/');
-		
 		$plugin_dir = basename(dirname(__FILE__));
 		load_plugin_textdomain( $this->plugin_domain, 'wp-content/plugins/' . $plugin_dir.'/lang', $plugin_dir.'/lang' );
 		
@@ -41,31 +38,29 @@ class SimpleMap {
 		$this->cat_table = $wpdb->prefix . 'simple_map_cats';
 		
 		// Add shortcode handler
-		add_shortcode('simplemap', array(&$this, 'display'));
+		add_shortcode('simplemap', array(&$this, 'sm_display'));
 		
 		// Create Admin menu & submenus
-		add_action('admin_menu', array(&$this, 'add_admin_pages'));
+		add_action('admin_menu', array(&$this, 'sm_add_admin_pages'));
 		
 		// Inject scripts & styles into <head>
-		add_action('wp_print_scripts', array(&$this, 'scripts_action'));
-		//echo 'ran SimpleMap()<br />';
+		add_action('wp_print_scripts', array(&$this, 'sm_scripts_action'));
 	}
 	
 	// Function to call after plugin activation
-	function install() {
-		$options = $this->get_options();
+	function sm_install() {
+		$options = $this->sm_get_options();
 		include('includes/install.php');
-		//echo 'ran install()<br />';
 	}
 	
-	function display() {
-		$options = $this->get_options();
+	function sm_display() {
+		$options = $this->sm_get_options();
 		include('includes/search-radii-array.php');
 		include('includes/display-map.php');
 		return $to_display;
 	}
 	
-	function get_options() {
+	function sm_get_options() {
 		$options = array(
 			'map_width' => '100%',
 			'map_height' => '350px',
@@ -76,6 +71,7 @@ class SimpleMap {
 			'map_type' => 'ROADMAP',
 			'special_text' => '',
 			'default_state' => 'none',
+			'default_country' => 'US',
 			'map_stylesheet' => 'simplemap/styles/light.css',
 			'units' => 'mi',
 			'autoload' => '1',
@@ -92,35 +88,27 @@ class SimpleMap {
 		
 		if ($saved != $options)
 			update_option($this->db_option, $options);
-		
-		//echo 'ran get_options()<br />';
 		return $options;
 	}
 	
-	function scripts_action() {
-		$options = $this->get_options();
+	function sm_scripts_action() {
+		$options = $this->sm_get_options();
 		include 'includes/scripts.php';
 	}
 	
-	function add_admin_pages() {
-		add_menu_page(__('SimpleMap Options', 'SimpleMap'), 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
-		add_submenu_page(__FILE__, __('SimpleMap: General Options', 'SimpleMap'), __('General Options', 'SimpleMap'), 10, __FILE__, array(&$this, 'menu_general_options'));
-		add_submenu_page(__FILE__, __('SimpleMap: Add Location', 'SimpleMap'), __('Add Location', 'SimpleMap'), 10, __('Add Location', 'SimpleMap'), array(&$this, 'menu_add_location'));
-		add_submenu_page(__FILE__, __('SimpleMap: Manage Database', 'SimpleMap'), __('Manage Database', 'SimpleMap'), 10, __('Manage Database', 'SimpleMap'), array(&$this, 'menu_manage_database'));
-		add_submenu_page(__FILE__, __('SimpleMap: Manage Categories', 'SimpleMap'), __('Manage Categories', 'SimpleMap'), 10, __('Manage Categories', 'SimpleMap'), array(&$this, 'menu_manage_categories'));
-		add_submenu_page(__FILE__, __('SimpleMap: Import/Export', 'SimpleMap'), __('Import/Export', 'SimpleMap'), 10, __('Import/Export', 'SimpleMap'), array(&$this, 'menu_import_export'));
-		/*
-add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'menu_general_options'), $this->plugin_url.'icon.png');
-		add_submenu_page(__FILE__, 'SimpleMap: General Options', 'General Options', 10, __FILE__, array(&$this, 'menu_general_options'));
-		add_submenu_page(__FILE__, 'SimpleMap: Manage Database', 'Manage Database', 10, 'Manage Database', array(&$this, 'menu_manage_database'));
-		add_submenu_page(__FILE__, 'SimpleMap: Add Location', 'Add Location', 10, 'Add Location', array(&$this, 'menu_add_location'));
-		add_submenu_page(__FILE__, 'SimpleMap: Import/Export', 'Import/Export', 10, 'Import/Export', array(&$this, 'menu_import_export'));
-*/
-		//echo 'ran add_admin_pages()<br />';
+	function sm_add_admin_pages() {
+		add_menu_page(__('SimpleMap Options', 'SimpleMap'), 'SimpleMap', 10, __FILE__, array(&$this, 'sm_menu_general_options'), $this->plugin_url.'icon.png');
+		add_submenu_page(__FILE__, __('SimpleMap: General Options', 'SimpleMap'), __('General Options', 'SimpleMap'), 10, __FILE__, array(&$this, 'sm_menu_general_options'));
+		add_submenu_page(__FILE__, __('SimpleMap: Add Location', 'SimpleMap'), __('Add Location', 'SimpleMap'), 10, __('Add Location', 'SimpleMap'), array(&$this, 'sm_menu_add_location'));
+		add_submenu_page(__FILE__, __('SimpleMap: Manage Database', 'SimpleMap'), __('Manage Database', 'SimpleMap'), 10, __('Manage Database', 'SimpleMap'), array(&$this, 'sm_menu_manage_database'));
+		add_submenu_page(__FILE__, __('SimpleMap: Manage Categories', 'SimpleMap'), __('Manage Categories', 'SimpleMap'), 10, __('Manage Categories', 'SimpleMap'), array(&$this, 'sm_menu_manage_categories'));
+		add_submenu_page(__FILE__, __('SimpleMap: Import/Export', 'SimpleMap'), __('Import/Export', 'SimpleMap'), 10, __('Import/Export', 'SimpleMap'), array(&$this, 'sm_menu_import_export'));
 	}
 	
-	function menu_general_options() {
-		$options = $this->get_options();
+	function sm_menu_general_options() {
+		$options = $this->sm_get_options();
+		$api_link = $this->sm_get_api_link();
+		
 		if (isset($_POST['submitted'])) {
 			check_admin_referer('simplemap-nonce');
 			
@@ -135,6 +123,7 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 			$options['map_type'] = $_POST['map_type'];
 			$options['special_text'] = $_POST['special_text'];
 			$options['default_state'] = $_POST['default_state'];
+			$options['default_country'] = $_POST['default_country'];
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
 			$options['units'] = $_POST['units'];
 			if ($_POST['autoload'])
@@ -190,25 +179,48 @@ add_menu_page('SimpleMap Options', 'SimpleMap', 10, __FILE__, array(&$this, 'men
 		include 'admin/general-options.php';
 	}
 	
-	function menu_add_location() {
-		$options = $this->get_options();
+	function sm_menu_add_location() {
+		$options = $this->sm_get_options();
 		include 'includes/states-array.php';
 		include 'admin/add-location.php';
 	}
 	
-	function menu_manage_database() {
-		$options = $this->get_options();
+	function sm_menu_manage_database() {
+		$options = $this->sm_get_options();
 		include 'admin/manage-db.php';
 	}
 	
-	function menu_manage_categories() {
-		$options = $this->get_options();
+	function sm_menu_manage_categories() {
+		$options = $this->sm_get_options();
 		include 'admin/manage-categories.php';
 	}
 	
-	function menu_import_export() {
-		$options = $this->get_options();
+	function sm_menu_import_export() {
+		$options = $this->sm_get_options();
 		include 'admin/import-export.php';
+	}
+	
+	function sm_get_api_link() {
+		$lo = str_replace('_', '-', get_locale());
+		$l = substr($lo, 0, 2);
+		switch($l) {
+			case 'es':
+			case 'de':
+			case 'ja':
+			case 'ko':
+			case 'ru':
+				$api_link = "http://code.google.com/intl/$l/apis/maps/signup.html";
+				break;
+			case 'pt':
+			case 'zh':
+				$api_link = "http://code.google.com/intl/$lo/apis/maps/signup.html";
+				break;
+			case 'en':
+			default:
+				$api_link = "http://code.google.com/apis/maps/signup.html";
+				break;
+		}
+		return $api_link;
 	}
 	
 }
@@ -219,43 +231,41 @@ else :
 
 endif;
 
+$plugin = plugin_basename(__FILE__);
 
 // Add info box under plugin on plugins page
-add_action('after_plugin_row', 'add_plugin_row', 10, 2);
-
-function add_plugin_row($links, $file) {
-	static $this_plugin;
+add_action("after_plugin_row_$plugin", 'sm_add_plugin_row', 10, 2);
+function sm_add_plugin_row($links, $file) {
 	global $wp_version;
-	if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
-	
-	if ($file == $this_plugin ) {
-		$current = get_option('update_plugins');
-		if (!isset($current->response[$file])) return false;
+	$this_plugin = plugin_basename(__FILE__);
+	if (strpos($links, $this_plugin) !== false) {
+		$current = get_transient('update_plugins');
+		
+		if (!isset($current->response[$this_plugin]))
+			return false;
 		
 		$columns = substr($wp_version, 0, 3) == "2.8" ? 3 : 5;
 		$url = "http://alisothegeek.com/simplemap-update.txt";
 		$update = wp_remote_fopen($url);
-		echo '<td colspan="'.$columns.'">';
+		echo '<td colspan="'.$columns.'" style="background: #fffbe4; border-top: 1px solid #dfdfdf; text-align: center;">';
 		echo $update;
 		echo '</td>';
 	}
 }
-
 	
 // Add settings link on plugins page
-function simplemap_settings_link($links) {
+function sm_settings_link($links) {
 	$plugin = plugin_basename(__FILE__);
 	$settings_link = sprintf('<a href="admin.php?page=%s">%s</a>', $plugin, __('Settings'));
 	array_unshift($links, $settings_link);
 	return $links;
 }
-$plugin = plugin_basename(__FILE__);
-add_filter("plugin_action_links_$plugin", 'simplemap_settings_link');
+add_filter("plugin_action_links_$plugin", 'sm_settings_link');
 
 // Create a new instance of the class
 $SimpleMap = new SimpleMap();
 
 if (isset($SimpleMap)) {
-	register_activation_hook(__FILE__, array(&$SimpleMap, 'install'));
+	register_activation_hook(__FILE__, array(&$SimpleMap, 'sm_install'));
 }
 ?>

@@ -45,7 +45,7 @@ $to_display .= '
 		
 		if ($options['autoload'] != '') {
 			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
-			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng());';
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto");';
 		}
 		
 $to_display .= '

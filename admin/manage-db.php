@@ -15,6 +15,9 @@ else
 	$paged = 1;
 $start = ($paged - 1) * 15;
 
+$wpdb->query("SET CHARACTER SET utf8");
+$wpdb->query("SET NAMES utf8");
+
 $result = $wpdb->get_results("SELECT * FROM $db_table_name ORDER BY name LIMIT $start, 15", ARRAY_A);
 $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 $categories = $wpdb->get_results("SELECT * FROM $db_cat_table_name ORDER BY name", ARRAY_A);
@@ -147,6 +150,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		if ($count > 0) {
 			$i = 0;
 			foreach ($result as $row) {
+				//echo (($row['description']))."<br />\n";
+				foreach ($row as $key => $value) {
+					//$row[$key] = utf8_decode(stripslashes($value));
+				}
 				$name = stripslashes($row['name']);
 				$address = stripslashes($row['address']);
 				$address2 = stripslashes($row['address2']);
@@ -181,8 +188,8 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 						<div class="store_phone"><?php echo $row['phone']; ?></div>
 						<div class="store_fax"><?php echo $row['fax']; ?></div>
 						<div class="store_url"><?php echo $row['url']; ?></div>
-						<div class="store_description"><?php echo $row['description']; ?></div>
-						<div class="store_category"><?php echo $row['category']; ?></div>
+						<div class="store_description"><?php echo $description; ?></div>
+						<div class="store_category"><?php echo $category; ?></div>
 						<div class="store_lat"><?php echo $row['lat']; ?></div>
 						<div class="store_lng"><?php echo $row['lng']; ?></div>
 						
@@ -192,10 +199,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					</td>
 					
 					<td>
-						<span class="row_address"><?php echo $row['address']."</span>";
+						<span class="row_address"><?php echo $address."</span>";
 						if ($row['address2'])
-							echo "<br /><span class='row_address2'>".$row['address2']."</span>";
-						echo "<br /><span class='row_city'>".$row['city']."<span> ";
+							echo "<br /><span class='row_address2'>".$address2."</span>";
+						echo "<br /><span class='row_city'>".$city."<span> ";
 						if ($row['state'] != 'none')
 							echo "<span class='row_state'>".$row['state']."</span> ";
 						echo "<span class='row_zip'>".$row['zip']."</span>";
@@ -211,11 +218,11 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					</td>
 					
 					<td>
-						<span class="row_category"><?php echo $row['category']; ?></span>
+						<span class="row_category"><?php echo $category; ?></span>
 					</td>
 					
 					<td>
-						<span class="row_description"><?php echo nl2br(html_entity_decode($row['description'])); ?></span>
+						<span class="row_description"><?php echo nl2br(html_entity_decode($description)); ?></span>
 					</td>
 					
 					<?php if ($options['special_text'] != '') { ?>
@@ -351,13 +358,19 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 			<fieldset style="width: 30%;"><div class="inline-edit-col"><br />
 			
 				<label for="store_category" class="long"><span class="title title_long"><?php _e('Category', 'SimpleMap'); ?></span></label>
-					<select name="store_category" id="store_category" class="full_width">
+					<?php
+					if ($categories != null) {
+					?>
+						<select name="store_category" id="store_category" class="full_width">
 						<?php
 						foreach ($categories as $cat) {
-							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name'])."</option>\n";
+							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name']).'</option>'."\n";
 						}
 						?>
-					</select>
+						</select>
+					<?php } else { ?>
+						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small>
+					<?php } ?>
 				
 				<label for="store_description" class="long"><span class="title title_long"><?php _e('Description', 'SimpleMap'); ?></span></label>
 				<textarea class="full_width" id="store_description" name="store_description" rows="5"></textarea><br />

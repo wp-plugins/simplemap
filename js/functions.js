@@ -1,20 +1,6 @@
 var map;
 var geocoder;
 
-/*
-function load() {
-  if (GBrowserIsCompatible()) {
-    geocoder = new GClientGeocoder();
-    var latlng = new GLatLng(default_lat,default_lng);
-    map = new GMap2(document.getElementById('map'));
-    map.addControl(new GLargeMapControl3D());
-    map.addControl(new GMenuMapTypeControl());
-    map.addMapType(G_PHYSICAL_MAP);
-    map.setCenter(latlng, zoom_level, map_type);
-  }
-}
-*/
-
 function codeAddress() {
 	geocoder = new GClientGeocoder();
 	var d_address = document.getElementById("default_address").value;
@@ -56,14 +42,14 @@ function searchLocations() {
  geocoder.getLatLng(address, function(latlng) {
    if (!latlng) {
      latlng = new GLatLng(150,100);
-     searchLocationsNear(latlng, address);
+     searchLocationsNear(latlng, address, "search");
    } else {
-     searchLocationsNear(latlng, address);
+     searchLocationsNear(latlng, address, "search");
    }
  });
 }
 
-function searchLocationsNear(center, homeAddress) {
+function searchLocationsNear(center, homeAddress, source) {
 	if (document.getElementById('radiusSelect')) {
 		if (units == 'mi') {
 		  	var radius = parseInt(document.getElementById('radiusSelect').value);
@@ -124,7 +110,12 @@ function searchLocationsNear(center, homeAddress) {
      results.appendChild(sidebarEntry);
      bounds.extend(point);
    }
-   map.setCenter(bounds.getCenter(), (map.getBoundsZoomLevel(bounds) - 1));
+   if (source == "search") {
+   		map.setCenter(bounds.getCenter(), (map.getBoundsZoomLevel(bounds) - 1));
+   }
+   else {
+   		map.setCenter(bounds.getCenter(), autozoom);
+   }
  });
 }
 
@@ -135,6 +126,9 @@ function retrieveComputedStyle(element, styleProperty) {
 	}
 	else {
 		computedStyle = document.defaultView.getComputedStyle(element, null);
+	}
+	if (!computedStyle) {
+		return 12;
 	}
 	return Number(computedStyle[styleProperty].replace('px', ''));
 }

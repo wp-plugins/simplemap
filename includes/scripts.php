@@ -3,7 +3,13 @@
 SimpleMap Plugin
 scripts.php: Contains scripts to insert into <head>
 */
-echo '<!-- SimpleMap version 1.1 ======================== -->'."\n";
+if ($options['autoload'] == 1)
+	$autozoom = $options['zoom_level'];
+else
+	$autozoom = 'false';
+
+
+echo '<!-- SimpleMap version 1.1.1 ======================== -->'."\n";
 echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/'.$options['map_stylesheet'].'" type="text/css" />'."\n";
 echo '<link rel="stylesheet" href="'.$this->plugin_url.'includes/admin.css" type="text/css" />'."\n";
 //include $this->plugin_url.'js/functions.js.php';
@@ -18,6 +24,7 @@ var map_height = "'.$options['map_height'].'";
 var special_text = "'.$options['special_text'].'";
 var units = "'.$options['units'].'";
 var plugin_url = "'.$this->plugin_url.'";
+var autozoom = '.$autozoom.';
 
 function load() {
   if (GBrowserIsCompatible()) {

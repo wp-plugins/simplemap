@@ -4,7 +4,7 @@ SimpleMap Plugin
 import-export.php: Displays the Import/Export admin page
 */
 
-$options = $this->get_options();
+$options = $this->sm_get_options();
 ?>
 
 <script type="text/javascript">

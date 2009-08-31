@@ -59,7 +59,7 @@ header("Content-type: text/xml");
 
 // Iterate through the rows, adding XML nodes for each
 while ($row = mysql_fetch_assoc($result)){
-  $node = $dom->createElement("marker", nl2br($row['description']));
+  $node = $dom->createElement("marker", nl2br(stripslashes($row['description'])));
   $newnode = $parnode->appendChild($node);
   $newnode->setAttribute("name", $row['name']);
   $newnode->setAttribute("address", $row['address']);

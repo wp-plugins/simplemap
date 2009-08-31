@@ -29,4 +29,8 @@ $db_selected = mysql_select_db($database, $connection);
 if (!$db_selected) {
   die("Can't use db: " . mysql_error());
 }
+
+mysql_query("SET CHARACTER SET utf8");
+mysql_query("SET NAMES utf8");
+
 ?>

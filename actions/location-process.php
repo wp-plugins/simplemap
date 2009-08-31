@@ -30,10 +30,13 @@ else if ($bcl_action == 'delete_all') {
 
 else {
 	
-	$bcl_store_description = htmlentities($bcl_store_description);
+	$bcl_store_description = htmlspecialchars($bcl_store_description);
 	
 	if (strpos($bcl_store_url, 'http://') === false && $bcl_store_url != '')
 		$bcl_store_url = 'http://'.$bcl_store_url;
+		
+	if (!isset($bcl_store_category))
+		$bcl_store_category = '';
 	
 	isset($bcl_store_special) ? $bcl_store_special = 1 : $bcl_store_special = 0;
 	
@@ -87,9 +90,22 @@ else {
 		// END Geocode ======================================================
 	}
 	
+	$esc_store_name =		mysql_real_escape_string(($bcl_store_name));
+	$esc_store_address =	mysql_real_escape_string(($bcl_store_address));
+	$esc_store_address2 =	mysql_real_escape_string(($bcl_store_address2));
+	$esc_store_city =		mysql_real_escape_string(($bcl_store_city));
+	$esc_store_state =		mysql_real_escape_string(($bcl_store_state));
+	$esc_store_country =	mysql_real_escape_string(($bcl_store_country));
+	$esc_store_zip =		mysql_real_escape_string(($bcl_store_zip));
+	$esc_store_phone =		mysql_real_escape_string(($bcl_store_phone));
+	$esc_store_fax =		mysql_real_escape_string(($bcl_store_fax));
+	$esc_store_url =		mysql_real_escape_string(($bcl_store_url));
+	$esc_store_category =	mysql_real_escape_string(($bcl_store_category));
+	$esc_store_description= mysql_real_escape_string($bcl_store_description);
+	
 	if ($bcl_action == 'edit' || $bcl_action == 'inline-save') {
 		$query = "UPDATE $table SET
-					name = '$bcl_store_name', address = '$bcl_store_address', address2 = '$bcl_store_address2', city = '$bcl_store_city', state = '$bcl_store_state', country = '$bcl_store_country', zip = '$bcl_store_zip', phone = '$bcl_store_phone', fax = '$bcl_store_fax', url = '$bcl_store_url', description = '$bcl_store_description', category = '$bcl_store_category', special = '$bcl_store_special', lat = '$bcl_store_lat', lng = '$bcl_store_lng'
+					name = '$esc_store_name', address = '$esc_store_address', address2 = '$esc_store_address2', city = '$esc_store_city', state = '$esc_store_state', country = '$esc_store_country', zip = '$esc_store_zip', phone = '$esc_store_phone', fax = '$esc_store_fax', url = '$esc_store_url', description = '$esc_store_description', category = '$esc_store_category', special = '$bcl_store_special', lat = '$bcl_store_lat', lng = '$bcl_store_lng'
 					WHERE id = '$bcl_store_id'";
 		
 		$result = mysql_query($query);
@@ -176,7 +192,7 @@ else {
 	else if ($bcl_action == 'add') {
 		$query = "INSERT INTO $table
 					(name ,address, address2, city, state, zip, country, phone, fax, url, description, category, special, lat, lng) VALUES
-					('$bcl_store_name', '$bcl_store_address', '$bcl_store_address2', '$bcl_store_city', '$bcl_store_state', '$bcl_store_zip', '$bcl_store_country', '$bcl_store_phone', '$bcl_store_fax', '$bcl_store_url', '$bcl_store_description', '$bcl_store_category', '$bcl_store_special', '$bcl_store_lat', '$bcl_store_lng')";
+					('$esc_store_name', '$esc_store_address', '$esc_store_address2', '$esc_store_city', '$esc_store_state', '$esc_store_zip', '$esc_store_country', '$esc_store_phone', '$esc_store_fax', '$esc_store_url', '$esc_store_description', '$esc_store_category', '$bcl_store_special', '$bcl_store_lat', '$bcl_store_lng')";
 		
 		$result = mysql_query($query);
 		if (!$result) {

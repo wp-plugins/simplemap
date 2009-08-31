@@ -49,9 +49,8 @@ jQuery(document).ready(function($) {
 
 	<?php
 	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="http://code.google.com/apis/maps/signup.html" target="_blank">'.__('Click here to sign up for a Google Maps API key.', 'SimpleMap').'</a></p></div>';
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.$api_link.'" target="_blank">'.__('Click here to sign up for a Google Maps API key.', 'SimpleMap').'</a></p></div>';
 	?>
-
 	<div id="dashboard-widgets-wrap" class="clear">
 	
 	<form method="post" action="<?php echo $action_url; ?>">
@@ -81,9 +80,9 @@ jQuery(document).ready(function($) {
 												<?php
 												foreach ($country_list as $key => $value) {
 													$selected = '';
-													if ($value == $options['default_country'])
+													if ($key == $options['default_country'])
 														$selected = ' selected="selected"';
-													echo "<option value='$value'$selected>$value</option>\n";
+													echo "<option value='$key'$selected>$value</option>\n";
 												}
 												?>
 											</select>
@@ -158,7 +157,7 @@ jQuery(document).ready(function($) {
 										<td width="150"><label for="api_key"><?php _e('Google Maps API Key', 'SimpleMap'); ?></label></td>
 										<td>
 											<input type="text" name="api_key" id="api_key" size="50" value="<?php echo $api_key; ?>" /><br />
-											<small><em><?php printf(__('%s Click here%s to sign up for a Google Maps API key for your domain.', 'SimpleMap'), '<a href="http://code.google.com/apis/maps/signup.html">', '</a>'); ?></em></small>
+											<small><em><?php printf(__('%s Click here%s to sign up for a Google Maps API key for your domain.', 'SimpleMap'), '<a href="'.$api_link.'">', '</a>'); ?></em></small>
 										</td>
 									
 									<tr valign="top">

@@ -66,16 +66,19 @@ jQuery(document).ready(function($) {
 			<tr valign="top">
 				<td><label for="store_category"><?php _e('Category', 'SimpleMap'); ?></label></td>
 				<td>
-					<select name="store_category" id="store_category">
 					<?php
 					$all_cats = $wpdb->get_results("SELECT * FROM ".$this->cat_table, ARRAY_A);
-					foreach ($all_cats as $cat) {
-						echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name']).'</option>'."\n";
-					}
+					if ($all_cats != null) {
 					?>
-					</select>
-					<?php if ($all_cats == null) { ?>
-					&nbsp;<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small>
+						<select name="store_category" id="store_category">
+						<?php
+						foreach ($all_cats as $cat) {
+							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name']).'</option>'."\n";
+						}
+						?>
+						</select>
+					<?php } else { ?>
+						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small>
 					<?php } ?>
 				</td>
 			</tr>
@@ -163,7 +166,7 @@ jQuery(document).ready(function($) {
 						<?php
 						foreach ($country_list as $key => $value) {
 							$selected = '';
-							if ($value == $options['default_country'])
+							if ($key == $options['default_country'])
 								$selected = ' selected="selected"';
 							echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>'."\n";
 						}

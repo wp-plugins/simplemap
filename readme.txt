@@ -59,6 +59,14 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.1.1 =
+* Support for Cyrillic characters
+* Autoloading locations now respects the default zoom level set in General Options
+* Link to sign up for Google Maps API key will link to a translated signup page (English, Spanish, German, Japanese, Korean, Portugese, Russian, and Chinese)
+* Fixed bug causing error when adding a location before any categories had been created
+* Fixed bug causing the default country to reset to "United States"
+* Fixed bug regarding duplicate function names; all function names are now unique to the plugin
+
 = 1.1 =
 * New Feature: Support for international locations
 * New Feature: HTML descriptions for locations
