@@ -1,6 +1,6 @@
 
 (function($) {
-inlineEditStore = {
+inlineEditCategory = {
 
 	init : function() {
 		var t = this, qeRow = $('#inline-edit'), bulkRow = $('#bulk-edit');
@@ -12,14 +12,14 @@ inlineEditStore = {
 		t.rows = $('tr.iedit');
 
 		// prepare the edit rows
-		qeRow.keyup(function(e) { if(e.which == 27) return inlineEditStore.revert(); });
-		bulkRow.keyup(function(e) { if (e.which == 27) return inlineEditStore.revert(); });
+		qeRow.keyup(function(e) { if(e.which == 27) return inlineEditCategory.revert(); });
+		bulkRow.keyup(function(e) { if (e.which == 27) return inlineEditCategory.revert(); });
 
-		$('a.cancel', qeRow).click(function() { return inlineEditStore.revert(); });
-		$('a.save', qeRow).click(function() { return inlineEditStore.save(this); });
-		$('input, select', qeRow).keydown(function(e) { if(e.which == 13) return inlineEditStore.save(this); });
+		$('a.cancel', qeRow).click(function() { return inlineEditCategory.revert(); });
+		$('a.save', qeRow).click(function() { return inlineEditCategory.save(this); });
+		$('input, select', qeRow).keydown(function(e) { if(e.which == 13) return inlineEditCategory.save(this); });
 
-		$('a.cancel', bulkRow).click(function() { return inlineEditStore.revert(); });
+		$('a.cancel', bulkRow).click(function() { return inlineEditCategory.revert(); });
 		
 		$("th#cb input").click(function() {
 			//alert(this.checked);
@@ -90,7 +90,7 @@ inlineEditStore = {
 	addEvents : function(r) {
 		r.each(function() {
 			var row = $(this);
-			$('a.editinline', row).click(function() { inlineEditStore.edit(this); return false; });
+			$('a.editinline', row).click(function() { inlineEditCategory.edit(this); return false; });
 		});
 	},
 
@@ -98,7 +98,7 @@ inlineEditStore = {
 		var te = '', c = '', type = this.type;
 		this.revert();
 
-		$('#bulk-edit td').attr('colspan', $('.widefat:first thead th:visible').length);
+		//$('#bulk-edit td').attr('colspan', $('.widefat:first thead th:visible').length);
 		$('table.widefat tbody').prepend( $('#bulk-edit') );
 		$('#bulk-edit').addClass('inline-editor').show();
 
@@ -112,7 +112,7 @@ inlineEditStore = {
 
 		$('#bulk-titles').html(te);
 		$('#bulk-titles a').click(function() {
-			var id = $(this).attr('id').substr(1), r = inlineEditStore.type+'-'+id;
+			var id = $(this).attr('id').substr(1), r = inlineEditCategory.type+'-'+id;
 
 			$('table.widefat input[value="'+id+'"]').attr('checked', '');
 			$('#ttle'+id).remove();
@@ -130,11 +130,11 @@ inlineEditStore = {
 		if ( typeof(id) == 'object' )
 			id = t.getId(id);
 
-		var fields = ['store_id', 'altclass', 'store_name', 'store_address', 'store_address2', 'store_city', 'store_state', 'store_zip', 'store_country', 'store_phone', 'store_fax', 'store_url', 'store_description', 'store_category', 'store_special', 'store_lat', 'store_lng'];
+		var fields = ['store_id', 'altclass', 'store_name'];
 
 		// add the new blank row
 		var editRow = $('#inline-edit').clone(true);
-		$('td', editRow).attr('colspan', $('.widefat:first thead th:visible').length);
+		//$('td', editRow).attr('colspan', $('.widefat:first thead th:visible').length);
 
 		if ( $(t.what+id).hasClass('alternate') )
 			$(editRow).addClass('alternate');
@@ -144,9 +144,6 @@ inlineEditStore = {
 		var rowData = $('#inline_'+id);
 		for ( var f = 0; f < fields.length; f++ ) {
 			$(':input[name="'+fields[f]+'"]', editRow).val( $('.'+fields[f], rowData).text() );
-		}
-		if ($('.store_special', rowData).text() == '1') {
-			$(':input[name="store_special"]', editRow).attr('checked', 'checked')
 		}
 
 		$(editRow).attr('id', 'edit-'+id).addClass('inline-editor').show();
@@ -171,20 +168,20 @@ inlineEditStore = {
 
 		// make ajax request
 		
-		$.post('../wp-content/plugins/simplemap/actions/location-process.php', params,
+		$.post('../wp-content/plugins/simplemap/actions/category-process.php', params,
 			function(r) {
 				$('table.widefat .inline-edit-save .waiting').hide();
 
 				if (r) {
 					if ( -1 != r.indexOf('<tr') ) {
-						$(inlineEditStore.what+id).remove();
+						$(inlineEditCategory.what+id).remove();
 						$('#edit-'+id).before(r).remove();
 
-						var row = $(inlineEditStore.what+id);
+						var row = $(inlineEditCategory.what+id);
 						row.hide();
 
 						row.find('.hide-if-no-js').removeClass('hide-if-no-js');
-						inlineEditStore.addEvents(row);
+						inlineEditCategory.addEvents(row);
 						row.fadeIn();
 					} else {
 						r = r.replace( /<.[^<>]*?>/g, '' );
@@ -225,5 +222,5 @@ inlineEditStore = {
 	}
 };
 
-$(document).ready(function(){inlineEditStore.init();});
+$(document).ready(function(){inlineEditCategory.init();});
 })(jQuery);

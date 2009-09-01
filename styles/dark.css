@@ -4,6 +4,32 @@ Theme Name: Dark
 
 #map {
 border: 1px solid #666;
+color: #000;
+}
+
+#map a {
+color: #00c;
+background: none;
+text-decoration: none;
+}
+
+#map a:hover {
+background: none;
+text-decoration: underline;
+}
+
+#powered_by_simplemap {
+font-size: 0.75em;
+text-align: right;
+color: #444;
+}
+
+#powered_by_simplemap a {
+color: #444;
+}
+
+#powered_by_simplemap a:hover {
+color: #fff;
 }
 
 #searchForm {
@@ -14,23 +40,38 @@ text-align: left;
 width: 250px;
 }
 
+#searchForm input#addressSubmit {
+width: auto;
+}
+
 #searchForm select {
 width: auto;
 }
 
-div.markertext {
+#searchForm p {
+margin: 10px auto;
+}
+
+.markertext {
 font-size: 0.9em;
 line-height: 1.2em;
 color: #000;
 }
 
-div.markertext a {
+.markertext .bubble_category {
+font-size: 0.6em;
+font-style: italic;
+}
+
+.markertext a {
 color: #00c;
 text-decoration: underline;
 }
 
-div.markertext h3 {
-margin-top: 0;
+.markertext h3 {
+margin-top: 0 !important;
+text-align: left !important;
+line-height: 1.2em !important;
 }
 
 div#results {
