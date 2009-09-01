@@ -59,6 +59,9 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixed bug: Javascript code was breaking map functionality and the Geocode Address button in the General Options (Internet Explorer/Firefox only)
+
 = 1.1.1 =
 * Support for Cyrillic characters
 * Autoloading locations now respects the default zoom level set in General Options

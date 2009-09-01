@@ -127,7 +127,7 @@ function retrieveComputedStyle(element, styleProperty) {
 	else {
 		computedStyle = document.defaultView.getComputedStyle(element, null);
 	}
-	if (!computedStyle) {
+	if (!computedStyle || !computedStyle[styleProperty]) {
 		return 12;
 	}
 	return Number(computedStyle[styleProperty].replace('px', ''));
