@@ -182,7 +182,11 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 					else if (fax != '') {
 	html += '			<p>Fax: ' + fax + '</p>';
 					}
-	html += '		<p class="bubble_links"><a href="http://google.com/maps?q=' + homeAddress + ' to ' + address + ',' + city + ',' + state + ',' + country + '" target="_blank">Get Directions</a>';
+					var dir_address = address + ',' + city;
+					if (state) { dir_address += ',' + state; }
+					if (zip) { dir_address += ',' + zip; }
+					if (country) { dir_address += ',' + country; }
+	html += '		<p class="bubble_links"><a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">Get Directions</a>';
 					if (url != '') {
 	html += '			&nbsp;|&nbsp;<a href="' + url + '" title="Open \'' + name + '\' in a new window" target="_blank">Visit Website</a>';
 					}
@@ -277,7 +281,11 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
   
   // Get Directions link
   if (distance.toFixed(1) != 'NaN') {
-	  html += '<a href="http://google.com/maps?q=' + homeAddress + ' to ' + address + ',' + city + ',' + state + '" target="_blank">Get Directions</a>';
+					var dir_address = address + ',' + city;
+					if (state) { dir_address += ',' + state; }
+					if (zip) { dir_address += ',' + zip; }
+					if (country) { dir_address += ',' + country; }
+	  html += '<a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">Get Directions</a>';
   }
   html += '</div>';
   

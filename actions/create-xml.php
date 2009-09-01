@@ -61,19 +61,19 @@ header("Content-type: text/xml");
 while ($row = mysql_fetch_assoc($result)){
   $node = $dom->createElement("marker", nl2br(stripslashes($row['description'])));
   $newnode = $parnode->appendChild($node);
-  $newnode->setAttribute("name", $row['name']);
-  $newnode->setAttribute("address", $row['address']);
-  $newnode->setAttribute("address2", $row['address2']);
-  $newnode->setAttribute("city", $row['city']);
-  $newnode->setAttribute("state", $row['state']);
-  $newnode->setAttribute("zip", $row['zip']);
+  $newnode->setAttribute("name", stripslashes($row['name']));
+  $newnode->setAttribute("address", stripslashes($row['address']));
+  $newnode->setAttribute("address2", stripslashes($row['address2']));
+  $newnode->setAttribute("city", stripslashes($row['city']));
+  $newnode->setAttribute("state", stripslashes($row['state']));
+  $newnode->setAttribute("zip", stripslashes($row['zip']));
   $newnode->setAttribute("lat", $row['lat']);
   $newnode->setAttribute("lng", $row['lng']);
   $newnode->setAttribute("distance", $row['distance']);
-  $newnode->setAttribute("phone", $row['phone']);
-  $newnode->setAttribute("fax", $row['fax']);
-  $newnode->setAttribute("url", $row['url']);
-  $newnode->setAttribute("category", $row['category']);
+  $newnode->setAttribute("phone", stripslashes($row['phone']));
+  $newnode->setAttribute("fax", stripslashes($row['fax']));
+  $newnode->setAttribute("url", stripslashes($row['url']));
+  $newnode->setAttribute("category", stripslashes($row['category']));
   $newnode->setAttribute("special", $row['special']);
 }
 

@@ -59,6 +59,10 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed bug: "Get Directions" link in location's info bubble no longer inserts "null" in the destination address
+* Fixed bug: Single quotes in a location's name and address are no longer preceded by a backslash in the results display
+
 = 1.1.2 =
 * Fixed bug: Javascript code was breaking map functionality and the Geocode Address button in the General Options (Internet Explorer/Firefox only)
 
