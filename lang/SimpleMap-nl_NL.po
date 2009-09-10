@@ -2,85 +2,84 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SimpleMap\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-09 21:37-0600\n"
+"POT-Creation-Date: 2009-09-09 21:36-0600\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Alison Barrett <alison@alisothegeek.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Language: English\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: ../\n"
-"X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: admin\n"
 "X-Poedit-SearchPath-2: includes\n"
 
 #: simplemap.php:13
 msgid "SimpleMap requires WordPress 2.8 or newer. <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">Please update!</a>"
-msgstr "SimpleMap requer Wordpress 2.8 ou superior. <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">Por favor, faça update do seu sistema!</a>"
+msgstr "SimpleMap vereist WordPress 2.8 of nieuwer.<a href=\"http://codex.wordpress.org/Upgrading_WordPress\">AUB update!</a>"
 
 #: simplemap.php:102
 msgid "SimpleMap Options"
-msgstr "Opções SimpleMap"
+msgstr "SimpleMap Opties"
 
 #: simplemap.php:103
 #: admin/general-options.php:90
 msgid "SimpleMap: General Options"
-msgstr "SimpleMap: Opções Principais"
+msgstr "SimpleMap: Algemene opties"
 
 #: simplemap.php:103
 #: admin/help.php:22
 #: admin/help.php:63
 msgid "General Options"
-msgstr "Opções Principais"
+msgstr "Algemene opties"
 
 #: simplemap.php:104
 #: admin/add-location.php:25
 msgid "SimpleMap: Add Location"
-msgstr "SimpleMap: Adicionar Local"
+msgstr "SimpleMap: Voeg Locatie Toe"
 
 #: simplemap.php:104
 #: admin/add-location.php:248
 #: admin/add-location.php:249
 msgid "Add Location"
-msgstr "Adicionar local"
+msgstr "Voeg Locatie Toe"
 
 #: simplemap.php:105
 #: admin/manage-db.php:41
 msgid "SimpleMap: Manage Database"
-msgstr "SimpleMap: Gerenciar Banco de Dados"
+msgstr "SimpleMap: Beheer Database"
 
 #: simplemap.php:105
 msgid "Manage Database"
-msgstr "Gerenciar Banco de Dados"
+msgstr "Beheer Database"
 
 #: simplemap.php:106
 #: admin/manage-categories.php:23
 #, fuzzy
 msgid "SimpleMap: Manage Categories"
-msgstr "SimpleMap: Gerenciar Banco de Dados"
+msgstr "SimpleMap: Beheer Database"
 
 #: simplemap.php:106
 #, fuzzy
 msgid "Manage Categories"
-msgstr "Gerenciar Banco de Dados"
+msgstr "Beheer Database"
 
 #: simplemap.php:107
 msgid "SimpleMap: Import/Export"
-msgstr "SimpleMap: Importar/Exportar"
+msgstr "SimpleMap: Import/Export"
 
 #: simplemap.php:107
 msgid "Import/Export"
-msgstr "Importar/Exportar"
+msgstr "Import/Export"
 
 #: simplemap.php:108
 #: admin/help.php:16
 #, fuzzy
 msgid "SimpleMap: Help"
-msgstr "Link SimpleMap"
+msgstr "SimpleMap Link"
 
 #: simplemap.php:108
 msgid "Help"
@@ -89,19 +88,19 @@ msgstr ""
 #: simplemap.php:108
 #, fuzzy
 msgid "SimpleMap Help"
-msgstr "Link SimpleMap"
+msgstr "SimpleMap Link"
 
 #: simplemap.php:152
 msgid "SimpleMap settings saved."
-msgstr "Configurações salvas."
+msgstr "SimpleMap instellingen opgeslagen."
 
 #: simplemap.php:250
 msgid "Class SimpleMap already declared!"
-msgstr "Classe SimpleMap já declarada!"
+msgstr "Class SimpleMap al aangegeven!"
 
 #: simplemap.php:279
 msgid "Settings"
-msgstr "Configurações"
+msgstr "Instellingen"
 
 #: actions/csv-process.php:203
 #, php-format
@@ -116,7 +115,7 @@ msgstr ""
 #: actions/csv-process.php:231
 #, fuzzy, php-format
 msgid "%d records imported successfully."
-msgstr "adicionado com sucesso."
+msgstr "succesvol toegevoegd."
 
 #: actions/location-process.php:17
 msgid "Record deleted."
@@ -130,13 +129,13 @@ msgstr ""
 #: admin/manage-categories.php:143
 #: admin/manage-db.php:187
 msgid "Quick Edit"
-msgstr "Edição rápida"
+msgstr "Snel bewerken"
 
 #: actions/location-process.php:143
 #: admin/manage-categories.php:144
 #: admin/manage-db.php:188
 msgid "Delete"
-msgstr "Excluir"
+msgstr "Wissen"
 
 #: actions/location-process.php:182
 #: admin/manage-db.php:227
@@ -151,7 +150,7 @@ msgstr "Fax"
 #: admin/manage-categories.php:27
 #: admin/manage-db.php:45
 msgid "You must enter an API key for your domain."
-msgstr "Você precisa adicionar um API para a seu domínio."
+msgstr "U moet een API-sleutel voor uw domein invoeren."
 
 #: admin/add-location.php:29
 #: admin/help.php:19
@@ -159,11 +158,11 @@ msgstr "Você precisa adicionar um API para a seu domínio."
 #: admin/manage-categories.php:27
 #: admin/manage-db.php:45
 msgid "Enter a key on the General Options page."
-msgstr "Adicione uma chave na Página de configurações gerais."
+msgstr "Druk op een toets op de Algemene opties pagina."
 
 #: admin/add-location.php:33
 msgid "added successfully."
-msgstr "adicionado com sucesso."
+msgstr "succesvol toegevoegd."
 
 #: admin/add-location.php:49
 msgid "Name and Description"
@@ -174,7 +173,7 @@ msgstr ""
 #: admin/manage-db.php:147
 #: admin/manage-db.php:308
 msgid "Name"
-msgstr "Nome"
+msgstr "Naam"
 
 #: admin/add-location.php:62
 #: admin/manage-db.php:135
@@ -196,12 +195,12 @@ msgstr ""
 #: admin/manage-db.php:395
 #, fuzzy, php-format
 msgid "You can add categories from the %s General Options screen.%s"
-msgstr "Adicione uma chave na Página de configurações gerais."
+msgstr "Druk op een toets op de Algemene opties pagina."
 
 #: admin/add-location.php:99
 #, fuzzy
 msgid "Geographic Location"
-msgstr "Localização Inicial"
+msgstr "Start Locatie"
 
 #: admin/add-location.php:102
 msgid "You must enter either an address or a latitude/longitude. If you enter both, the address will not be geocoded and your latitude/longitude values will remain intact."
@@ -212,7 +211,7 @@ msgstr ""
 #: admin/manage-db.php:148
 #: admin/manage-db.php:321
 msgid "Address"
-msgstr "Endereço"
+msgstr "Adres"
 
 #: admin/add-location.php:114
 msgid "City/Town"
@@ -235,7 +234,7 @@ msgstr ""
 #: admin/add-location.php:182
 #, fuzzy
 msgid "Latitude/Longitude"
-msgstr "Longitude:"
+msgstr "Lengtegraad:"
 
 #: admin/add-location.php:210
 msgid "Miscellaneous Information"
@@ -244,7 +243,7 @@ msgstr ""
 #: admin/add-location.php:218
 #: admin/manage-db.php:372
 msgid "Phone"
-msgstr "Telefone"
+msgstr "Telefoon"
 
 #: admin/add-location.php:223
 #: admin/manage-db.php:374
@@ -267,7 +266,7 @@ msgstr ""
 
 #: admin/general-options.php:94
 msgid "Click here to sign up for a Google Maps API key."
-msgstr "Clique aqui para pegar seu API do Google Maps."
+msgstr "Klik hier om u aan te melden voor een Google Maps API-sleutel."
 
 #: admin/general-options.php:110
 msgid "Location Defaults"
@@ -276,7 +275,7 @@ msgstr ""
 #: admin/general-options.php:113
 #, fuzzy
 msgid "If most of your locations are in the same area, choose the country and state/province here to make adding new locations easier."
-msgstr "Se a maioria dos locais estão no mesmo Estado, escolha aqui o Estado que faço a adição de novos locais mais fácil."
+msgstr "Als de meeste van uw locaties zijn in dezelfde provincie zijn, kiest u die provincie hier, om toevoeging van nieuwe locaties te vergemakkelijken."
 
 #: admin/general-options.php:119
 msgid "Default Country"
@@ -290,7 +289,7 @@ msgstr ""
 #: admin/general-options.php:272
 #: admin/general-options.php:408
 msgid "Save Options"
-msgstr "Salvar opções"
+msgstr "Opslagopties"
 
 #: admin/general-options.php:157
 msgid "Map Configuration"
@@ -303,41 +302,41 @@ msgstr ""
 
 #: admin/general-options.php:166
 msgid "Google Maps API Key"
-msgstr "API do Google Maps"
+msgstr "Google Maps API sleutel"
 
 #: admin/general-options.php:169
 #, fuzzy, php-format
 msgid "%s Click here%s to sign up for a Google Maps API key for your domain."
-msgstr "para pegar um API do Google Maps para seu domínio."
+msgstr "aan te melden voor een Google Maps API-sleutel voor uw domein."
 
 #: admin/general-options.php:174
 #: admin/help.php:71
 msgid "Starting Location"
-msgstr "Localização Inicial"
+msgstr "Start Locatie"
 
 #: admin/general-options.php:176
 msgid "Latitude:"
-msgstr "Latitude:"
+msgstr "Breedtegraad:"
 
 #: admin/general-options.php:178
 msgid "Longitude:"
-msgstr "Longitude:"
+msgstr "Lengtegraad:"
 
 #: admin/general-options.php:186
 msgid "Distance Units"
-msgstr "Unidade de distância"
+msgstr "Afstand Eenheden"
 
 #: admin/general-options.php:193
 msgid "Miles"
-msgstr "Milhas (mi)"
+msgstr "Mijl"
 
 #: admin/general-options.php:194
 msgid "Kilometers"
-msgstr "Quilômetros (km)"
+msgstr "Kilometers"
 
 #: admin/general-options.php:200
 msgid "Default Search Radius"
-msgstr "Abrangência padrão da busca"
+msgstr "Standaard Zoeken Radius"
 
 #: admin/general-options.php:214
 msgid "Number of Results to Display"
@@ -351,7 +350,7 @@ msgstr ""
 #: admin/help.php:76
 #, fuzzy
 msgid "Auto-Load Database"
-msgstr "Gerenciar Banco de Dados"
+msgstr "Beheer Database"
 
 #: admin/general-options.php:232
 msgid "No auto-load"
@@ -360,7 +359,7 @@ msgstr ""
 #: admin/general-options.php:233
 #, fuzzy
 msgid "Auto-load search results"
-msgstr "Autocarregar Endereço"
+msgstr "Automatisch laden van Adres"
 
 #: admin/general-options.php:234
 msgid "Auto-load all locations"
@@ -369,20 +368,20 @@ msgstr ""
 #: admin/general-options.php:242
 #, fuzzy
 msgid "Stick to default location set above"
-msgstr "Estado Padrão"
+msgstr "Standaard Provincie"
 
 #: admin/general-options.php:247
 msgid "Default Zoom Level"
-msgstr "Nível de zoom padrão"
+msgstr "Standaard zoomniveau"
 
 #: admin/general-options.php:256
 msgid "1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in."
-msgstr "1 é o zoom mínimo (todo o globo é visível) e 19 é o zoom máximo."
+msgstr "1 is de meest uitgezoomde (de hele wereld zichtbaar is) en 19 is de meest ingezoomde."
 
 #: admin/general-options.php:261
 #: admin/help.php:87
 msgid "Special Location Label"
-msgstr "Identificação Especial de Local"
+msgstr "Bijzondere Locatie Label"
 
 #: admin/general-options.php:295
 msgid "Map Style Defaults"
@@ -395,58 +394,58 @@ msgstr ""
 
 #: admin/general-options.php:304
 msgid "Map Size"
-msgstr "Tamanho do mapa"
+msgstr "Map Grootte"
 
 #: admin/general-options.php:306
 msgid "Width:"
-msgstr "Largura:"
+msgstr "Breedte:"
 
 #: admin/general-options.php:308
 msgid "Height:"
-msgstr "Altura:"
+msgstr "Hoogte:"
 
 #: admin/general-options.php:310
 #, fuzzy, php-format
 msgid "Enter a numeric value with CSS units, such as %s or %s."
-msgstr "Entre um valor numérico com unidades CSS, como"
+msgstr "Voer een numerieke waarde met CSS eenheden, zoals"
 
 #: admin/general-options.php:315
 msgid "Default Map Type"
-msgstr "Tipo de Mapa Padrão"
+msgstr "Standaard Kaart Type"
 
 #: admin/general-options.php:319
 #, fuzzy
 msgid "Road map"
-msgstr "Normal"
+msgstr "Normaal kaart"
 
 #: admin/general-options.php:326
 msgid "Satellite map"
-msgstr "Satélite"
+msgstr "Satelliet kaart"
 
 #: admin/general-options.php:333
 msgid "Hybrid map"
-msgstr "Híbrido"
+msgstr "Hybride kaart"
 
 #: admin/general-options.php:340
 msgid "Terrain map"
-msgstr "Terreno"
+msgstr "Terrein kaart"
 
 #: admin/general-options.php:348
 msgid "Theme"
-msgstr "Tema"
+msgstr "Thema"
 
 #: admin/general-options.php:355
 msgid "Default Themes"
-msgstr "Temas padrões"
+msgstr "Standaard Thema's"
 
 #: admin/general-options.php:363
 msgid "Custom Themes"
-msgstr "Temas personalizados"
+msgstr "Aangepaste Thema's"
 
 #: admin/general-options.php:372
 #, fuzzy, php-format
 msgid "To add your own theme, upload your own CSS file to a new directory in your plugins folder called %s simplemap-styles%s.  To give it a name, use the following header in the top of your stylesheet:"
-msgstr "Para adicionar seu próprio tema, faça upload do seu próprio arquivo de CSS para um novo diretório dentro do diretório atual do plugin chamado"
+msgstr "Als u uw eigen thema wilt gebruiken, upload uw eigen CSS-bestand naar een nieuwe map in je plugins map genaamd"
 
 #: admin/general-options.php:381
 msgid "Display Search Form"
@@ -458,11 +457,11 @@ msgstr ""
 
 #: admin/general-options.php:393
 msgid "SimpleMap Link"
-msgstr "Link SimpleMap"
+msgstr "SimpleMap Link"
 
 #: admin/general-options.php:400
 msgid "Show the \"Powered by SimpleMap\" link"
-msgstr "Mostrar o link \"por SimpleMap\""
+msgstr "Toon de \"Powered by SimpleMap\" link"
 
 #: admin/help.php:22
 msgid "Jump to a section:"
@@ -472,13 +471,13 @@ msgstr ""
 #: admin/help.php:35
 #, fuzzy
 msgid "Displaying Your Map"
-msgstr "Mostrando"
+msgstr "Weergeven"
 
 #: admin/help.php:22
 #: admin/help.php:106
 #, fuzzy
 msgid "Adding a Location"
-msgstr "Adicionar local"
+msgstr "Voeg Locatie Toe"
 
 #: admin/help.php:22
 #: admin/help.php:135
@@ -496,12 +495,12 @@ msgstr ""
 #: admin/help.php:46
 #, fuzzy, php-format
 msgid "Configure the appearance of your map on the %s General Options page.%s"
-msgstr "Adicione uma chave na Página de configurações gerais."
+msgstr "Druk op een toets op de Algemene opties pagina."
 
 #: admin/help.php:72
 #, fuzzy
 msgid "Enter the location the map should open to by default, when no location has been searched for. If you do not know the latitude and longitude of your starting location, enter the address in the provided text field and press \"Geocode Address.\""
-msgstr "Adicione o local no mapa a ser aberto por padrão quando nenhum local tenha sido pesquisado. Por exemplo, se seus locais estão concentrados na mesma cidade, você pode querer começar centralizado naquela cidade."
+msgstr "Voer de locatie in van de kaart, die standaard geopnend moet worden, als er niet op plaatsnaam is gezocht. Bijvoorbeeld, als uw locaties zich in dezelfde stad bevinden, kunt u beginnen met het midden van die stad."
 
 #: admin/help.php:78
 #, php-format
@@ -533,12 +532,12 @@ msgstr ""
 #: admin/help.php:115
 #, fuzzy
 msgid "1. A full address"
-msgstr "Autocarregar Endereço"
+msgstr "Automatisch laden van Adres"
 
 #: admin/help.php:116
 #, fuzzy
 msgid "2. A latitude and longitude"
-msgstr "para encontrar a latitude e longitude de um endereço"
+msgstr "om de breedte-en lengtegraad van een adres te vinden."
 
 #: admin/help.php:117
 msgid "If you enter a latitude and longitude, then the address will not be geocoded, and your custom values will be left in place. Entering an address without latitude or longitude will result in the address being geocoded before it is submitted to the database."
@@ -551,11 +550,11 @@ msgstr ""
 
 #: admin/import-export.php:16
 msgid "SimpleMap: Import/Export CSV"
-msgstr "SimpleMap: Importar/Exportar CSV"
+msgstr "SimpleMap: Import/Export CSV"
 
 #: admin/import-export.php:33
 msgid "Import From File"
-msgstr "Importar do Arquivo"
+msgstr "Import Uit bestand"
 
 #: admin/import-export.php:37
 msgid "Preparing Your CSV File"
@@ -580,7 +579,7 @@ msgstr ""
 #: admin/import-export.php:46
 #, fuzzy
 msgid "Importing Your CSV File"
-msgstr "Importar do Arquivo"
+msgstr "Import Uit bestand"
 
 #: admin/import-export.php:48
 msgid "If you have more than 100 records to import, it is best to do one of the following:"
@@ -606,7 +605,7 @@ msgstr ""
 #: admin/import-export.php:63
 #, fuzzy
 msgid "File to import (maximum size 2MB):"
-msgstr "Arquivo para importar:"
+msgstr "Bestand te importeren:"
 
 #: admin/import-export.php:65
 msgid "Check this box if the locations in the file are already geocoded."
@@ -615,20 +614,20 @@ msgstr ""
 #: admin/import-export.php:67
 #, fuzzy
 msgid "Import CSV File"
-msgstr "Importar do Arquivo"
+msgstr "Import Uit bestand"
 
 #: admin/import-export.php:71
 msgid "Importing a file may take several seconds; please be patient."
-msgstr "Importação de um arquivo pode levar vários segundos, por favor seja paciente."
+msgstr "Het importeren van een bestand kan enkele seconden duren, even geduld AUB."
 
 #: admin/import-export.php:83
 msgid "Export To File"
-msgstr "Exportar para arquivo"
+msgstr "Exporteren naar bestand"
 
 #: admin/import-export.php:90
 #, fuzzy
 msgid "Export Database to CSV File"
-msgstr "Exportar Banco de Dados"
+msgstr "Export Database"
 
 #: admin/manage-categories.php:36
 msgid "Delete All Categories"
@@ -637,7 +636,7 @@ msgstr ""
 #: admin/manage-categories.php:36
 #, fuzzy
 msgid "Delete all categories in database"
-msgstr "Excluir todas as entrada no banco de dados"
+msgstr "Verwijder alle vermeldingen in de database"
 
 #: admin/manage-categories.php:84
 #: admin/manage-categories.php:167
@@ -649,7 +648,7 @@ msgstr ""
 #: admin/manage-db.php:252
 #: admin/manage-db.php:254
 msgid "No records found."
-msgstr "Registro não encontrado."
+msgstr "Geen gegevens gevonden."
 
 #: admin/manage-categories.php:207
 msgid "Category Name"
@@ -658,17 +657,17 @@ msgstr ""
 #: admin/manage-categories.php:213
 #: admin/manage-db.php:409
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Annuleren"
 
 #: admin/manage-categories.php:214
 #, fuzzy
 msgid "Update Category"
-msgstr "Atualizar local"
+msgstr "Vernieuw Locatie"
 
 #: admin/manage-categories.php:231
 #, fuzzy
 msgid "You are about to delete the selected categories. \"Cancel\" to stop, \"OK\" to delete."
-msgstr "Você deseja excluir as entradas selecionados. \"Cancelar\" para parar, \"OK\" para excluir."
+msgstr "U gaat de geselecteerde posten verwijderen. \"Annuleren \" om te stoppen, \"OK \" om te verwijderen."
 
 #: admin/manage-categories.php:245
 msgid "Add Category"
@@ -676,7 +675,7 @@ msgstr ""
 
 #: admin/manage-db.php:54
 msgid "Delete Database"
-msgstr "Excluir Banco de Dados"
+msgstr "Verwijder Database"
 
 #: admin/manage-db.php:54
 msgid "Do you really want to delete all locations in your database?"
@@ -684,18 +683,18 @@ msgstr ""
 
 #: admin/manage-db.php:54
 msgid "Delete all entries in database"
-msgstr "Excluir todas as entrada no banco de dados"
+msgstr "Verwijder alle vermeldingen in de database"
 
 #: admin/manage-db.php:102
 #: admin/manage-db.php:263
 msgid "Displaying"
-msgstr "Mostrando"
+msgstr "Weergeven"
 
 #: admin/manage-db.php:133
 #: admin/manage-db.php:149
 #, fuzzy
 msgid "Phone/Fax/URL"
-msgstr "Fone/Fax"
+msgstr "Tel/Fax"
 
 #: admin/manage-db.php:187
 msgid "Edit this post inline"
@@ -709,12 +708,12 @@ msgstr ""
 #: admin/manage-db.php:312
 #, fuzzy
 msgid "Latitude"
-msgstr "Latitude:"
+msgstr "Breedtegraad:"
 
 #: admin/manage-db.php:315
 #, fuzzy
 msgid "Longitude"
-msgstr "Longitude:"
+msgstr "Lengtegraad:"
 
 #: admin/manage-db.php:325
 msgid "City"
@@ -726,48 +725,49 @@ msgstr ""
 
 #: admin/manage-db.php:410
 msgid "Update Location"
-msgstr "Atualizar local"
+msgstr "Vernieuw Locatie"
 
 #: admin/manage-db.php:427
 msgid "You are about to delete the selected posts. \"Cancel\" to stop, \"OK\" to delete."
-msgstr "Você deseja excluir as entradas selecionados. \"Cancelar\" para parar, \"OK\" para excluir."
+msgstr "U gaat de geselecteerde posten verwijderen. \"Annuleren \" om te stoppen, \"OK \" om te verwijderen."
 
 #: includes/display-map.php:28
 #, fuzzy
 msgid "Please enter a name, address, city or zip/postal code in the search box above."
-msgstr "Adicione um nome, endereço, cidade ou CEP no campo de busca acima."
+msgstr "Geef een naam, adres, woonplaats of postcode in het zoekvak hierboven."
 
 #: includes/display-map.php:33
 #, fuzzy, php-format
 msgid "Powered by %s SimpleMap"
-msgstr "Mostrar o link \"por SimpleMap\""
+msgstr "Toon de \"Powered by SimpleMap\" link"
 
 #~ msgid "City, State, Zip"
-#~ msgstr "Cidade, Estado, CEP"
+#~ msgstr "Plaats, Provincie , postcode"
 #~ msgid "Please include the"
-#~ msgstr "Por favor inclua o(a)"
+#~ msgstr "Geef ook de"
 #~ msgid "Click here"
-#~ msgstr "Clique aqui"
+#~ msgstr "Klik hier"
 #~ msgid "or"
-#~ msgstr "ou"
+#~ msgstr "of"
 #~ msgid ""
 #~ "If you want to distinguish certain locations (i.e. Ten-Year Members, Most "
 #~ "Popular, etc.) then enter the label for them here. Leave it blank to "
 #~ "disable this feature."
 #~ msgstr ""
-#~ "Se você deseja distinguir certos locais (por exemplo, Membros de 10 anos, "
-#~ "Mais Popular, etc.) então adicione a identificação para eles aqui. Deixe "
-#~ "em branco se desejar desabilitar esta opção."
+#~ "Als je diverse locaties wilt onderscheiden (bv: Tien Jaar leden, Meest "
+#~ "Populaire, enz.), voer het etiket dan hier in. Laat dit veld leeg om deze "
+#~ "functie uit te schakelen."
 #~ msgid ""
 #~ "Enter an address, city, or zip code here if you want the map to "
 #~ "automatically show all locations in that area."
 #~ msgstr ""
-#~ "Adicione aqui um endereço, cidade ou CEP se você deseja que o mapa mostre "
-#~ "automaticamente todos os locais daquela área. "
+#~ "Voer een adres, plaats of postcode in, als u wilt dat de kaart "
+#~ "automatisch alle locaties in dat gebied laat zien."
 #~ msgid ""
 #~ "To give it a name, use the following header in the top of your stylesheet:"
 #~ msgstr ""
-#~ "Ao nomeá-lo, use a seguinte cabeçalho no topo da sua folha de estilo:"
+#~ "Om het een naam te geven, gebruikt u de volgende kop in de top van uw "
+#~ "stylesheet:"
 #~ msgid ""
 #~ "To ensure that you have the correct column structure, please download an "
 #~ "export of your database below, even if it is empty, and compare your "
@@ -775,13 +775,14 @@ msgstr "Mostrar o link \"por SimpleMap\""
 #~ "application, be sure to remove any double quotation marks (\") from your "
 #~ "data before you export the CSV."
 #~ msgstr ""
-#~ "Esteja seguro que a estrutura de coluna seja correta, por favor, faça "
-#~ "abaixo o download do seu banco de dados, ainda que vazio, e compare a "
-#~ "posição das colunas. Se você está usando um aplicativo de planilhas, "
-#~ "tenha certeza que removeu qualquer aspas ('\") do seus dados antes de "
-#~ "exportar o arquivo CSV."
+#~ "Om ervoor te zorgen dat u de juiste kolom structuur heeft, download een "
+#~ "export van uw database hier beneden, zelfs als deze leeg is, U kunt dan "
+#~ "een vergelijking maken van uw kolom structuur en die van het eport "
+#~ "bestand. Als u een spreadsheet-toepassing gebruikt, moet u eventuele "
+#~ "dubbele aanhalingstekens (\") van uw gegevens verwijderen voordat u het "
+#~ "CSV bestnd exporteert."
 #~ msgid "Import"
-#~ msgstr "Importar"
+#~ msgstr "Import"
 #~ msgid "Powered by"
-#~ msgstr "por"
+#~ msgstr "Powered by"
 

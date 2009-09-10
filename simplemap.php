@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.1.3
+Version: 1.1.4
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
@@ -70,11 +70,13 @@ class SimpleMap {
 			'default_radius' => '10',
 			'map_type' => 'ROADMAP',
 			'special_text' => '',
-			'default_state' => 'none',
+			'default_state' => '',
 			'default_country' => 'US',
 			'map_stylesheet' => 'simplemap/styles/light.css',
 			'units' => 'mi',
-			'autoload' => '1',
+			'autoload' => 'none',
+			'lock_default_location' => 'unlock',
+			'results_limit' => '20',
 			'powered_by' => 'show',
 			'display_search' => 'show'
 		);
@@ -103,6 +105,7 @@ class SimpleMap {
 		add_submenu_page(__FILE__, __('SimpleMap: Manage Database', 'SimpleMap'), __('Manage Database', 'SimpleMap'), 10, __('Manage Database', 'SimpleMap'), array(&$this, 'sm_menu_manage_database'));
 		add_submenu_page(__FILE__, __('SimpleMap: Manage Categories', 'SimpleMap'), __('Manage Categories', 'SimpleMap'), 10, __('Manage Categories', 'SimpleMap'), array(&$this, 'sm_menu_manage_categories'));
 		add_submenu_page(__FILE__, __('SimpleMap: Import/Export', 'SimpleMap'), __('Import/Export', 'SimpleMap'), 10, __('Import/Export', 'SimpleMap'), array(&$this, 'sm_menu_import_export'));
+		add_submenu_page(__FILE__, __('SimpleMap: Help', 'SimpleMap'), __('Help', 'SimpleMap'), 10, __('SimpleMap Help', 'SimpleMap'), array(&$this, 'sm_menu_help'));
 	}
 	
 	function sm_menu_general_options() {
@@ -126,10 +129,13 @@ class SimpleMap {
 			$options['default_country'] = $_POST['default_country'];
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
 			$options['units'] = $_POST['units'];
-			if ($_POST['autoload'])
-				$options['autoload'] = 1;
+			$options['results_limit'] = $_POST['results_limit'];
+			$options['autoload'] = $_POST['autoload'];
+				
+			if ($_POST['lock_default_location'])
+				$options['lock_default_location'] = 'lock';
 			else
-				$options['autoload'] = 0;
+				$options['lock_default_location'] = 'unlock';
 				
 			if ($_POST['powered_by'])
 				$options['powered_by'] = 'show';
@@ -151,6 +157,8 @@ class SimpleMap {
 		$map_height = $options['map_height'];
 		$default_lat = $options['default_lat'];
 		$default_lng = $options['default_lng'];
+		$default_state = $options['default_state'];
+		$lock_default_location = $options['lock_default_location'];
 		
 		$zoom_level = $options['zoom_level'];
 		unset($selected_zoom);
@@ -160,6 +168,14 @@ class SimpleMap {
 		unset($selected_radius);
 		$selected_radius[$default_radius] = ' selected="selected"';
 		
+		$results_limit = $options['results_limit'];
+		unset($selected_results_limit);
+		$selected_results_limit[$results_limit] = ' selected="selected"';
+		
+		$autoload = $options['autoload'];
+		unset($selected_autoload);
+		$selected_autoload[$autoload] = ' selected="selected"';
+		
 		$map_type = $options['map_type'];
 		unset($selected_type);
 		$selected_type[$map_type] = ' checked="checked"';
@@ -167,7 +183,6 @@ class SimpleMap {
 		
 		$special_text = $options['special_text'];
 		$map_stylesheet = $options['map_stylesheet'];
-		$autoload = $options['autoload'];
 		$units = $options['units'];
 		$powered_by = $options['powered_by'];
 		$display_search = $options['display_search'];
@@ -198,6 +213,11 @@ class SimpleMap {
 	function sm_menu_import_export() {
 		$options = $this->sm_get_options();
 		include 'admin/import-export.php';
+	}
+	
+	function sm_menu_help() {
+		$options = $this->sm_get_options();
+		include 'admin/help.php';
 	}
 	
 	function sm_get_api_link() {

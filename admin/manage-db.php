@@ -18,7 +18,19 @@ $start = ($paged - 1) * 15;
 $wpdb->query("SET CHARACTER SET utf8");
 $wpdb->query("SET NAMES utf8");
 
-$result = $wpdb->get_results("SELECT * FROM $db_table_name ORDER BY name LIMIT $start, 15", ARRAY_A);
+$orderby['name'] = 'name, address';
+$orderby['address'] = 'country, state, city, address, name';
+$orderby['phone'] = 'phone, name, country, state, city, address';
+$orderby['category'] = 'category, name, country, state, city, address';
+
+if (isset($_GET['orderby']))
+	$orderbyme = $_GET['orderby'];
+else
+	$orderbyme = 'name';
+	
+$orderbyarrow[$orderbyme] = '&nbsp;&darr;';
+
+$result = $wpdb->get_results("SELECT * FROM $db_table_name ORDER BY ".$orderby[$orderbyme]." LIMIT $start, 15", ARRAY_A);
 $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 $categories = $wpdb->get_results("SELECT * FROM $db_cat_table_name ORDER BY name", ARRAY_A);
 include "../wp-content/plugins/simplemap/includes/states-array.php";
@@ -33,13 +45,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
 	
 	if (isset($_GET['message'])) {
-		echo '<div id="message" class="updated fade"><p>'.$_GET['message'].'</p></div>';
+		echo '<div id="message" class="updated fade"><p>'.stripslashes(urldecode($_GET['message'])).'</p></div>';
 	}
 	?>
 	<?php if ($count > 0) { ?>
 		<form action="<?php echo $this->plugin_url; ?>actions/location-process.php" method="post" style="float: left; margin: 15px 0;">
 			<input type="hidden" name="action" value="delete_all" />
-			<input type="submit" class="button-primary" value="<?php _e('Delete Database', 'SimpleMap'); ?>" onclick="javascript:return confirm('Do you really want to delete all locations in your database?');" /> <small><?php _e('Delete all entries in database', 'SimpleMap'); ?></small>
+			<input type="submit" class="button-primary" value="<?php _e('Delete Database', 'SimpleMap'); ?>" onclick="javascript:return confirm('<?php _e('Do you really want to delete all locations in your database?'); ?>');" /> <small><?php _e('Delete all entries in database', 'SimpleMap'); ?></small>
 		</form>
 	<?php } else { ?>
 		<div style="height: 30px;"></div>
@@ -59,20 +71,20 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		
 		// at the beginning
 		if ($paged - 5 < 1) {
-			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages'>$number_of_pages</a>\n";
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
 			$page_numbers_start = 1;
 			$page_numbers_end = 9;
 		}
 		// at the end
 		else if ($paged + 5 > $number_of_pages) {
-			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1'>1</a>&nbsp;&hellip;\n";
+			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
 			$page_numbers_start = $number_of_pages - 9;
 			$page_numbers_end = $number_of_pages;
 		}
 		// in the middle
 		else {
-			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1'>1</a>&nbsp;&hellip;\n";
-			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages'>$number_of_pages</a>\n";
+			$dots1 = "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
 			$page_numbers_start = $paged - 4;
 			$page_numbers_end = $paged + 4;
 		}
@@ -90,7 +102,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -99,13 +111,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i&orderby=$orderbyme'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
@@ -116,10 +128,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 15%;"><?php _e('Name', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax/URL', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo $orderbyarrow['name']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
@@ -132,10 +144,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 15%;"><?php _e('Name', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Address', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Phone/Fax/URL', 'SimpleMap'); ?></th>
-				<th scope="col" class="manage-column" style=""><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo $orderbyarrow['name']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
@@ -172,8 +184,8 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $name; ?></span></strong>
 						<div class="row-actions">
-							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this post inline"><?php _e('Quick Edit', 'SimpleMap'); ?></a> | </span>
-							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('Do you really want to delete \'<?php echo addslashes($name); ?>\'?');"><?php _e('Delete', 'SimpleMap'); ?></a></span>
+							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="<?php _e('Edit this post inline', 'SimpleMap'); ?>"><?php _e('Quick Edit', 'SimpleMap'); ?></a> | </span>
+							<span class='delete'><a class='submitdelete' title='Delete this location' href='<?php echo $this->plugin_url; ?>actions/location-process.php?action=delete&amp;del_id=<?php echo $row['id']; ?>' onclick="javascript:return confirm('<?php printf(__('Do you really want to delete %s ?', 'SimpleMap'), "\\'".addslashes($name)."\\'"); ?>');"><?php _e('Delete', 'SimpleMap'); ?></a></span>
 						</div>
 						<div class="hidden" id="inline_<?php echo $row['id']; ?>">
 						<div class="store_id"><?php echo $row['id']; ?></div>
@@ -203,7 +215,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 						if ($row['address2'])
 							echo "<br /><span class='row_address2'>".$address2."</span>";
 						echo "<br /><span class='row_city'>".$city."<span> ";
-						if ($row['state'] != 'none')
+						if ($row['state'])
 							echo "<span class='row_state'>".$row['state']."</span> ";
 						echo "<span class='row_zip'>".$row['zip']."</span>";
 						echo "<br /><span class='row_country'>".strtoupper($country_list[$row['country']])."</span>"; ?>
@@ -251,7 +263,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -260,13 +272,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=Manage%20Database&paged=$i&orderby=$orderbyme'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Database&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
@@ -284,8 +296,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 			<input type="hidden" name="action" value="edit" />
 		
 			<input type="hidden" name="store_id" value="" />
-			<input type="hidden" name="store_lat" value="" />
+			<!--
+<input type="hidden" name="store_lat" value="" />
 			<input type="hidden" name="store_lng" value="" />
+-->
 			<input type="hidden" name="altclass" value="" />
 			<input type="hidden" name="api_key" value="<?php echo $options['api_key']; ?>" />
 		
@@ -293,7 +307,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<label for="store_name">
 					<span class="title" class="long"><?php _e('Name', 'SimpleMap'); ?></span><br />
 				</label>
-					<span class="input-text-wrap"><input type="text" id="store_name" name="store_name" class="ptitle" value="" /></span>
+					<span class="input-text-wrap"><input type="text" id="store_name" name="store_name" value="" /></span><br /><br />
+					
+				<label for="store_lat" class="long"><span class="title title_long"><?php _e('Latitude', 'SimpleMap'); ?></span></label>
+					<input type="text" id="store_lat" name="store_lat" size="20" value="" class="fix_width" /><br />
+				
+				<label for="store_lng" class="long"><span class="title title_long"><?php _e('Longitude', 'SimpleMap'); ?></span></label>
+					<input type="text" id="store_lng" name="store_lng" size="20" value="" class="fix_width" /><br />
 			</div></fieldset>
 		
 		
@@ -306,7 +326,9 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					<input type="text" id="store_city" name="store_city" size="20" value="" class="fix_width" /><br />
 				
 				<label for="store_state" class="long"><span class="title title_long"><?php _e('State/Province', 'SimpleMap'); ?></span></label>
-				<select name="store_state" id="store_state" class="fix_width">
+					<input type="text" id="store_state" name="store_state" size="20" value="" class="fix_width" /><br />
+				<!--
+<select name="store_state" id="store_state" class="fix_width">
 					<option value="none">&mdash;</option>
 					<optgroup label="United States">
 						<?php
@@ -330,6 +352,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 						?>
 					</optgroup>
 				</select><br />
+-->
 				
 				<label for="store_zip" class="long"><span class="title title_long"><?php _e('ZIP/Postal Code', 'SimpleMap'); ?></span></label>
 					<input type="text" id="store_zip" name="store_zip" size="13" maxlength="20" value="" class="fix_width" /><br />
@@ -367,9 +390,9 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name']).'</option>'."\n";
 						}
 						?>
-						</select>
+						</select><br /><br />
 					<?php } else { ?>
-						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small>
+						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small><br /><br />
 					<?php } ?>
 				
 				<label for="store_description" class="long"><span class="title title_long"><?php _e('Description', 'SimpleMap'); ?></span></label>

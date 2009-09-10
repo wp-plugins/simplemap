@@ -51,8 +51,21 @@ else {
 		$prev_country = $row['country'];
 	}
 	
-	// Only geocode if the address has changed
-	if ($prev_address != $bcl_store_address || $prev_city != $bcl_store_city || $prev_state != $bcl_store_state || $prev_country != $bcl_store_country) {
+	$needs_geocode = false;
+	
+	// Only geocode if the address has changed OR if one or both of the lat/lng fields are blank
+	if ($bcl_action == 'edit' || $bcl_action == 'inline_save') {
+		if (($prev_address != $bcl_store_address || $prev_city != $bcl_store_city || $prev_state != $bcl_store_state || $prev_country != $bcl_store_country) || ($bcl_store_lat == '' || $bcl_store_lng == '')) {
+			$needs_geocode = true;
+		}
+	}
+	else if ($bcl_action == 'add') {
+		if ($bcl_store_lat == '' || $bcl_store_lng == '') {
+			$needs_geocode = true;
+		}
+	}
+	
+	if ($needs_geocode) {
 	
 		define("MAPS_HOST", "maps.google.com");
 		define("KEY", $bcl_api_key);
@@ -117,6 +130,7 @@ else {
 			$bcl_store_address = stripslashes($bcl_store_address);
 			$bcl_store_address2 = stripslashes($bcl_store_address2);
 			$bcl_store_city = stripslashes($bcl_store_city);
+			$bcl_store_state = stripslashes($bcl_store_state);
 			$bcl_store_category = stripslashes($bcl_store_category);
 			$bcl_store_description = stripslashes($bcl_store_description);
 		?>

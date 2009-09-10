@@ -43,9 +43,14 @@ $to_display .= '
 	$(document).ready(function() {
 		load();';
 		
-		if ($options['autoload'] != '') {
+		if ($options['autoload'] == 'some') {
 			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
-			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto");';
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto", "'.$options['lock_default_location'].'");';
+		}
+		
+		else if ($options['autoload'] == 'all') {
+			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto_all", "'.$options['lock_default_location'].'");';
 		}
 		
 $to_display .= '

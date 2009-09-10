@@ -25,7 +25,7 @@ function codeNewAddress() {
 		
 		if (street) { address += street + ', '; }
 		if (city) { address += city + ', '; }
-		if (country == 'United States' || country == 'Australia' || country == 'Canada') { address += state + ', '; }
+		if (state) { address += state + ', '; }
 		address += country;
 	
 		 geocoder.getLatLng(address, function(latlng) {
@@ -42,14 +42,14 @@ function searchLocations() {
  geocoder.getLatLng(address, function(latlng) {
    if (!latlng) {
      latlng = new GLatLng(150,100);
-     searchLocationsNear(latlng, address, "search");
+     searchLocationsNear(latlng, address, "search", "unlock");
    } else {
-     searchLocationsNear(latlng, address, "search");
+     searchLocationsNear(latlng, address, "search", "unlock");
    }
  });
 }
 
-function searchLocationsNear(center, homeAddress, source) {
+function searchLocationsNear(center, homeAddress, source, mapLock) {
 	if (document.getElementById('radiusSelect')) {
 		if (units == 'mi') {
 		  	var radius = parseInt(document.getElementById('radiusSelect').value);
@@ -67,56 +67,61 @@ function searchLocationsNear(center, homeAddress, source) {
 		}
 	}
  
- var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress;
- GDownloadUrl(searchUrl, function(data) {
-   var xml = GXml.parse(data);
-   var markers = xml.documentElement.getElementsByTagName('marker');
-   map.clearOverlays();
-
-   var results = document.getElementById('results');
-   results.innerHTML = '';
-   if (markers.length == 0) {
-     results.innerHTML = '<h3>No results found.</h3>';
-     map.setCenter(new GLatLng(default_lat,default_lng), zoom_level);
-     return;
-   }
-
-   var bounds = new GLatLngBounds();
-   for (var i = 0; i < markers.length; i++) {
-     var name = markers[i].getAttribute('name');
-     var address = markers[i].getAttribute('address');
-     var address2 = markers[i].getAttribute('address2');
-     var city = markers[i].getAttribute('city');
-     var state = markers[i].getAttribute('state');
-     var zip = markers[i].getAttribute('zip');
-     var country = markers[i].getAttribute('country');
-     var distance = parseFloat(markers[i].getAttribute('distance'));
-     var point = new GLatLng(parseFloat(markers[i].getAttribute('lat')), parseFloat(markers[i].getAttribute('lng')));
-	 var url = markers[i].getAttribute('url');
-	 var phone = markers[i].getAttribute('phone');
-	 var fax = markers[i].getAttribute('fax');
-	 var special = markers[i].getAttribute('special');
-	 var category = markers[i].getAttribute('category');
-	 if (markers[i].firstChild) {
-		 var description = markers[i].firstChild.nodeValue;
+	if (source == 'auto_all') {
+		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=infinite&namequery=' + homeAddress + '&limit=0';
 	}
 	else {
-		var description = '';
+		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit;
 	}
-     
-     var marker = createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, description);
-     map.addOverlay(marker);
-     var sidebarEntry = createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, description);
-     results.appendChild(sidebarEntry);
-     bounds.extend(point);
-   }
-   if (source == "search") {
-   		map.setCenter(bounds.getCenter(), (map.getBoundsZoomLevel(bounds) - 1));
-   }
-   else {
-   		map.setCenter(bounds.getCenter(), autozoom);
-   }
- });
+	GDownloadUrl(searchUrl, function(data) {
+		var xml = GXml.parse(data);
+		var markers = xml.documentElement.getElementsByTagName('marker');
+		map.clearOverlays();
+		
+		var results = document.getElementById('results');
+		results.innerHTML = '';
+		if (markers.length == 0) {
+			results.innerHTML = '<h3>No results found.</h3>';
+			map.setCenter(new GLatLng(default_lat,default_lng), zoom_level);
+			return;
+		}
+		
+		var bounds = new GLatLngBounds();
+		for (var i = 0; i < markers.length; i++) {
+			var name = markers[i].getAttribute('name');
+			var address = markers[i].getAttribute('address');
+			var address2 = markers[i].getAttribute('address2');
+			var city = markers[i].getAttribute('city');
+			var state = markers[i].getAttribute('state');
+			var zip = markers[i].getAttribute('zip');
+			var country = markers[i].getAttribute('country');
+			var distance = parseFloat(markers[i].getAttribute('distance'));
+			var point = new GLatLng(parseFloat(markers[i].getAttribute('lat')), parseFloat(markers[i].getAttribute('lng')));
+			var url = markers[i].getAttribute('url');
+			var phone = markers[i].getAttribute('phone');
+			var fax = markers[i].getAttribute('fax');
+			var special = markers[i].getAttribute('special');
+			var category = markers[i].getAttribute('category');
+			if (markers[i].firstChild) {
+				var description = markers[i].firstChild.nodeValue;
+			}
+			else {
+				var description = '';
+			}
+			
+			var marker = createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, description);
+			map.addOverlay(marker);
+			var sidebarEntry = createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, description);
+			results.appendChild(sidebarEntry);
+			bounds.extend(point);
+		}
+		if (source == "search") {
+			map.setCenter(bounds.getCenter(), (map.getBoundsZoomLevel(bounds) - 1));
+		}
+		else if (mapLock == "unlock") {
+			map.setCenter(bounds.getCenter(), autozoom);
+		}
+	});
 }
 
 function retrieveComputedStyle(element, styleProperty) {
@@ -144,7 +149,8 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 	var fontsize = retrieveComputedStyle(document.getElementById('map'), 'font-size');
 	var lineheight = retrieveComputedStyle(document.getElementById('map'), 'line-height');
 	
-	var titleheight = 2;
+	var titleheight = 2 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.25));
+	//var titleheight = 2;
 	var addressheight = 2;
 	if (address2 != '') {
 		addressheight += 1;

@@ -4,6 +4,28 @@ SimpleMap Plugin
 general-options.php: Displays the General Options admin page
 */
 
+global $wpdb;
+$db_table_name = $this->table;
+$db_cat_table_name = $this->cat_table;
+
+$count = (int)$wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
+unset($disabled);
+$disabledmsg = '';
+
+if ($count > 100) {
+	if ($autoload == 'all') {
+		echo '<!-- Autoload All was selected, but there are more than 100 locations. -->';
+		$autoload = 'some';
+		unset($selected_autoload);
+		$selected_autoload[$autoload] = ' selected="selected"';
+		
+		$options['autoload'] = 'some';
+		update_option($this->db_option, $options);
+	}
+	$disabledmsg = sprintf(__('%s Auto-load all locations %s is disabled because you have more than 100 locations in your database.', 'SimpleMap'), '<strong>', '</strong>');
+	$disabled['all'] = ' disabled="disabled"';
+}
+
 $themes1 = readStyles('../wp-content/plugins/simplemap/styles');
 $themes2 = array();
 
@@ -40,6 +62,26 @@ jQuery(document).ready(function($) {
 	else {
 		$('.postbox-container').css({'width': '49%'});
 	}
+	
+	if ($('#autoload').val() == 'none') {
+		$('#lock_default_location').attr('checked', false);
+		$('#lock_default_location').attr('disabled', true);
+		$('#lock_default_location_label').addClass('disabled');
+	}
+	
+	$('#autoload').change(function() {
+		if ($(this).val() != 'none') {
+			$('#lock_default_location').attr('disabled', false);
+			$('#lock_default_location_label').removeClass('disabled');
+		}
+		else {
+			$('#lock_default_location').attr('checked', false);
+			$('#lock_default_location').attr('disabled', true);
+			$('#lock_default_location_label').addClass('disabled');
+		}
+	});
+	
+	// #autoload, #lock_default_location
 });
 </script>
 
@@ -91,41 +133,7 @@ jQuery(document).ready(function($) {
 									
 									<tr valign="top">
 										<td scope="row"><label for="default_state"><?php _e('Default State/Province', 'SimpleMap'); ?></label></td>
-										<td>
-											<select name="default_state" id="default_state">
-												<option value="none">&mdash;</option>
-												<optgroup label="United States">
-												<?php
-												foreach ($states_list as $key => $value) {
-													$selected = '';
-													if ($key == $options['default_state'])
-														$selected = ' selected="selected"';
-													echo "<option value='$key'$selected>$value</option>\n";
-												}
-												?>
-												</optgroup>
-												<optgroup label="Canada">
-												<?php
-												foreach ($canada_list as $key => $value) {
-													$selected = '';
-													if ($key == $options['default_state'])
-														$selected = ' selected="selected"';
-													echo "<option value='$key'$selected>$value</option>\n";
-												}
-												?>
-												</optgroup>
-												<optgroup label="Australia">
-												<?php
-												foreach ($australia_list as $key => $value) {
-													$selected = '';
-													if ($key == $options['default_state'])
-														$selected = ' selected="selected"';
-													echo "<option value='$key'$selected>$value</option>\n";
-												}
-												?>
-												</optgroup>
-											</select>
-										</td>
+										<td><input type="text" name="default_state" id="default_state" size="30" value="<?php echo $default_state; ?>" /></td>
 									</tr>
 								
 								</table>
@@ -149,6 +157,7 @@ jQuery(document).ready(function($) {
 						<h3><?php _e('Map Configuration', 'SimpleMap'); ?></h3>
 						
 						<div class="inside">
+							<p class="sub"><?php printf(__('See %s the Help page%s for an explanation of these options.', 'SimpleMap'), '<a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=SimpleMap%20Help">','</a>&nbsp;'); ?></p>
 							
 							<div class="table">
 								<table class="form-table">
@@ -159,6 +168,7 @@ jQuery(document).ready(function($) {
 											<input type="text" name="api_key" id="api_key" size="50" value="<?php echo $api_key; ?>" /><br />
 											<small><em><?php printf(__('%s Click here%s to sign up for a Google Maps API key for your domain.', 'SimpleMap'), '<a href="'.$api_link.'">', '</a>'); ?></em></small>
 										</td>
+									</tr>
 									
 									<tr valign="top">
 										<td width="150"><label for="default_lat"><?php _e('Starting Location', 'SimpleMap'); ?></label></td>
@@ -167,8 +177,8 @@ jQuery(document).ready(function($) {
 											<input type="text" name="default_lat" id="default_lat" size="13" value="<?php echo $default_lat; ?>" /><br />
 											<label for="default_lng" style="display: inline-block; width: 60px;"><?php _e('Longitude:', 'SimpleMap'); ?> </label>
 											<input type="text" name="default_lng" id="default_lng" size="13" value="<?php echo $default_lng; ?>" />
-											<p><small><em><?php _e('Enter the location the map should open to by default, when no location has been searched for. If you don\'t know the latitude and longitude of your starting location, enter the address below and press "Geocode Address."', 'SimpleMap'); ?></em></small></p>
-											<input type="text" name="default_address" id="default_address" size="30" value="" />&nbsp;<a class="button" onclick="codeAddress();" href="#">Geocode Address</a>
+											
+											<p><input type="text" name="default_address" id="default_address" size="30" value="" />&nbsp;<a class="button" onclick="codeAddress();" href="#">Geocode Address</a></p>
 										</td>
 									</tr>
 									
@@ -201,6 +211,39 @@ jQuery(document).ready(function($) {
 									</tr>
 									
 									<tr valign="top">
+										<td><label for="results_limit"><?php _e('Number of Results to Display', 'SimpleMap'); ?></label></td>
+										<td>
+											<select name="results_limit" id="results_limit">
+												<option value="0"<?php echo $selected_results_limit[0]; ?>>No Limit</option>
+												<?php
+												for ($i = 5; $i <= 50; $i += 5) {
+													echo "<option value=\"$i\"".$selected_results_limit[$i].">$i</option>\n";
+												}
+												?>
+											</select><br />
+											<small><em><?php _e('Select "No Limit" to display all results within the search radius.', 'SimpleMap'); ?></em></small>
+										</td>
+									</tr>
+									
+									<tr valign="top">
+										<td><label for="autoload"><?php _e('Auto-Load Database', 'SimpleMap'); ?></label></td>
+										<td>
+											<select name="autoload" id="autoload">
+												<option value="none"<?php echo $selected_autoload['none']; ?>><?php _e('No auto-load', 'SimpleMap'); ?></option>
+												<option value="some"<?php echo $selected_autoload['some']; ?>><?php _e('Auto-load search results', 'SimpleMap'); ?></option>
+												<option value="all"<?php echo $selected_autoload['all'].$disabled['all']; ?>><?php _e('Auto-load all locations', 'SimpleMap'); ?></option>
+											</select>
+											<?php if ($disabledmsg != '') { echo '<br /><small><em>'.$disabledmsg.'</small></em>'; } ?>
+											<?php
+											$lock_default_checked = '';
+											if ($lock_default_location == 'lock')
+												$lock_default_checked = ' checked="checked"';
+											?>
+											<br /><label for="lock_default_location" id="lock_default_location_label"><input type="checkbox" name="lock_default_location" id="lock_default_location" value="1"<?php echo $lock_default_checked; ?> /> <?php _e('Stick to default location set above', 'SimpleMap'); ?></label>
+										</td>
+									</tr>
+									
+									<tr valign="top">
 										<td><label for="zoom_level"><?php _e('Default Zoom Level', 'SimpleMap'); ?></label></td>
 										<td>
 											<select name="zoom_level" id="zoom_level">
@@ -217,16 +260,7 @@ jQuery(document).ready(function($) {
 									<tr valign="top">
 										<td><label for="special_text"><?php _e('Special Location Label', 'SimpleMap'); ?></label></td>
 										<td>
-											<input type="text" name="special_text" id="special_text" size="30" value="<?php echo $special_text; ?>" /><br />
-											<small><em><?php _e('If you want to flag certain locations, then enter the label for them here.', 'SimpleMap'); ?></em></small>
-										</td>
-									</tr>
-									
-									<tr valign="top">
-										<td><label for="autoload"><?php _e('Auto-Load Locations', 'SimpleMap'); ?></label></td>
-										<td>
-											<input type="checkbox" name="autoload" id="autoload" size="30"<?php if ($autoload == 1) { echo ' checked="checked"'; } ?> /> <label for="autoload"><?php _e('Display locations automatically on page load', 'SimpleMap'); ?></label><br />
-											<small><em><?php _e('The locations will load based on the default location and default search radius set above.', 'SimpleMap'); ?></small></em>
+											<input type="text" name="special_text" id="special_text" size="30" value="<?php echo $special_text; ?>" />
 										</td>
 									</tr>
 								
@@ -261,6 +295,7 @@ jQuery(document).ready(function($) {
 						<h3><?php _e('Map Style Defaults', 'SimpleMap'); ?></h3>
 						
 						<div class="inside">
+							<p class="sub"><?php printf(__('To insert SimpleMap into a post or page, type this shortcode in the body: %s', 'SimpleMap'), '<code>[simplemap]</code>'); ?></p>
 							
 							<div class="table">
 								<table class="form-table">

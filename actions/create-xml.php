@@ -6,6 +6,7 @@ $center_lat = $_GET["lat"];
 $center_lng = $_GET["lng"];
 $radius = $_GET["radius"];
 $namequery = $_GET['namequery'];
+$limit = (int)$_GET['limit'];
 
 // Start XML file, create parent node
 $dom = new DOMDocument("1.0");
@@ -41,12 +42,22 @@ if ($usename == 1) {
 	}
 }
 else {
+	$limittext = '';
+	if ($limit != 0)
+		$limittext = " LIMIT 0, $limit";
+	else
+		$limittext = " LIMIT 0, 100";
 	// Search the rows in the markers table
-	$query = sprintf("SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM $table HAVING distance < '%s' ORDER BY distance LIMIT 0 , 20",
-		mysql_real_escape_string($center_lat),
-		mysql_real_escape_string($center_lng),
-		mysql_real_escape_string($center_lat),
-		mysql_real_escape_string($radius));
+	if ($radius == 'infinite') {
+		$query = "SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special FROM $table ORDER BY name";
+	}
+	else {
+		$query = sprintf("SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM $table HAVING distance < '%s' ORDER BY distance".$limittext,
+			mysql_real_escape_string($center_lat),
+			mysql_real_escape_string($center_lng),
+			mysql_real_escape_string($center_lat),
+			mysql_real_escape_string($radius));
+	}
 }
   
 $result = mysql_query($query);

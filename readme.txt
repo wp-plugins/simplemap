@@ -49,6 +49,31 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 == Frequently Asked Questions ==
 
+= What are the minimum requirements for SimpleMap? =
+
+You must have:
+
+* WordPress 2.8 or later
+* PHP 5 (or PHP 4 with the SimpleXML extension loaded)
+
+= How do I put SimpleMap on my website? =
+
+Simply insert the following shortcode into any page or post: `[simplemap]`
+
+= I've put in the shortcode, but my map isn't showing up. Why? =
+
+First, check to make sure you have a Google Maps API key entered on the General Options page. The map won't display if you don't have a key.
+
+If the search form is showing up, but the map is blank, it's probably a Javascript error. Check to see if any other plugins are throwing Javascript errors before the SimpleMap Javascript gets loaded.
+
+= What is the "Special Location Label"? =
+
+This is meant to flag certain locations with a specific label. It shows up in the search results with a gold star next to it. Originally this was developed for an organization that wanted to highlight people that had been members for more than ten years. It could be used for something like that, or for "Favorite Spots," or "Free Wi-Fi," or anything you want. You can also leave it blank to disable it.
+
+= Why can't my map load more than 100 search results at a time? =
+
+On most browsers, loading more than 100 locations at once will really slow things down. In some cases, such as a slower internet connection, it can crash the browser completely. I put that limit on there to prevent that from happening.
+
 = Can I suggest a feature for SimpleMap? =
 
 Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do so.
@@ -58,6 +83,19 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.1.4 =
+* Added Help page to de-clutter the other admin pages, and allow for more thorough explanations of features
+* Improved CSV import: Now includes an option to quickly import large files if the locations are already geocoded
+* Improved latitude/longitude handling: The values are now directly editable on the Manage Database page, and any new location (added on the Add Location page OR via CSV import) that has latitude/longitude already set will keep those values intact
+* Improved Auto-Load: There is now an option to auto-load all locations in the database, and it automatically disables itself if there are more than 100 locations (to prevent crashing browsers)
+* Improved Auto-Load: There is now an option to lock the auto-load to your default location, instead of the map centering itself on the loaded locations
+* Improved map display: Numerous CSS fixes added to ensure that map overlays display properly
+* Improved state/province: Is now a text field instead of a drop-down list, so any value can be entered
+* Added ability to sort the database by column on the Manage Database page
+* Added ability to change the number of search results shown (was previously limited to 20)
+* Fixed bug: Info bubble should now expand properly when a location's name/category takes up more than one line
+* Added questions to FAQ in Readme file
 
 = 1.1.3 =
 * Fixed bug: "Get Directions" link in location's info bubble no longer inserts "null" in the destination address
@@ -134,6 +172,8 @@ Theme Name: YOUR THEME NAME HERE
 Planned for future releases:
 
 * Custom map markers (that can vary by category)
+* User can choose to show or hide specific categories on map
+* Load scripts in <head> only on pages where the map is being displayed
 
 To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
 
@@ -142,6 +182,7 @@ To suggest any new features, please visit [the SimpleMap home page](http://simpl
 * German: Thorsten at [.numinose](http://www.numinose.com)
 * Spanish: Fernando at [Dixit](http://www.dixit.es)
 * Portugese (Brazil): Rodolfo Rodrigues at [ChEngineer Place](http://chengineer.com/)
+* Dutch: Jan-Albert Droppers at [Droppers.NL](http://droppers.nl)
 
 If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated! The updated `.POT` file is always included in every release, in the `lang` folder.
 

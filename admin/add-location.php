@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
 
 		<div id='dashboard-widgets' class='metabox-holder'>
 		
-			<div class='postbox-container' style='width:59%;'>
+			<div class='postbox-container' style='max-width: 800px;'>
 			
 				<div id='normal-sortables' class='meta-box-sortables ui-sortable'>
 				
@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
 		<h3><?php _e('Geographic Location', 'SimpleMap'); ?></h3>
 		
 		<div class="inside">
-		<p class="sub"><?php _e('You must enter either an address or a latitude/longitude. If you enter both, the address will override the latitude/longitude.', 'SimpleMap'); ?></p>
+		<p class="sub"><?php _e('You must enter either an address or a latitude/longitude. If you enter both, the address will not be geocoded and your latitude/longitude values will remain intact.', 'SimpleMap'); ?></p>
 		<div class="table">
 	
 		<table class="form-table">
@@ -117,7 +117,9 @@ jQuery(document).ready(function($) {
 			
 			<tr valign="top">
 				<td><label for="store_state"><?php _e('State/Province', 'SimpleMap'); ?></label></td>
-				<td>
+				<td><input type="text" name="store_state" id="store_state" value="<?php echo $options['default_state']; ?>" size="30" /></td>
+				<!--
+<td>
 					<select name="store_state" id="store_state">
 						<option value="none">&mdash;</option>
 						<optgroup label="United States">
@@ -152,6 +154,7 @@ jQuery(document).ready(function($) {
 						</optgroup>
 					</select>
 				</td>
+-->
 			</tr>
 			
 			<tr valign="top">
@@ -224,7 +227,7 @@ jQuery(document).ready(function($) {
 			<tr valign="top">
 				<td><label for="store_url"><?php _e('URL', 'SimpleMap'); ?></label></td>
 				<td><input type="text" name="store_url" id="store_url" size="30" value="" />
-				<br /><?php _e('Please include', 'SimpleMap'); ?> <strong>http://</strong></td>
+				<br /><?php _e('Please include <strong>http://</strong>', 'SimpleMap'); ?></td>
 			</tr>
 			
 			<?php if ($options['special_text'] != '') { ?>

@@ -3,13 +3,13 @@
 SimpleMap Plugin
 scripts.php: Contains scripts to insert into <head>
 */
-if ($options['autoload'] == 1)
+if ($options['autoload'] == 'some' || $options['autoload'] == 'all')
 	$autozoom = $options['zoom_level'];
 else
 	$autozoom = 'false';
 
 
-echo '<!-- SimpleMap version 1.1.1 ======================== -->'."\n";
+echo '<!-- SimpleMap version 1.1.4 ======================== -->'."\n";
 echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/'.$options['map_stylesheet'].'" type="text/css" />'."\n";
 echo '<link rel="stylesheet" href="'.$this->plugin_url.'includes/admin.css" type="text/css" />'."\n";
 //include $this->plugin_url.'js/functions.js.php';
@@ -23,6 +23,7 @@ var map_width = "'.$options['map_width'].'";
 var map_height = "'.$options['map_height'].'";
 var special_text = "'.$options['special_text'].'";
 var units = "'.$options['units'].'";
+var limit = "'.$options['results_limit'].'";
 var plugin_url = "'.$this->plugin_url.'";
 var autozoom = '.$autozoom.';
 
@@ -40,7 +41,13 @@ function load() {
 </script>'."\n";
 echo '<style type="text/css">
 /* This is necessary for the markers and map controls to display properly. */
-#map img { background: none !important; }
+#map img {
+background: none !important;
+padding: none !important;
+max-width: none !important;
+max-height: none !important;
+border: none !important;
+}
 </style>'."\n";
 
 echo '<script type="text/javascript" src="'.$this->plugin_url.'js/functions.js"></script>'."\n";

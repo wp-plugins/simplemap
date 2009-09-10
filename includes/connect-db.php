@@ -18,6 +18,7 @@ $password=DB_PASSWORD;
 $database=DB_NAME;
 $host=DB_HOST;
 
+
 // Opens a connection to a MySQL server
 $connection = mysql_connect($host, $username, $password);
 if (!$connection) {
