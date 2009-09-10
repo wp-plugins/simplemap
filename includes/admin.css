@@ -1,3 +1,68 @@
+body.toplevel_page_simplemap-simplemap small, body.simplemap_page_Add-Location small, body.simplemap_page_Manage-Database small, body.simplemap_page_Manage-Categories small, body.simplemap_page_Import-Export small {
+	color: #777;
+}
+
+select option span.hidden {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+span.title, label span.title {
+	display: inline-block;
+	width: 5em;
+}
+
+span.title.title_long, label.long span.title.title_long {
+	width: 10em;
+}
+
+input.fix_width, select.fix_width, textarea.fix_width {
+	width: 200px;
+}
+
+input.full_width, select.full_width, textarea.full_width {
+	width: 70%;
+}
+
+.disabled {
+	color: #999;
+}
+
+span.hidden {
+	display: none;
+}
+
+span#ala {
+	padding-left: 10px;
+}
+
+.postbox .sub {
+	color: rgb(119, 119, 119);
+	font-family: Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif;
+	font-size: 13px;
+	font-style: italic;
+	padding: 5px 10px 15px;
+	margin: 0;
+}
+
+.postbox h3 {
+	cursor: default !important;
+}
+
+form.inabox {
+	padding: 10px;
+	background: #ffffe0;
+	border: 1px solid #e6db55;
+	-moz-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+
+form.inabox label {
+	font-weight: bold;
+}
+
 .radio-thumbnail {
 	float: left;
 	text-align: center;
