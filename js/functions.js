@@ -149,7 +149,7 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 	var fontsize = retrieveComputedStyle(document.getElementById('map'), 'font-size');
 	var lineheight = retrieveComputedStyle(document.getElementById('map'), 'line-height');
 	
-	var titleheight = 2 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.25));
+	var titleheight = 2 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.5));
 	//var titleheight = 2;
 	var addressheight = 2;
 	if (address2 != '') {
