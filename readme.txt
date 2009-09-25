@@ -84,6 +84,10 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= 1.1.5 =
+* Fixed the handling of fields surrounded by quotation marks when importing pre-geocoded data (finally); now works with or without quotes
+* Fixed the handling of Cyrillic text when importing a CSV file
+
 = 1.1.4 =
 * Added Help page to de-clutter the other admin pages, and allow for more thorough explanations of features
 * Improved CSV import: Now includes an option to quickly import large files if the locations are already geocoded

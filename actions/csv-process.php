@@ -50,7 +50,7 @@ if (isset($_POST['action'])) {
 				$ignorelines = ' IGNORE 1 LINES';
 			
 			
-			$query = "LOAD DATA LOCAL INFILE '".$_FILES['uploadedfile']['tmp_name']."' INTO TABLE ".$table." FIELDS TERMINATED BY ','".$ignorelines." (name, address, address2, city, state, country, zip, phone, fax, url, category, description, special, lat, lng)";
+			$query = "LOAD DATA LOCAL INFILE '".$_FILES['uploadedfile']['tmp_name']."' INTO TABLE ".$table." CHARACTER SET utf8 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'".$ignorelines." (name, address, address2, city, state, country, zip, phone, fax, url, category, description, special, lat, lng)";
 			$result = @mysql_query($query);
 			
 			if ($result)
@@ -135,7 +135,7 @@ if (isset($_POST['action'])) {
 				}
 				
 				// Re-encode HTML entities in description, and change any '<br />' back to '\n'
-				$linearray[11] = htmlentities(str_replace('<br />', "\n", $linearray[11]));
+				$linearray[11] = htmlspecialchars(str_replace('<br />', "\n", $linearray[11]));
 				
 				// If 'special' is blank, set it to zero
 				if ($linearray[12] == '')
