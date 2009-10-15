@@ -13,10 +13,10 @@ jQuery(document).ready(function($) {
 </script>
 
 <div class="wrap">
-	<h2><?php _e('SimpleMap: Help', 'SimpleMap'); ?></h2>
+		
 	<?php
-	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
+	$sm_page_title = __('SimpleMap: Help', 'SimpleMap');
+	include "../wp-content/plugins/simplemap/includes/toolbar.php";
 	?>
 	
 	<div><p><?php _e('Jump to a section:', 'SimpleMap'); ?> <a href="#displaying_your_map"><?php _e('Displaying Your Map', 'SimpleMap'); ?></a> | <a href="#general_options"><?php _e('General Options', 'SimpleMap'); ?></a> | <a href="#adding_a_location"><?php _e('Adding a Location', 'SimpleMap'); ?></a> | <a href="#everything_else"><?php _e('Everything Else', 'SimpleMap'); ?></a></p></div>
@@ -40,6 +40,8 @@ jQuery(document).ready(function($) {
 								<table class="form-table">
 							
 									<tr><td><?php _e('To show your map on any post or page, insert the shortcode in the body:', 'SimpleMap'); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap]</code></td></tr>
+							
+									<tr><td><?php _e('If you want only certain categories to show on a map, insert shortcode like this, where the numbers are replaced with the ID numbers of your desired categories:', 'SimpleMap'); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap categories=2,5,14]</code></td></tr>
 									
 									<tr><td><?php _e('You can place content above or below your map, just like in any other post. Note that any content placed below the map will be pushed down by the list of search results (unless you have them displaying differently with a custom theme).', 'SimpleMap'); ?></td></tr>
 									
@@ -117,6 +119,10 @@ jQuery(document).ready(function($) {
 										<?php _e('If you enter a latitude and longitude, then the address will not be geocoded, and your custom values will be left in place. Entering an address without latitude or longitude will result in the address being geocoded before it is submitted to the database.', 'SimpleMap'); ?>
 									</td></tr>
 									
+									<tr><td>
+										<?php _e('You must also enter a name for every location.', 'SimpleMap'); ?>
+									</td></tr>
+									
 								</table>
 							</div>
 							
@@ -140,7 +146,7 @@ jQuery(document).ready(function($) {
 								<table class="form-table">
 							
 									<tr><td>
-										<?php printf(__('If you have any other questions or comments, please visit the %s SimpleMap website%s to leave a comment or to contact me for help. Please read through the existing comments on the site first if you have a problem; the same issue may have been solved already by someone else.', 'SimpleMap'), '<a href="http://simplemap-plugin.com/" target="_blank">', '</a>'); ?>
+										<?php printf(__('If you have any other questions or comments, please visit the %s SimpleMap Support Forums%s. Search the forums for your problem before you post; the same issue may have been solved already by someone else.', 'SimpleMap'), '<a href="http://alisothegeek.com/forum/" target="_blank">', '</a>'); ?>
 									</td></tr>
 									
 								</table>

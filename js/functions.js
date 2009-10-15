@@ -36,20 +36,20 @@ function codeNewAddress() {
 	}
 }
 
-function searchLocations() {
+function searchLocations(categories) {
  var address = document.getElementById('addressInput').value;
  address = address.replace(/&/gi, " ");
  geocoder.getLatLng(address, function(latlng) {
    if (!latlng) {
      latlng = new GLatLng(150,100);
-     searchLocationsNear(latlng, address, "search", "unlock");
+     searchLocationsNear(latlng, address, "search", "unlock", categories);
    } else {
-     searchLocationsNear(latlng, address, "search", "unlock");
+     searchLocationsNear(latlng, address, "search", "unlock", categories);
    }
  });
 }
 
-function searchLocationsNear(center, homeAddress, source, mapLock) {
+function searchLocationsNear(center, homeAddress, source, mapLock, categories) {
 	if (document.getElementById('radiusSelect')) {
 		if (units == 'mi') {
 		  	var radius = parseInt(document.getElementById('radiusSelect').value);
@@ -68,10 +68,10 @@ function searchLocationsNear(center, homeAddress, source, mapLock) {
 	}
  
 	if (source == 'auto_all') {
-		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=infinite&namequery=' + homeAddress + '&limit=0';
+		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=infinite&namequery=' + homeAddress + '&limit=0&categories=' + categories;
 	}
 	else {
-		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit;
+		var searchUrl = plugin_url + 'actions/create-xml.php?lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit + '&categories=' + categories;
 	}
 	GDownloadUrl(searchUrl, function(data) {
 		var xml = GXml.parse(data);
@@ -102,6 +102,7 @@ function searchLocationsNear(center, homeAddress, source, mapLock) {
 			var fax = markers[i].getAttribute('fax');
 			var special = markers[i].getAttribute('special');
 			var category = markers[i].getAttribute('category');
+			var tags = markers[i].getAttribute('tags');
 			if (markers[i].firstChild) {
 				var description = markers[i].firstChild.nodeValue;
 			}
@@ -109,9 +110,9 @@ function searchLocationsNear(center, homeAddress, source, mapLock) {
 				var description = '';
 			}
 			
-			var marker = createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, description);
+			var marker = createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, tags, description);
 			map.addOverlay(marker);
-			var sidebarEntry = createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, description);
+			var sidebarEntry = createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, tags, description);
 			results.appendChild(sidebarEntry);
 			bounds.extend(point);
 		}
@@ -138,7 +139,7 @@ function retrieveComputedStyle(element, styleProperty) {
 	return Number(computedStyle[styleProperty].replace('px', ''));
 }
 
-function createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, description) {
+function createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, tags, description) {
 	var marker = new GMarker(point);
 	
 	var mapwidth = retrieveComputedStyle(document.getElementById('map'), 'width');
@@ -149,7 +150,7 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 	var fontsize = retrieveComputedStyle(document.getElementById('map'), 'font-size');
 	var lineheight = retrieveComputedStyle(document.getElementById('map'), 'line-height');
 	
-	var titleheight = 2 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.5));
+	var titleheight = 3 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.5));
 	//var titleheight = 2;
 	var addressheight = 2;
 	if (address2 != '') {
@@ -164,15 +165,16 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 			addressheight += 1;
 		}
 	}
+	var tagsheight = 3;
 	var linksheight = 2;
-	var totalheight = (titleheight + addressheight + linksheight + 1) * fontsize;
+	var totalheight = (titleheight + addressheight + tagsheight + linksheight + 1) * fontsize;
 		
 	if (totalheight > maxbubbleheight) {
 		totalheight = maxbubbleheight;
 	}
 	
 	var html = '	<div class="markertext" style="height: ' + totalheight + 'px;">';
-	html += '		<h3>' + name + ' <span class="bubble_category">' + category + '</span></h3>';
+	html += '		<h3>' + name + '<br /><span class="bubble_category">' + category + '</span></h3>';
 	html += '		<p>' + address;
 					if (address2 != '') {
 	html += '			<br />' + address2;
@@ -188,13 +190,16 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 					else if (fax != '') {
 	html += '			<p>Fax: ' + fax + '</p>';
 					}
+					if (tags != '') {
+	html += '			<p class="bubble_tags">Tags: ' + tags + '</p>';
+					}
 					var dir_address = address + ',' + city;
 					if (state) { dir_address += ',' + state; }
 					if (zip) { dir_address += ',' + zip; }
 					if (country) { dir_address += ',' + country; }
-	html += '		<p class="bubble_links"><a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">Get Directions</a>';
+	html += '		<p class="bubble_links"><a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
 					if (url != '') {
-	html += '			&nbsp;|&nbsp;<a href="' + url + '" title="Open \'' + name + '\' in a new window" target="_blank">Visit Website</a>';
+	html += '			&nbsp;|&nbsp;<a href="' + url + '" title="' + name + '" target="_blank">' + visit_website_text + '</a>';
 					}
 	html += '		</p>';
 	html += '	</div>';
@@ -222,7 +227,7 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 		var html2 = '	<div class="markertext" style="height: ' + totalheight2 + 'px; overflow-y: auto; overflow-x: hidden;">' + description + '</div>';
 		
 		GEvent.addListener(marker, 'click', function() {
-			marker.openInfoWindowTabsHtml([new GInfoWindowTab("Location", html), new GInfoWindowTab("Description", html2)], {maxWidth: maxbubblewidth});
+			marker.openInfoWindowTabsHtml([new GInfoWindowTab(location_tab_text, html), new GInfoWindowTab(description_tab_text, html2)], {maxWidth: maxbubblewidth});
 		});
 	}
 
@@ -234,7 +239,7 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 	return marker;
 }
 
-function createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, description) {
+function createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, url, special, category, tags, description) {
   var div = document.createElement('div');
   
   // Beginning of result
@@ -281,7 +286,7 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
   // Visit Website link
   html += '<div>';
   if (url != 'http://' && url != '') {
-  	html += '<a href="' + url + '" target="_blank">Visit Website</a>';
+  	html += '<a href="' + url + '" title="' + name + '" target="_blank">' + visit_website_text + '</a>';
   }
   html += '</div>';
   
@@ -291,7 +296,7 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
 					if (state) { dir_address += ',' + state; }
 					if (zip) { dir_address += ',' + zip; }
 					if (country) { dir_address += ',' + country; }
-	  html += '<a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">Get Directions</a>';
+	  html += '<a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
   }
   html += '</div>';
   

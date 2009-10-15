@@ -5,6 +5,8 @@ manage-db.php: Displays the Manage Database admin page
 */
 
 $current_page = $_SERVER['SCRIPT_NAME'];
+$current_query = '?'.$_SERVER['QUERY_STRING'];
+$current_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 global $wpdb;
 $db_table_name = $this->table;
@@ -38,12 +40,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 <script src="<?php echo $this->plugin_url; ?>js/inline-edit-stores.js" type="text/javascript"></script>
 <script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.form.js" type="text/javascript"></script>
 <div class="wrap">
-	<h2><?php _e('SimpleMap: Manage Database', 'SimpleMap'); ?></h2>
 		
 	<?php
-	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
-	
+	$sm_page_title = __('SimpleMap: Manage Database', 'SimpleMap');
+	include "../wp-content/plugins/simplemap/includes/toolbar.php";
+	?>
+
+	<?php
 	if (isset($_GET['message'])) {
 		echo '<div id="message" class="updated fade"><p>'.stripslashes(urldecode($_GET['message'])).'</p></div>';
 	}
@@ -132,10 +135,11 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Tags', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
-					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
+					<th scope="col" class="manage-column" style="width: 100px;"><?php echo $options['special_text']; ?></th>
 				<?php } ?>
 				
 			</tr>
@@ -148,10 +152,11 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
 				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=Manage%20Database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
+				<th scope="col" class="manage-column" style=""><?php _e('Tags', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
 				<?php if ($options['special_text'] != '') { ?>
-					<th scope="col" class="manage-column" style=""><?php echo $options['special_text']; ?></th>
+					<th scope="col" class="manage-column" style="width: 100px;"><?php echo $options['special_text']; ?></th>
 				<?php } ?>
 				
 			</tr>
@@ -170,8 +175,9 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				$address = stripslashes($row['address']);
 				$address2 = stripslashes($row['address2']);
 				$city = stripslashes($row['city']);
-				$category = stripslashes($row['category']);
+				$tags = stripslashes($row['tags']);
 				$description = stripslashes($row['description']);
+				$category_name = $wpdb->get_var("SELECT name FROM $db_cat_table_name WHERE id = '".$row['category']."'");
 				$i++;
 				if ($i % 2 == 0)
 					$altclass = 'alternate ';
@@ -201,7 +207,8 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 						<div class="store_fax"><?php echo $row['fax']; ?></div>
 						<div class="store_url"><?php echo $row['url']; ?></div>
 						<div class="store_description"><?php echo $description; ?></div>
-						<div class="store_category"><?php echo $category; ?></div>
+						<div class="store_category"><?php echo $row['category']; ?></div>
+						<div class="store_tags"><?php echo $tags; ?></div>
 						<div class="store_lat"><?php echo $row['lat']; ?></div>
 						<div class="store_lng"><?php echo $row['lng']; ?></div>
 						
@@ -230,7 +237,11 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					</td>
 					
 					<td>
-						<span class="row_category"><?php echo $category; ?></span>
+						<span class="row_category"><?php echo $category_name; ?></span>
+					</td>
+					
+					<td>
+						<span class="row_tags"><?php echo $tags; ?></span>
 					</td>
 					
 					<td>
@@ -238,7 +249,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					</td>
 					
 					<?php if ($options['special_text'] != '') { ?>
-						<td><span class="row_special">
+						<td style="text-align: center;"><span class="row_special">
 							<?php if ($row['special'] == 1) { echo "&#x2713;"; } ?>
 						</span></td>
 					<?php } ?>
@@ -291,7 +302,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		<tbody id="inlineedit">
 	
 			<tr id="inline-edit" class="inline-edit-row inline-edit-row-post quick-edit-row quick-edit-row-post" style="display: none;">
-			<td colspan="6">
+			<td colspan="7">
 			
 			<input type="hidden" name="action" value="edit" />
 		
@@ -374,29 +385,25 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<label for="store_fax"><span class="title"><?php _e('Fax', 'SimpleMap'); ?></span></label>
 					<input type="text" class="full_width" name="store_fax" size="20" maxlength="28" value="" /><br />
 				<label for="store_url"><span class="title"><?php _e('URL', 'SimpleMap'); ?></span></label>
-					<input type="text" class="full_width" id="store_url" name="store_url" value="" />
-			</div></fieldset>
-		
-		
-			<fieldset style="width: 30%;"><div class="inline-edit-col"><br />
+					<input type="text" class="full_width" id="store_url" name="store_url" value="" /><br /><br />
 			
-				<label for="store_category" class="long"><span class="title title_long"><?php _e('Category', 'SimpleMap'); ?></span></label>
+				<label for="store_category"><span class="title"><?php _e('Category', 'SimpleMap'); ?></span></label>
 					<?php
 					if ($categories != null) {
 					?>
 						<select name="store_category" id="store_category" class="full_width">
 						<?php
 						foreach ($categories as $cat) {
-							echo '<option value="'.htmlspecialchars($cat['name']).'">'.htmlspecialchars($cat['name']).'</option>'."\n";
+							echo '<option value="'.$cat['id'].'">'.htmlspecialchars($cat['name']).'</option>'."\n";
 						}
 						?>
-						</select><br /><br />
+						</select><br />
 					<?php } else { ?>
-						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small><br /><br />
+						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small><br />
 					<?php } ?>
-				
-				<label for="store_description" class="long"><span class="title title_long"><?php _e('Description', 'SimpleMap'); ?></span></label>
-				<textarea class="full_width" id="store_description" name="store_description" rows="5"></textarea><br />
+					
+				<label for="store_tags"><span class="title"><?php _e('Tags', 'SimpleMap'); ?></span></label>
+					<input type="text" class="full_width" id="store_tags" name="store_tags" value="" /><br />
 				
 				<?php if ($options['special_text'] != '') { ?>
 						<input type="checkbox" id="store_special" name="store_special" />&nbsp;&nbsp;<label for="store_special" style="display: inline;"><span style="width: auto; float: none; clear: none; display: inline; vertical-align: text-top; font-style: italic; font-family: Georgia;"><?php echo $options['special_text']; ?></span></label>
@@ -405,8 +412,14 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				
 			</div></fieldset>
 		
+		
+			<fieldset style="width: 30%;"><div class="inline-edit-col">
+				<label for="store_description" class="long"><span class="title title_long"><?php _e('Description', 'SimpleMap'); ?></span></label><br />
+				<textarea style="width: 100%; clear: left;" id="store_description" name="store_description" rows="9"></textarea>
+			</div></fieldset>
+		
 			<p class="submit inline-edit-save">
-				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft"><?php _e('Cancel', 'SimpleMap'); ?></a>
+				<a accesskey="c" href="#inline-edit" title="Cancel" class="button-secondary cancel alignleft button-red"><?php _e('Cancel', 'SimpleMap'); ?></a>
 				<input type="hidden" id="_inline_edit" name="_inline_edit" value="58a915a1fb" /><a accesskey="s" href="#inline-edit" title="Update" class="button-primary save alignright"><?php _e('Update Location', 'SimpleMap'); ?></a>
 					<img class="waiting" style="display:none;" src="images/loading.gif" alt="" />
 						<input type="hidden" name="post_view" value="list" />
