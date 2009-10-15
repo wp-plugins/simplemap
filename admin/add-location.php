@@ -22,13 +22,12 @@ jQuery(document).ready(function($) {
 </script>
 
 <div class="wrap">
-		
-	<?php
-	$sm_page_title = __('SimpleMap: Add Location', 'SimpleMap');
-	include "../wp-content/plugins/simplemap/includes/toolbar.php";
-	?>
+	<h2><?php _e('SimpleMap: Add Location', 'SimpleMap'); ?></h2>
 	
 	<?php
+	if ($options['api_key'] == '')
+		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
+	
 	if (isset($_GET['added'])) {
 		$added = stripslashes($_GET['added']);
 		echo '<div id="message" class="updated fade"><p><strong>'.$added.'</strong> '.__('added successfully.', 'SimpleMap').'</p></div>';
@@ -56,7 +55,7 @@ jQuery(document).ready(function($) {
 			
 			<tr valign="top">
 				<td width="150"><label for="store_name"><?php _e('Name', 'SimpleMap'); ?></label></td>
-				<td><input type="text" name="store_name" id="store_name" size="30" value="" class="required" /><span id="name_error" class="hidden" style="font-weight: bold; color: #c00;">&nbsp;<?php _e('Please enter a name.', 'SimpleMap'); ?></span></td>
+				<td><input type="text" name="store_name" id="store_name" size="30" value="" class="required" /><span id="name_error" class="hidden" style="font-weight: bold; color: #c00;">&nbsp;Please enter a name.</span></td>
 			</tr>
 			
 			<tr valign="top">
@@ -82,11 +81,6 @@ jQuery(document).ready(function($) {
 						<small><em><?php printf(__('You can add categories from the %s General Options screen.%s', 'SimpleMap'), '<a href="admin.php?page=simplemap/simplemap.php">', '</a>'); ?></em></small>
 					<?php } ?>
 				</td>
-			</tr>
-			
-			<tr valign="top">
-				<td width="150"><label for="store_tags"><?php _e('Tags', 'SimpleMap'); ?></label></td>
-				<td><input type="text" name="store_tags" id="store_tags" size="30" value="" class="required" /></td>
 			</tr>
 		
 		</table>
@@ -124,6 +118,43 @@ jQuery(document).ready(function($) {
 			<tr valign="top">
 				<td><label for="store_state"><?php _e('State/Province', 'SimpleMap'); ?></label></td>
 				<td><input type="text" name="store_state" id="store_state" value="<?php echo $options['default_state']; ?>" size="30" /></td>
+				<!--
+<td>
+					<select name="store_state" id="store_state">
+						<option value="none">&mdash;</option>
+						<optgroup label="United States">
+							<?php
+							foreach ($states_list as $key => $value) {
+								$selected = '';
+								if ($key == $options['default_state'])
+									$selected = ' selected="selected"';
+								echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>'."\n";
+							}
+							?>
+						</optgroup>
+						<optgroup label="Canada">
+							<?php
+							foreach ($canada_list as $key => $value) {
+								$selected = '';
+								if ($key == $options['default_state'])
+									$selected = ' selected="selected"';
+								echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>'."\n";
+							}
+							?>
+						</optgroup>
+						<optgroup label="Australia">
+							<?php
+							foreach ($australia_list as $key => $value) {
+								$selected = '';
+								if ($key == $options['default_state'])
+									$selected = ' selected="selected"';
+								echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>'."\n";
+							}
+							?>
+						</optgroup>
+					</select>
+				</td>
+-->
 			</tr>
 			
 			<tr valign="top">

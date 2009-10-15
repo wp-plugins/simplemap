@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.2b1
+Version: 1.1.5
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
-Description: *This version is for beta testing only!* An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
+Description: An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 */
 	
 global $wp_version;
@@ -53,13 +53,8 @@ class SimpleMap {
 		include('includes/install.php');
 	}
 	
-	function sm_display($atts) {
+	function sm_display() {
 		$options = $this->sm_get_options();
-		
-		extract(shortcode_atts(array(
-		'categories' => ''
-		), $atts));
-		
 		include('includes/search-radii-array.php');
 		include('includes/display-map.php');
 		return $to_display;
@@ -77,7 +72,6 @@ class SimpleMap {
 			'special_text' => '',
 			'default_state' => '',
 			'default_country' => 'US',
-			'default_domain' => '.com',
 			'map_stylesheet' => 'simplemap/styles/light.css',
 			'units' => 'mi',
 			'autoload' => 'none',
@@ -88,10 +82,6 @@ class SimpleMap {
 		);
 		
 		$saved = get_option($this->db_option);
-		
-		if (!get_option('simplemap_cats_using_ids')) {
-			add_option('simplemap_cats_using_ids', 'false');
-		}
 		
 		if (!empty($saved)) {
 			foreach ($saved as $key => $option)
@@ -137,7 +127,6 @@ class SimpleMap {
 			$options['special_text'] = $_POST['special_text'];
 			$options['default_state'] = $_POST['default_state'];
 			$options['default_country'] = $_POST['default_country'];
-			$options['default_domain'] = $_POST['default_domain'];
 			$options['map_stylesheet'] = $_POST['map_stylesheet'];
 			$options['units'] = $_POST['units'];
 			$options['results_limit'] = $_POST['results_limit'];
@@ -169,7 +158,6 @@ class SimpleMap {
 		$default_lat = $options['default_lat'];
 		$default_lng = $options['default_lng'];
 		$default_state = $options['default_state'];
-		$default_domain = $options['default_domain'];
 		$lock_default_location = $options['lock_default_location'];
 		
 		$zoom_level = $options['zoom_level'];

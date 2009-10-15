@@ -130,7 +130,7 @@ inlineEditStore = {
 		if ( typeof(id) == 'object' )
 			id = t.getId(id);
 
-		var fields = ['store_id', 'altclass', 'store_name', 'store_address', 'store_address2', 'store_city', 'store_state', 'store_zip', 'store_country', 'store_phone', 'store_fax', 'store_url', 'store_description', 'store_category', 'store_tags', 'store_special', 'store_lat', 'store_lng'];
+		var fields = ['store_id', 'altclass', 'store_name', 'store_address', 'store_address2', 'store_city', 'store_state', 'store_zip', 'store_country', 'store_phone', 'store_fax', 'store_url', 'store_description', 'store_category', 'store_special', 'store_lat', 'store_lng'];
 
 		// add the new blank row
 		var editRow = $('#inline-edit').clone(true);

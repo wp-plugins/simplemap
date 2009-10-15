@@ -7,22 +7,6 @@ select option span.hidden {
 	visibility: hidden !important;
 }
 
-.inline-editor {
-	background: #ffffe0 !important;
-}
-
-.button-red {
-	border-color: #900 !important;
-	font-weight: bold;
-	color: #fff !important;
-	background: #c00 url(../images/button-red-grad.png) repeat-x scroll left top;
-	text-shadow: rgba(0,0,0,0.3) 0 -1px 0;
-}
-
-.button-red:active {
-	background: #c00 url(../images/button-red-grad-active.png) repeat-x scroll left top !important;
-}
-
 span.title, label span.title {
 	display: inline-block;
 	width: 5em;
@@ -105,56 +89,3 @@ form.inabox label {
 	-khtml-border-radius: 4px;
 	border-radius: 4px;
 }
-
-table.server-tests {
-	border-collapse: collapse;
-}
-
-table.server-tests td {
-	padding: 2px;
-	border: 1px solid #999;
-	font-size: 0.8em;
-}
-
-.sm-toolbar {
-	width: 97%;
-	margin-top: 25px;
-}
-
-.sm-toolbar td {
-	vertical-align: middle;
-	padding: 0 10px;
-}
-
-.sm-toolbar td.sm-page-title {
-	vertical-align: top;
-}
-
-.sm-toolbar td.sm-page-title h2 {
-	margin: 0;
-}
-
-.sm-toolbar-item {
-	width: 100px;
-	text-align: center;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	-khtml-border-radius: 4px;
-	border-radius: 4px;
-	border: 1px solid #f9f9f9;
-}
-
-.sm-toolbar-item:hover {
-	background-color: #eaf2fa;
-	border-color: #93d8e2;
-}
-
-.sm-toolbar-item a {
-	text-decoration: none;
-	font: bold italic 1.1em Georgia;
-}
-
-.sm-toolbar-item form {
-	margin: 0;
-}
-

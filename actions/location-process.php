@@ -103,23 +103,22 @@ else {
 		// END Geocode ======================================================
 	}
 	
-	$esc_store_name =		mysql_real_escape_string($bcl_store_name);
-	$esc_store_address =	mysql_real_escape_string($bcl_store_address);
-	$esc_store_address2 =	mysql_real_escape_string($bcl_store_address2);
-	$esc_store_city =		mysql_real_escape_string($bcl_store_city);
-	$esc_store_state =		mysql_real_escape_string($bcl_store_state);
-	$esc_store_country =	mysql_real_escape_string($bcl_store_country);
-	$esc_store_zip =		mysql_real_escape_string($bcl_store_zip);
-	$esc_store_phone =		mysql_real_escape_string($bcl_store_phone);
-	$esc_store_fax =		mysql_real_escape_string($bcl_store_fax);
-	$esc_store_url =		mysql_real_escape_string($bcl_store_url);
-	$esc_store_category =	mysql_real_escape_string($bcl_store_category);
-	$esc_store_tags =		mysql_real_escape_string($bcl_store_tags);
+	$esc_store_name =		mysql_real_escape_string(($bcl_store_name));
+	$esc_store_address =	mysql_real_escape_string(($bcl_store_address));
+	$esc_store_address2 =	mysql_real_escape_string(($bcl_store_address2));
+	$esc_store_city =		mysql_real_escape_string(($bcl_store_city));
+	$esc_store_state =		mysql_real_escape_string(($bcl_store_state));
+	$esc_store_country =	mysql_real_escape_string(($bcl_store_country));
+	$esc_store_zip =		mysql_real_escape_string(($bcl_store_zip));
+	$esc_store_phone =		mysql_real_escape_string(($bcl_store_phone));
+	$esc_store_fax =		mysql_real_escape_string(($bcl_store_fax));
+	$esc_store_url =		mysql_real_escape_string(($bcl_store_url));
+	$esc_store_category =	mysql_real_escape_string(($bcl_store_category));
 	$esc_store_description= mysql_real_escape_string($bcl_store_description);
 	
 	if ($bcl_action == 'edit' || $bcl_action == 'inline-save') {
 		$query = "UPDATE $table SET
-					name = '$esc_store_name', address = '$esc_store_address', address2 = '$esc_store_address2', city = '$esc_store_city', state = '$esc_store_state', country = '$esc_store_country', zip = '$esc_store_zip', phone = '$esc_store_phone', fax = '$esc_store_fax', url = '$esc_store_url', description = '$esc_store_description', category = '$esc_store_category', tags = '$esc_store_tags', special = '$bcl_store_special', lat = '$bcl_store_lat', lng = '$bcl_store_lng'
+					name = '$esc_store_name', address = '$esc_store_address', address2 = '$esc_store_address2', city = '$esc_store_city', state = '$esc_store_state', country = '$esc_store_country', zip = '$esc_store_zip', phone = '$esc_store_phone', fax = '$esc_store_fax', url = '$esc_store_url', description = '$esc_store_description', category = '$esc_store_category', special = '$bcl_store_special', lat = '$bcl_store_lat', lng = '$bcl_store_lng'
 					WHERE id = '$bcl_store_id'";
 		
 		$result = mysql_query($query);
@@ -133,7 +132,6 @@ else {
 			$bcl_store_city = stripslashes($bcl_store_city);
 			$bcl_store_state = stripslashes($bcl_store_state);
 			$bcl_store_category = stripslashes($bcl_store_category);
-			$bcl_store_tags = stripslashes($bcl_store_tags);
 			$bcl_store_description = stripslashes($bcl_store_description);
 		?>
 			<tr id='post-<?php echo $bcl_store_id; ?>' class='<?php echo $bcl_altclass; ?>author-self status-publish iedit' valign="top">
@@ -159,7 +157,6 @@ else {
 						<div class="store_url"><?php echo $bcl_store_url; ?></div>
 						<div class="store_description"><?php echo $bcl_store_description; ?></div>
 						<div class="store_category"><?php echo $bcl_store_category; ?></div>
-						<div class="store_tags"><?php echo $bcl_store_tags; ?></div>
 						<div class="store_lat"><?php echo $bcl_store_lat; ?></div>
 						<div class="store_lng"><?php echo $bcl_store_lng; ?></div>
 						
@@ -193,11 +190,6 @@ else {
 					</td>
 					
 					<td>
-						<span class="row_tags"><?php echo $bcl_store_tags; ?></span>
-					
-					</td>
-					
-					<td>
 						<span class="row_description"><?php echo nl2br(html_entity_decode($bcl_store_description)); ?></span>
 					</td>
 					
@@ -213,8 +205,8 @@ else {
 	}
 	else if ($bcl_action == 'add') {
 		$query = "INSERT INTO $table
-					(name ,address, address2, city, state, zip, country, phone, fax, url, description, category, tags, special, lat, lng) VALUES
-					('$esc_store_name', '$esc_store_address', '$esc_store_address2', '$esc_store_city', '$esc_store_state', '$esc_store_zip', '$esc_store_country', '$esc_store_phone', '$esc_store_fax', '$esc_store_url', '$esc_store_description', '$esc_store_category', '$esc_store_tags', '$bcl_store_special', '$bcl_store_lat', '$bcl_store_lng')";
+					(name ,address, address2, city, state, zip, country, phone, fax, url, description, category, special, lat, lng) VALUES
+					('$esc_store_name', '$esc_store_address', '$esc_store_address2', '$esc_store_city', '$esc_store_state', '$esc_store_zip', '$esc_store_country', '$esc_store_phone', '$esc_store_fax', '$esc_store_url', '$esc_store_description', '$esc_store_category', '$bcl_store_special', '$bcl_store_lat', '$bcl_store_lng')";
 		
 		$result = mysql_query($query);
 		if (!$result) {
