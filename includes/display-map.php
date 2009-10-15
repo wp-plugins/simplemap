@@ -9,7 +9,7 @@ if ($options['display_search'] == 'show') {
 $to_display .= '
 <div id="map_search" style="width: '.$options['map_width'].';">
 	<!-- <a name="map_top"></a> -->
-	<form onsubmit="searchLocations(); return false;" name="searchForm" id="searchForm" action="http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">
+	<form onsubmit="searchLocations(\''.$categories.'\'); return false;" name="searchForm" id="searchForm" action="http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">
 		<input type="text" id="addressInput" name="addressInput" class="address" />&nbsp;
 		<select name="radiusSelect" id="radiusSelect">';
 			
@@ -25,7 +25,7 @@ $to_display .= '
 $to_display .= '	
 		</select>&nbsp;
 		<input type="submit" value="Search" id="addressSubmit" class="submit" />
-		<p>'.__('Please enter a name, address, city or zip/postal code in the search box above.', 'SimpleMap').'</p>
+		<p>'.__('Please enter an address or search term in the box above.', 'SimpleMap').'</p>
 	</form>
 </div>';
 }
@@ -45,12 +45,12 @@ $to_display .= '
 		
 		if ($options['autoload'] == 'some') {
 			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
-			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto", "'.$options['lock_default_location'].'");';
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto", "'.$options['lock_default_location'].'", "'.$categories.'");';
 		}
 		
 		else if ($options['autoload'] == 'all') {
 			$to_display .= 'var autoLatLng = new GLatLng(default_lat, default_lng);
-			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto_all", "'.$options['lock_default_location'].'");';
+			searchLocationsNear(autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto_all", "'.$options['lock_default_location'].'", "'.$categories.'");';
 		}
 		
 $to_display .= '

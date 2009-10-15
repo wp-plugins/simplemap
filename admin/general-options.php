@@ -8,6 +8,33 @@ global $wpdb;
 $db_table_name = $this->table;
 $db_cat_table_name = $this->cat_table;
 
+$domains_list = array(
+	'United States' => '.com',
+	'Austria' => '.at',
+	'Australia' => '.com.au',
+	'Bosnia and Herzegovina' => '.com.ba',
+	'Belgium' => '.be',
+	'Brazil' => '.com.br',
+	'Canada' => '.ca',
+	'Switzerland' => '.ch',
+	'Czech Republic' => '.cz',
+	'Germany' => '.de',
+	'Denmark' => '.dk',
+	'Spain' => '.es',
+	'Finland' => '.fi',
+	'France' => '.fr',
+	'Italy' => '.it',
+	'Japan' => '.jp',
+	'Netherlands' => '.nl',
+	'Norway' => '.no',
+	'New Zealand' => '.co.nz',
+	'Poland' => '.pl',
+	'Russia' => '.ru',
+	'Sweden' => '.se',
+	'Taiwan' => '.tw',
+	'United Kingdom' => '.co.uk'
+);
+
 $count = (int)$wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 unset($disabled);
 $disabledmsg = '';
@@ -86,13 +113,12 @@ jQuery(document).ready(function($) {
 </script>
 
 <div class="wrap">
-	
-	<h2><?php _e('SimpleMap: General Options', 'SimpleMap'); ?></h2>
-
+		
 	<?php
-	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.$api_link.'" target="_blank">'.__('Click here to sign up for a Google Maps API key.', 'SimpleMap').'</a></p></div>';
+	$sm_page_title = __('SimpleMap: General Options', 'SimpleMap');
+	include "../wp-content/plugins/simplemap/includes/toolbar.php";
 	?>
+	
 	<div id="dashboard-widgets-wrap" class="clear">
 	
 	<form method="post" action="<?php echo $action_url; ?>">
@@ -114,6 +140,22 @@ jQuery(document).ready(function($) {
 							
 							<div class="table">
 								<table class="form-table">
+								
+									<tr valign="top">
+										<td width="150"><label for="default_domain"><?php _e('Google Maps Domain', 'SimpleMap'); ?></label></td>
+										<td>
+											<select name="default_domain" id="default_domain">
+												<?php
+												foreach ($domains_list as $key => $value) {
+													$selected = '';
+													if ($value == $options['default_domain'])
+														$selected = ' selected="selected"';
+													echo "<option value='$value'$selected>$key ($value)</option>\n";
+												}
+												?>
+											</select>
+										</td>
+									</tr>
 			
 									<tr valign="top">
 										<td width="150"><label for="default_country"><?php _e('Default Country', 'SimpleMap'); ?></label></td>

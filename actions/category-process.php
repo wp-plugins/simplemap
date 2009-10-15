@@ -41,6 +41,7 @@ else {
 		?>
 			<tr id='post-<?php echo $bcl_store_id; ?>' class='<?php echo $bcl_altclass; ?>author-self status-publish iedit' valign="top">
 				<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
+					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $bcl_store_id; ?></span></strong></td>
 				<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $bcl_store_name; ?></span></strong>
 					<div class="row-actions">
 					<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this category inline">Quick Edit</a> | </span>

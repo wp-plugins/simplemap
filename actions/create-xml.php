@@ -7,52 +7,57 @@ $center_lng = $_GET["lng"];
 $radius = $_GET["radius"];
 $namequery = $_GET['namequery'];
 $limit = (int)$_GET['limit'];
+if ($_GET['categories'] != '')
+	$categories = explode(',', $_GET['categories']);
+else
+	$categories = null;
 
 // Start XML file, create parent node
 $dom = new DOMDocument("1.0");
 $node = $dom->createElement("markers");
 $parnode = $dom->appendChild($node);
 
+// Set finite limit based on option set in General Options (or 100 if no limit)
+$limittext = '';
+if ($limit != 0)
+	$limittext = " LIMIT 0, $limit";
+else
+	$limittext = " LIMIT 0, 100";
 
-$namequery = str_replace('&', '', $namequery);
-$namequery = str_replace("\'", '', $namequery);
-$namequery = str_replace('.', '', $namequery);
-$namequery = str_ireplace('saint', 'st', $namequery);
 $namequery = trim($namequery);
 
-$storename = Array();
 $usename = 0;
-$names = mysql_query("SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special FROM $table");
-while ($row = @mysql_fetch_assoc($names)) {
-	$name_no_quotes = str_replace("&", ' ', str_replace("'", '', $row['name']));
-	$name_quotes_to_spaces = str_replace("&", ' ', str_replace("'", ' ', $row['name']));
-	if ((stripos($name_no_quotes, $namequery) !== false || stripos($name_quotes_to_spaces, $namequery) !== false) && array_search($row['name'], $storename) === false) {
-		$storename[] = addslashes($row['name']);
+
+$textsearch = mysql_query("SELECT id FROM $table WHERE MATCH(name, description, category, tags) AGAINST('$namequery*' IN BOOLEAN MODE)");
+if ($textsearch) {
+	while ($row = mysql_fetch_array($textsearch)) {
 		$usename = 1;
 	}
 }
 
 if ($usename == 1) {
-	$query = "SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special FROM $table WHERE name = '".$storename[0]."'";
-	if (count($storename) > 1) {
-		foreach ($storename as $name) {
-			if ($name != $storename[0])
-				$query .= " OR name = '".$name."'";
-		}
+	$category_text = ' ';
+	if ($categories) {
+		foreach ($categories as $category)
+			$category_text .= "category = '".$category."' OR ";
+		$category_text = substr($category_text, 0, -4).' AND ';
 	}
+	$query = "SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, tags, special, MATCH(name, description, category, tags) AGAINST('$namequery') AS score FROM $table WHERE".$category_text."MATCH(name, description, category, tags) AGAINST('$namequery*' IN BOOLEAN MODE) ORDER BY score DESC".$limittext;
 }
 else {
-	$limittext = '';
-	if ($limit != 0)
-		$limittext = " LIMIT 0, $limit";
-	else
-		$limittext = " LIMIT 0, 100";
+	$category_text = ' ';
+	if ($categories) {
+		$category_text .= 'WHERE ';
+		foreach ($categories as $category)
+			$category_text .= "category = '".$category."' OR ";
+		$category_text = substr($category_text, 0, -3);
+	}
 	// Search the rows in the markers table
 	if ($radius == 'infinite') {
-		$query = "SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special FROM $table ORDER BY name";
+		$query = "SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, tags, special FROM $table".$category_text."ORDER BY name".$limittext;
 	}
 	else {
-		$query = sprintf("SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, special, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM $table HAVING distance < '%s' ORDER BY distance".$limittext,
+		$query = sprintf("SELECT name, address, address2, city, state, zip, country, lat, lng, phone, fax, url, description, category, tags, special, ( 3959 * acos( cos( radians('%s') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians('%s') ) + sin( radians('%s') ) * sin( radians( lat ) ) ) ) AS distance FROM $table".$category_text."HAVING distance < '%s' ORDER BY distance".$limittext,
 			mysql_real_escape_string($center_lat),
 			mysql_real_escape_string($center_lng),
 			mysql_real_escape_string($center_lat),
@@ -70,22 +75,23 @@ header("Content-type: text/xml");
 
 // Iterate through the rows, adding XML nodes for each
 while ($row = mysql_fetch_assoc($result)){
-  $node = $dom->createElement("marker", nl2br(stripslashes($row['description'])));
-  $newnode = $parnode->appendChild($node);
-  $newnode->setAttribute("name", stripslashes($row['name']));
-  $newnode->setAttribute("address", stripslashes($row['address']));
-  $newnode->setAttribute("address2", stripslashes($row['address2']));
-  $newnode->setAttribute("city", stripslashes($row['city']));
-  $newnode->setAttribute("state", stripslashes($row['state']));
-  $newnode->setAttribute("zip", stripslashes($row['zip']));
-  $newnode->setAttribute("lat", $row['lat']);
-  $newnode->setAttribute("lng", $row['lng']);
-  $newnode->setAttribute("distance", $row['distance']);
-  $newnode->setAttribute("phone", stripslashes($row['phone']));
-  $newnode->setAttribute("fax", stripslashes($row['fax']));
-  $newnode->setAttribute("url", stripslashes($row['url']));
-  $newnode->setAttribute("category", stripslashes($row['category']));
-  $newnode->setAttribute("special", $row['special']);
+	$node = $dom->createElement("marker", nl2br(stripslashes($row['description'])));
+	$newnode = $parnode->appendChild($node);
+	$newnode->setAttribute("name", stripslashes($row['name']));
+	$newnode->setAttribute("address", stripslashes($row['address']));
+	$newnode->setAttribute("address2", stripslashes($row['address2']));
+	$newnode->setAttribute("city", stripslashes($row['city']));
+	$newnode->setAttribute("state", stripslashes($row['state']));
+	$newnode->setAttribute("zip", stripslashes($row['zip']));
+	$newnode->setAttribute("lat", $row['lat']);
+	$newnode->setAttribute("lng", $row['lng']);
+	$newnode->setAttribute("distance", $row['distance']);
+	$newnode->setAttribute("phone", stripslashes($row['phone']));
+	$newnode->setAttribute("fax", stripslashes($row['fax']));
+	$newnode->setAttribute("url", stripslashes($row['url']));
+	$newnode->setAttribute("category", stripslashes($row['category']));
+	$newnode->setAttribute("tags", stripslashes($row['tags']));
+	$newnode->setAttribute("special", $row['special']);
 }
 
 echo $dom->saveXML();

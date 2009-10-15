@@ -11,6 +11,8 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 == Description ==
 
+**Version 1.2b1 is a beta testing release. Do not use it in a production environment!**
+
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
 Key features include:
@@ -84,9 +86,13 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
-= 1.1.5 =
-* Fixed the handling of fields surrounded by quotation marks when importing pre-geocoded data (finally); now works with or without quotes
-* Fixed the handling of Cyrillic text when importing a CSV file
+= 1.2b1 =
+* Added tags
+* Multiple maps (on different posts/pages only)
+* Maps with specific categories
+* Searching by name or keyword now searches the Name, Description, Category, and Tags fields
+* Improved CSV support
+* Added ability to choose Google Maps domain (.com, .co.uk, etc.)
 
 = 1.1.4 =
 * Added Help page to de-clutter the other admin pages, and allow for more thorough explanations of features
@@ -181,7 +187,15 @@ Planned for future releases:
 
 To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
 
-== Translation Credits ==
+== Credits ==
+
+= Code and Inspiration =
+
+* [Viadat Creations](http://www.viadat.com/) and their Store Locator plugin. This was the original inspiration for SimpleMap, and it was a huge help in writing & figuring out my own code.
+* [James Nierodzik](http://sparktivity.com/) for a little help with the code for the custom map markers, and the inspiration that led to the great customization tool I found.
+* [Pamela Fox](http://gmaps-utility-library-dev.googlecode.com/svn/tags/mapiconmaker/1.1/src/mapiconmaker.js) for said customization tool.
+
+= Translations =
 
 * German: Thorsten at [.numinose](http://www.numinose.com)
 * Spanish: Fernando at [Dixit](http://www.dixit.es)

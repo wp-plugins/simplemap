@@ -20,12 +20,13 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 <script src="<?php echo $this->plugin_url; ?>js/inline-edit-categories.js" type="text/javascript"></script>
 <script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.form.js" type="text/javascript"></script>
 <div class="wrap">
-	<h2><?php _e('SimpleMap: Manage Categories', 'SimpleMap'); ?></h2>
 		
 	<?php
-	if ($options['api_key'] == '')
-		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
-	
+	$sm_page_title = __('SimpleMap: Manage Categories', 'SimpleMap');
+	include "../wp-content/plugins/simplemap/includes/toolbar.php";
+	?>
+		
+	<?php
 	if (isset($_GET['message'])) {
 		echo '<div id="message" class="updated fade"><p>'.$_GET['message'].'</p></div>';
 	}
@@ -110,7 +111,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 10%;"><?php _e('ID', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 90%;"><?php _e('Category', 'SimpleMap'); ?></th>
 				
 			</tr>
 		</thead>
@@ -118,7 +120,8 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 30%;"><?php _e('Category', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 10%;"><?php _e('ID', 'SimpleMap'); ?></th>
+				<th scope="col" class="manage-column" style="width: 90%;"><?php _e('Category', 'SimpleMap'); ?></th>
 				
 			</tr>
 		</tfoot>
@@ -138,6 +141,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 				
 				<tr id='post-<?php echo $row['id']; ?>' class='<?php echo $altclass; ?>author-self status-publish iedit' valign="top">
 					<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
+					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $row['id']; ?></span></strong></td>
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $name; ?></span></strong>
 						<div class="row-actions">
 							<span class='inline hide-if-no-js'><a href="#" class="editinline" title="Edit this category inline"><?php _e('Quick Edit', 'SimpleMap'); ?></a> | </span>
@@ -195,7 +199,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 		<tbody id="inlineedit">
 	
 			<tr id="inline-edit" class="inline-edit-row inline-edit-row-post quick-edit-row quick-edit-row-post" style="display: none;">
-			<td>
+			<td colspan="2">
 			
 			<input type="hidden" name="action" value="edit" />
 		
