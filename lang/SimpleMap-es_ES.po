@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SimpleMap\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-14 20:35-0600\n"
+"POT-Creation-Date: 2009-10-21 22:50-0600\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Alison Barrett <alison@alisothegeek.com>\n"
 "Language-Team: \n"
@@ -53,6 +53,24 @@ msgid "SimpleMap: Manage Database"
 msgstr "SimpleMap: Gestionar la base de datos"
 
 #: simplemap.php:115
+#: admin/manage-db.php:77
+#: admin/manage-db.php:83
+#: admin/manage-db.php:89
+#: admin/manage-db.php:90
+#: admin/manage-db.php:108
+#: admin/manage-db.php:117
+#: admin/manage-db.php:123
+#: admin/manage-db.php:134
+#: admin/manage-db.php:135
+#: admin/manage-db.php:136
+#: admin/manage-db.php:137
+#: admin/manage-db.php:151
+#: admin/manage-db.php:152
+#: admin/manage-db.php:153
+#: admin/manage-db.php:154
+#: admin/manage-db.php:277
+#: admin/manage-db.php:286
+#: admin/manage-db.php:292
 msgid "Manage Database"
 msgstr "Gestionar la base de datos"
 
@@ -63,6 +81,12 @@ msgid "SimpleMap: Manage Categories"
 msgstr "SimpleMap: Gestionar la base de datos"
 
 #: simplemap.php:116
+#: admin/manage-categories.php:88
+#: admin/manage-categories.php:97
+#: admin/manage-categories.php:103
+#: admin/manage-categories.php:174
+#: admin/manage-categories.php:183
+#: admin/manage-categories.php:189
 msgid "Manage Categories"
 msgstr "Administrar categorías"
 
@@ -85,6 +109,7 @@ msgid "Help"
 msgstr ""
 
 #: simplemap.php:118
+#: admin/general-options.php:202
 #, fuzzy
 msgid "SimpleMap Help"
 msgstr "Enlace a SimpleMap"
@@ -167,7 +192,7 @@ msgstr ""
 #: admin/add-location.php:63
 #: admin/manage-db.php:139
 #: admin/manage-db.php:156
-#: admin/manage-db.php:417
+#: admin/manage-db.php:418
 msgid "Description"
 msgstr "Descripción"
 
@@ -176,12 +201,12 @@ msgstr "Descripción"
 #: admin/manage-categories.php:124
 #: admin/manage-db.php:137
 #: admin/manage-db.php:154
-#: admin/manage-db.php:390
+#: admin/manage-db.php:391
 msgid "Category"
 msgstr "Categoría"
 
 #: admin/add-location.php:82
-#: admin/manage-db.php:402
+#: admin/manage-db.php:403
 #, php-format
 msgid "You can add categories from the %s General Options screen.%s"
 msgstr "Puedes añadir categorías desde la seccion de %s Opciones Generales%s"
@@ -189,7 +214,7 @@ msgstr "Puedes añadir categorías desde la seccion de %s Opciones Generales%s"
 #: admin/add-location.php:88
 #: admin/manage-db.php:138
 #: admin/manage-db.php:155
-#: admin/manage-db.php:405
+#: admin/manage-db.php:406
 msgid "Tags"
 msgstr ""
 
@@ -235,17 +260,17 @@ msgid "Miscellaneous Information"
 msgstr "Información adicional"
 
 #: admin/add-location.php:187
-#: admin/manage-db.php:383
+#: admin/manage-db.php:384
 msgid "Phone"
 msgstr "Teléfono"
 
 #: admin/add-location.php:192
-#: admin/manage-db.php:385
+#: admin/manage-db.php:386
 msgid "Fax"
 msgstr "Fax"
 
 #: admin/add-location.php:197
-#: admin/manage-db.php:387
+#: admin/manage-db.php:388
 msgid "URL"
 msgstr "URL"
 
@@ -657,7 +682,7 @@ msgid "Category Name"
 msgstr ""
 
 #: admin/manage-categories.php:217
-#: admin/manage-db.php:422
+#: admin/manage-db.php:423
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -722,13 +747,26 @@ msgstr ""
 msgid "ZIP/Postal Code"
 msgstr ""
 
-#: admin/manage-db.php:423
+#: admin/manage-db.php:379
+#, fuzzy
+msgid "Geocode Address"
+msgstr "Dirección"
+
+#: admin/manage-db.php:424
 msgid "Update Location"
 msgstr "Actualice la localización"
 
-#: admin/manage-db.php:440
+#: admin/manage-db.php:424
+msgid "Geocode the new address to update this location."
+msgstr ""
+
+#: admin/manage-db.php:441
 msgid "You are about to delete the selected posts. \"Cancel\" to stop, \"OK\" to delete."
 msgstr "Va a borrar los post seleccionados \"Cancelar\" para no borrarlos u \"OK\" para borrarlos."
+
+#: includes/display-map.php:27
+msgid "Search"
+msgstr ""
 
 #: includes/display-map.php:28
 #, fuzzy
@@ -740,15 +778,15 @@ msgstr "Por favor, introduzca el nombre, dirección, ciudad o el código postal 
 msgid "Powered by %s SimpleMap"
 msgstr "Mostrar el enlace \"Creado por SimpleMap\""
 
-#: includes/scripts.php:29
+#: includes/scripts.php:30
 msgid "Visit Website"
 msgstr ""
 
-#: includes/scripts.php:30
+#: includes/scripts.php:31
 msgid "Get Directions"
 msgstr ""
 
-#: includes/scripts.php:31
+#: includes/scripts.php:32
 #, fuzzy
 msgid "Location"
 msgstr "Añadir localización"

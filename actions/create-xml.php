@@ -75,6 +75,15 @@ header("Content-type: text/xml");
 
 // Iterate through the rows, adding XML nodes for each
 while ($row = mysql_fetch_assoc($result)){
+	
+	$category_name = '';
+	$cats = mysql_query("SELECT name FROM $cat_table WHERE id = '".$row['category']."'");
+	if ($cats) {
+		while ($cat = mysql_fetch_array($cats)) {
+			$category_name = $cat['name'];
+		}
+	}
+
 	$node = $dom->createElement("marker", nl2br(stripslashes($row['description'])));
 	$newnode = $parnode->appendChild($node);
 	$newnode->setAttribute("name", stripslashes($row['name']));
@@ -89,7 +98,7 @@ while ($row = mysql_fetch_assoc($result)){
 	$newnode->setAttribute("phone", stripslashes($row['phone']));
 	$newnode->setAttribute("fax", stripslashes($row['fax']));
 	$newnode->setAttribute("url", stripslashes($row['url']));
-	$newnode->setAttribute("category", stripslashes($row['category']));
+	$newnode->setAttribute("category", stripslashes($category_name));
 	$newnode->setAttribute("tags", stripslashes($row['tags']));
 	$newnode->setAttribute("special", $row['special']);
 }

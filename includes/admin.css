@@ -23,6 +23,12 @@ select option span.hidden {
 	background: #c00 url(../images/button-red-grad-active.png) repeat-x scroll left top !important;
 }
 
+span.disabled-text {
+	font: italic 13px Georgia;
+	float: right;
+	color: #555;
+}
+
 span.title, label span.title {
 	display: inline-block;
 	width: 5em;
@@ -33,7 +39,7 @@ span.title.title_long, label.long span.title.title_long {
 }
 
 input.fix_width, select.fix_width, textarea.fix_width {
-	width: 200px;
+	width: 180px;
 }
 
 input.full_width, select.full_width, textarea.full_width {

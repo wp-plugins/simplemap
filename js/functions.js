@@ -36,6 +36,25 @@ function codeNewAddress() {
 	}
 }
 
+function codeChangedAddress() {
+	geocoder = new GClientGeocoder();
+	var address = '';
+	var street = document.getElementById("store_address").value;
+	var city = document.getElementById("store_city").value;
+	var state = document.getElementById("store_state").value;
+	var country = document.getElementById("store_country").value;
+	
+	if (street) { address += street + ', '; }
+	if (city) { address += city + ', '; }
+	if (state) { address += state + ', '; }
+	address += country;
+
+	geocoder.getLatLng(address, function(latlng) {
+		document.getElementById("store_lat").value = latlng.lat();
+		document.getElementById("store_lng").value = latlng.lng();
+	});
+}
+
 function searchLocations(categories) {
  var address = document.getElementById('addressInput').value;
  address = address.replace(/&/gi, " ");
@@ -125,30 +144,28 @@ function searchLocationsNear(center, homeAddress, source, mapLock, categories) {
 	});
 }
 
-function retrieveComputedStyle(element, styleProperty) {
-	var computedStyle = null;
-	if (typeof element.currentStyle != "undefined") {
-		computedStyle = element.currentStyle;
+function stringFilter(s) {
+	filteredValues = "emnpxt%";     // Characters stripped out
+	var i;
+	var returnString = "";
+	for (i = 0; i < s.length; i++) {  // Search through string and append to unfiltered values to returnString.
+		var c = s.charAt(i);
+		if (filteredValues.indexOf(c) == -1) returnString += c;
 	}
-	else {
-		computedStyle = document.defaultView.getComputedStyle(element, null);
-	}
-	if (!computedStyle || !computedStyle[styleProperty]) {
-		return 12;
-	}
-	return Number(computedStyle[styleProperty].replace('px', ''));
+	return returnString;
 }
 
 function createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, special, category, tags, description) {
 	var marker = new GMarker(point);
 	
-	var mapwidth = retrieveComputedStyle(document.getElementById('map'), 'width');
-	var mapheight = retrieveComputedStyle(document.getElementById('map'), 'height');
-	var maxbubblewidth = Math.round(mapwidth / 2);
-	var maxbubbleheight = Math.round(mapheight / 2);
+	var mapwidth = Number(stringFilter(map_width));
+	var mapheight = Number(stringFilter(map_height));
 	
-	var fontsize = retrieveComputedStyle(document.getElementById('map'), 'font-size');
-	var lineheight = retrieveComputedStyle(document.getElementById('map'), 'line-height');
+	var maxbubblewidth = Math.round(mapwidth / 1.5);
+	var maxbubbleheight = Math.round(mapheight / 2.2);
+	
+	var fontsize = 12;
+	var lineheight = 12;
 	
 	var titleheight = 3 + Math.floor((name.length + category.length) * fontsize / (maxbubblewidth * 1.5));
 	//var titleheight = 2;
@@ -173,8 +190,8 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 		totalheight = maxbubbleheight;
 	}
 	
-	var html = '	<div class="markertext" style="height: ' + totalheight + 'px;">';
-	html += '		<h3>' + name + '<br /><span class="bubble_category">' + category + '</span></h3>';
+	var html = '	<div class="markertext" style="height: ' + totalheight + 'px; overflow-y: auto; overflow-x: hidden;">';
+	html += '		<h3 style="margin-top: 0; padding-top: 0; border-top: none;">' + name + '<br /><span class="bubble_category">' + category + '</span></h3>';
 	html += '		<p>' + address;
 					if (address2 != '') {
 	html += '			<br />' + address2;
@@ -183,21 +200,21 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 					if (phone != '') {
 	html += '			<p>' + phone;
 						if (fax != '') {
-	html += '				<br />Fax: ' + fax;
+	html += '				<br />' + fax_text + ': ' + fax;
 						}
 	html += '			</p>';
 					}
 					else if (fax != '') {
-	html += '			<p>Fax: ' + fax + '</p>';
+	html += '			<p>' + fax_text + ': ' + fax + '</p>';
 					}
 					if (tags != '') {
-	html += '			<p class="bubble_tags">Tags: ' + tags + '</p>';
+	html += '			<p class="bubble_tags">' + tags_text + ': ' + tags + '</p>';
 					}
 					var dir_address = address + ',' + city;
 					if (state) { dir_address += ',' + state; }
 					if (zip) { dir_address += ',' + zip; }
 					if (country) { dir_address += ',' + country; }
-	html += '		<p class="bubble_links"><a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
+	html += '		<p class="bubble_links"><a href="http://google' + default_domain + '/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
 					if (url != '') {
 	html += '			&nbsp;|&nbsp;<a href="' + url + '" title="' + name + '" target="_blank">' + visit_website_text + '</a>';
 					}
@@ -252,7 +269,7 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
   
   // Name & distance
   html += '<div class="result_name">';
-  html += '<h3>' + name;
+  html += '<h3 style="margin-top: 0; padding-top: 0; border-top: none;">' + name;
   if (distance.toFixed(1) != 'NaN') {
   	if (units == 'mi') {
 	  	html+= ' <small>' + distance.toFixed(1) + ' miles</small>';
@@ -276,7 +293,7 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
   	html += 'Phone: ' + phone;
   }
   if (fax != '') {
-  	html += '<br />Fax: ' + fax;
+  	html += '<br />' + fax_text + ': ' + fax;
   }
   html += '</div>';
   
@@ -296,7 +313,7 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
 					if (state) { dir_address += ',' + state; }
 					if (zip) { dir_address += ',' + zip; }
 					if (country) { dir_address += ',' + country; }
-	  html += '<a href="http://google.com/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
+	  html += '<a href="http://google' + default_domain + '/maps?q=' + homeAddress + ' to ' + dir_address + '" target="_blank">' + get_directions_text + '</a>';
   }
   html += '</div>';
   

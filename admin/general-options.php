@@ -199,7 +199,7 @@ jQuery(document).ready(function($) {
 						<h3><?php _e('Map Configuration', 'SimpleMap'); ?></h3>
 						
 						<div class="inside">
-							<p class="sub"><?php printf(__('See %s the Help page%s for an explanation of these options.', 'SimpleMap'), '<a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=SimpleMap%20Help">','</a>&nbsp;'); ?></p>
+							<p class="sub"><?php printf(__('See %s the Help page%s for an explanation of these options.', 'SimpleMap'), '<a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page='.urlencode(__('SimpleMap Help', 'SimpleMap')).'">','</a>&nbsp;'); ?></p>
 							
 							<div class="table">
 								<table class="form-table">

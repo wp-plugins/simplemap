@@ -4,14 +4,14 @@ Contributors: aliso
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7382728
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
 Requires at least: 2.8
-Tested up to: 2.8.4
+Tested up to: 2.8.5
 Stable tag: trunk
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
 == Description ==
 
-**Version 1.2b1 is a beta testing release. Do not use it in a production environment!**
+**Version 1.2b2 is a beta testing release. DO NOT USE IT IN A PRODUCTION ENVIRONMENT!**
 
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
@@ -85,6 +85,14 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.2b2 =
+* "Get Directions" link now uses custom Google Maps country domain (as set in General Options)
+* Added translation support for a few strings that were missing it (including "Fax" and "Tags")
+* Fixed the bubble-height problem (hopefully for good this time)
+* Added ability to re-geocode address when changing the database with Quick Edit
+* Info bubble correctly displays category name instead of ID number
+* Removed "get computed style" function, which should eliminate that error in any browsers
 
 = 1.2b1 =
 * Added tags

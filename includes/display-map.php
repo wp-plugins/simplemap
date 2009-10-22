@@ -24,7 +24,7 @@ $to_display .= '
 			
 $to_display .= '	
 		</select>&nbsp;
-		<input type="submit" value="Search" id="addressSubmit" class="submit" />
+		<input type="submit" value="'.__('Search', 'SimpleMap').'" id="addressSubmit" class="submit" />
 		<p>'.__('Please enter an address or search term in the box above.', 'SimpleMap').'</p>
 	</form>
 </div>';

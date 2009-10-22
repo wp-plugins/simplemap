@@ -132,9 +132,9 @@ else {
 			$bcl_store_address2 = stripslashes($bcl_store_address2);
 			$bcl_store_city = stripslashes($bcl_store_city);
 			$bcl_store_state = stripslashes($bcl_store_state);
-			$bcl_store_category = stripslashes($bcl_store_category);
 			$bcl_store_tags = stripslashes($bcl_store_tags);
 			$bcl_store_description = stripslashes($bcl_store_description);
+			$category_name = $wpdb->get_var("SELECT name FROM $cat_table WHERE id = '$bcl_store_category'");
 		?>
 			<tr id='post-<?php echo $bcl_store_id; ?>' class='<?php echo $bcl_altclass; ?>author-self status-publish iedit' valign="top">
 					<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
@@ -188,7 +188,7 @@ else {
 					</td>
 					
 					<td>
-						<span class="row_category"><?php echo $bcl_store_category; ?></span>
+						<span class="row_category"><?php echo $category_name; ?></span>
 					
 					</td>
 					

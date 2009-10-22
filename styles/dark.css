@@ -21,15 +21,16 @@ text-decoration: underline;
 #powered_by_simplemap {
 font-size: 0.75em;
 text-align: right;
-color: #444;
+color: #666;
 }
 
 #powered_by_simplemap a {
-color: #444;
+color: #666;
+text-decoration: underline;
 }
 
 #powered_by_simplemap a:hover {
-color: #fff;
+text-decoration: none;
 }
 
 #searchForm {
@@ -74,6 +75,10 @@ text-align: left !important;
 line-height: 1.2em !important;
 }
 
+.markertext .search-term {
+background: #ff6;
+}
+
 div#results {
 padding-bottom: 20px;
 }
@@ -107,6 +112,11 @@ text-transform: none;
 
 div.result img {
 border: none;
+}
+
+div.result .search-term {
+background: #004080;
+color: #fff;
 }
 
 div.result div.result_name {

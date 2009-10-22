@@ -85,7 +85,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 				<span class="displaying-num"><?php printf(__('Displaying %d&#8211;%d of %d', 'SimpleMap'), ($start + 1), $end, $count); ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Categories&paged=".($paged - 1)."'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=".($paged - 1)."'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -94,13 +94,13 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=Manage%20Categories&paged=$i'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=$i'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Categories&paged=".($paged + 1)."'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=".($paged + 1)."'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
@@ -171,7 +171,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 				<span class="displaying-num"><?php printf(__('Displaying %d&#8211;%d of %d', 'SimpleMap'), ($start + 1), $end, $count); ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=Manage%20Categories&paged=".($paged - 1)."'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=".($paged - 1)."'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -180,13 +180,13 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=Manage%20Categories&paged=$i'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=$i'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=Manage%20Categories&paged=".($paged + 1)."'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=".urlencode(__('Manage Categories', 'SimpleMap'))."&paged=".($paged + 1)."'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
