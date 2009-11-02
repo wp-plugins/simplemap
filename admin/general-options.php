@@ -35,6 +35,14 @@ $domains_list = array(
 	'United Kingdom' => '.co.uk'
 );
 
+$order1 = __('City/Town', 'SimpleMap').', '.__('State/Province', 'SimpleMap').', '.__('Zip/Postal Code', 'SimpleMap');
+$order2 = __('Zip/Postal Code', 'SimpleMap').', '.__('City/Town', 'SimpleMap').', '.__('State/Province', 'SimpleMap');
+
+$address_format_list = array(
+	'city state zip' => "$order1",
+	'zip city state' => "$order2"
+);
+
 $count = (int)$wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 unset($disabled);
 $disabledmsg = '';
@@ -108,6 +116,40 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+	$('#address_format').siblings().addClass('hidden');
+	if ($('#address_format').val() == 'town, province postalcode')
+		$('#order_1').removeClass('hidden');
+	else if ($('#address_format').val() == 'town province postalcode')
+		$('#order_2').removeClass('hidden');
+	else if ($('#address_format').val() == 'town-province postalcode')
+		$('#order_3').removeClass('hidden');
+	else if ($('#address_format').val() == 'postalcode town-province')
+		$('#order_4').removeClass('hidden');
+	else if ($('#address_format').val() == 'postalcode town, province')
+		$('#order_5').removeClass('hidden');
+	else if ($('#address_format').val() == 'postalcode town')
+		$('#order_6').removeClass('hidden');
+	else if ($('#address_format').val() == 'town postalcode')
+		$('#order_7').removeClass('hidden');
+	
+	$('#address_format').change(function() {
+		$(this).siblings().addClass('hidden');
+		if ($(this).val() == 'town, province postalcode')
+			$('#order_1').removeClass('hidden');
+		else if ($(this).val() == 'town province postalcode')
+			$('#order_2').removeClass('hidden');
+		else if ($(this).val() == 'town-province postalcode')
+			$('#order_3').removeClass('hidden');
+		else if ($(this).val() == 'postalcode town-province')
+			$('#order_4').removeClass('hidden');
+		else if ($(this).val() == 'postalcode town, province')
+			$('#order_5').removeClass('hidden');
+		else if ($(this).val() == 'postalcode town')
+			$('#order_6').removeClass('hidden');
+		else if ($(this).val() == 'town postalcode')
+			$('#order_7').removeClass('hidden');
+	});
+	
 	// #autoload, #lock_default_location
 });
 </script>
@@ -176,6 +218,34 @@ jQuery(document).ready(function($) {
 									<tr valign="top">
 										<td scope="row"><label for="default_state"><?php _e('Default State/Province', 'SimpleMap'); ?></label></td>
 										<td><input type="text" name="default_state" id="default_state" size="30" value="<?php echo $default_state; ?>" /></td>
+									</tr>
+								
+									<tr valign="top">
+										<td width="150"><label for="address_format"><?php _e('Address Format', 'SimpleMap'); ?></label></td>
+										<td>
+											<select id="address_format" name="address_format">
+												<option value="town, province postalcode"<?php echo $selected_address_format['town, province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+
+												<option value="town province postalcode"<?php echo $selected_address_format['town province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												
+												<option value="town-province postalcode"<?php echo $selected_address_format['town-province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												
+												<option value="postalcode town-province"<?php echo $selected_address_format['postalcode town-province']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']'; ?>
+												
+												<option value="postalcode town, province"<?php echo $selected_address_format['postalcode town, province']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']'; ?>
+												
+												<option value="postalcode town"<?php echo $selected_address_format['postalcode town']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').']'; ?>
+												
+												<option value="town postalcode"<?php echo $selected_address_format['town postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+											</select>
+											<span class="hidden" id="order_1"><br /><?php _e('Example', 'SimpleMap'); ?>: Minneapolis, MN 55403</span>
+											<span class="hidden" id="order_2"><br /><?php _e('Example', 'SimpleMap'); ?>: Minneapolis MN 55403</span>
+											<span class="hidden" id="order_3"><br /><?php _e('Example', 'SimpleMap'); ?>: S&atilde;o Paulo - SP 85070</span>
+											<span class="hidden" id="order_4"><br /><?php _e('Example', 'SimpleMap'); ?>: 85070 S&atilde;o Paulo - SP</span>
+											<span class="hidden" id="order_5"><br /><?php _e('Example', 'SimpleMap'); ?>: 46800 Puerto Vallarta, JAL</span>
+											<span class="hidden" id="order_6"><br /><?php _e('Example', 'SimpleMap'); ?>: 126 25&nbsp;&nbsp;Stockholm</span>
+											<span class="hidden" id="order_7"><br /><?php _e('Example', 'SimpleMap'); ?>: London&nbsp;&nbsp;EC1Y 8SY</span>
+										</td>
 									</tr>
 								
 								</table>

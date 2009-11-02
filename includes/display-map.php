@@ -8,7 +8,7 @@ $to_display = '';
 if ($options['display_search'] == 'show') {
 $to_display .= '
 <div id="map_search" style="width: '.$options['map_width'].';">
-	<!-- <a name="map_top"></a> -->
+	<a name="map_top"></a>
 	<form onsubmit="searchLocations(\''.$categories.'\'); return false;" name="searchForm" id="searchForm" action="http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'">
 		<input type="text" id="addressInput" name="addressInput" class="address" />&nbsp;
 		<select name="radiusSelect" id="radiusSelect">';

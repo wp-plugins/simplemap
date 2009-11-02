@@ -9,7 +9,7 @@ else
 	$autozoom = 'false';
 
 
-echo '<!-- SimpleMap version 1.2b2 ======================== -->'."\n";
+echo '<!-- SimpleMap version 1.2b3 ======================== -->'."\n";
 echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/'.$options['map_stylesheet'].'" type="text/css" />'."\n";
 echo '<link rel="stylesheet" href="'.$this->plugin_url.'includes/admin.css" type="text/css" />'."\n";
 //include $this->plugin_url.'js/functions.js.php';
@@ -27,12 +27,15 @@ var limit = "'.$options['results_limit'].'";
 var plugin_url = "'.$this->plugin_url.'";
 var autozoom = '.$autozoom.';
 var default_domain = "'.$options['default_domain'].'";
+var address_format = "'.$options['address_format'].'";
 var visit_website_text = "'.__('Visit Website', 'SimpleMap').'";
 var get_directions_text = "'.__('Get Directions', 'SimpleMap').'";
 var location_tab_text = "'.__('Location', 'SimpleMap').'";
 var description_tab_text = "'.__('Description', 'SimpleMap').'";
+var phone_text = "'.__('Phone', 'SimpleMap').'";
 var fax_text = "'.__('Fax', 'SimpleMap').'";
 var tags_text = "'.__('Tags', 'SimpleMap').'";
+var noresults_text = "'.__('No results found.', 'SimpleMap').'";
 
 function load() {
   if (GBrowserIsCompatible()) {

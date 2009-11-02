@@ -159,7 +159,7 @@ $count = $wpdb->get_var("SELECT COUNT(*) FROM $db_table_name");
 			}
 		}
 		else {
-			echo '<tr><td>'.__('No records found.', 'SimpleMap').'</td></tr>';
+			echo '<tr><td colspan="2">'.__('No records found.', 'SimpleMap').'</td></tr>';
 		}
 	
 	?>

@@ -1,7 +1,7 @@
 <?php
 $plugin_folder = $this->plugin_url;
 global $wpdb;
-$simplemap_db_version = '1.2';
+$simplemap_db_version = '1.2b3';
 require_once(ABSPATH . "wp-admin/upgrade-functions.php");
 $installed_ver = get_option('simplemap_db_version');
 
@@ -28,7 +28,7 @@ if (($wpdb->get_var("SHOW TABLES LIKE '".$this->table."'") != $this->table) || (
 	lng float(10,6) default NULL,
 	dateUpdated timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	UNIQUE KEY id (id),
-	FULLTEXT(name, description, category, tags)
+	FULLTEXT(name, description, tags)
 	);";
 	dbDelta($sql);
 	

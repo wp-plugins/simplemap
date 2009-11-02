@@ -58,7 +58,7 @@ if (isset($action)) {
 			$lineseparator = "\n";
 			$linescontent = explode($lineseparator, $csvcontent);
 			$count = count($linescontent);
-			if ($linescontent[0] == 'name,address,address2,city,state,zip,country,phone,fax,url,category,tags,description,special,lat,lng' || $linescontent[0] == '"name","address","address2","city","state","zip","country","phone","fax","url","category","tags","description","special","lat","lng"' || $linescontent[0] == 'name,address,address2,city,state_province,zip_postal_code,country,phone,fax,url,category,tags,description,special,lat,lng' || $linescontent[0] == '"name","address","address2","city","state_province","zip_postal_code","country","phone","fax","url","category","tags","description","special","lat","lng"')
+			if ($linescontent[0] == 'name,address,address2,city,state,country,zip,phone,fax,url,category,tags,description,special,lat,lng' || $linescontent[0] == '"name","address","address2","city","state","country","zip","phone","fax","url","category","tags","description","special","lat","lng"' || $linescontent[0] == 'name,address,address2,city,state_province,country,zip_postal_code,phone,fax,url,category,tags,description,special,lat,lng' || $linescontent[0] == '"name","address","address2","city","state_province","country","zip_postal_code","phone","fax","url","category","tags","description","special","lat","lng"')
 				$ignorelines = ' IGNORE 1 LINES';
 			
 			$query = "LOAD DATA LOCAL INFILE '".$_FILES['uploadedfile']['tmp_name']."' INTO TABLE ".$table." CHARACTER SET utf8 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'".$ignorelines." (name, address, address2, city, state, zip, country, phone, fax, url, category, tags, description, special, lat, lng)";

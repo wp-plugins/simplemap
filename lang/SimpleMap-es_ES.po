@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SimpleMap\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-21 22:50-0600\n"
+"POT-Creation-Date: 2009-11-01 22:10-0600\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Alison Barrett <alison@alisothegeek.com>\n"
 "Language-Team: \n"
@@ -21,38 +21,38 @@ msgstr ""
 msgid "SimpleMap requires WordPress 2.8 or newer. <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">Please update!</a>"
 msgstr "SimpleMap requiere WordPress 2.8 o superior. <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">¡Por favor, actualiza tu WP!</a>"
 
-#: simplemap.php:112
+#: simplemap.php:113
 msgid "SimpleMap Options"
 msgstr "Opciones de SimpleMap"
 
-#: simplemap.php:113
-#: admin/general-options.php:118
+#: simplemap.php:114
+#: admin/general-options.php:160
 msgid "SimpleMap: General Options"
 msgstr "SimpleMap: Opciones generales"
 
-#: simplemap.php:113
+#: simplemap.php:114
 #: admin/help.php:22
 #: admin/help.php:65
 msgid "General Options"
 msgstr "Opciones generales"
 
-#: simplemap.php:114
+#: simplemap.php:115
 #: admin/add-location.php:27
 msgid "SimpleMap: Add Location"
 msgstr "SimpleMap: Añadir localización"
 
-#: simplemap.php:114
+#: simplemap.php:115
 #: admin/add-location.php:217
 #: admin/add-location.php:218
 msgid "Add Location"
 msgstr "Añadir localización"
 
-#: simplemap.php:115
+#: simplemap.php:116
 #: admin/manage-db.php:45
 msgid "SimpleMap: Manage Database"
 msgstr "SimpleMap: Gestionar la base de datos"
 
-#: simplemap.php:115
+#: simplemap.php:116
 #: admin/manage-db.php:77
 #: admin/manage-db.php:83
 #: admin/manage-db.php:89
@@ -74,13 +74,13 @@ msgstr "SimpleMap: Gestionar la base de datos"
 msgid "Manage Database"
 msgstr "Gestionar la base de datos"
 
-#: simplemap.php:116
+#: simplemap.php:117
 #: admin/manage-categories.php:25
 #, fuzzy
 msgid "SimpleMap: Manage Categories"
 msgstr "SimpleMap: Gestionar la base de datos"
 
-#: simplemap.php:116
+#: simplemap.php:117
 #: admin/manage-categories.php:88
 #: admin/manage-categories.php:97
 #: admin/manage-categories.php:103
@@ -90,39 +90,39 @@ msgstr "SimpleMap: Gestionar la base de datos"
 msgid "Manage Categories"
 msgstr "Administrar categorías"
 
-#: simplemap.php:117
+#: simplemap.php:118
 msgid "SimpleMap: Import/Export"
 msgstr "SimpleMap: Importar/exportar"
 
-#: simplemap.php:117
+#: simplemap.php:118
 msgid "Import/Export"
 msgstr "Importar/exportar"
 
-#: simplemap.php:118
+#: simplemap.php:119
 #: admin/help.php:18
 #, fuzzy
 msgid "SimpleMap: Help"
 msgstr "Enlace a SimpleMap"
 
-#: simplemap.php:118
+#: simplemap.php:119
 msgid "Help"
 msgstr ""
 
-#: simplemap.php:118
-#: admin/general-options.php:202
+#: simplemap.php:119
+#: admin/general-options.php:272
 #, fuzzy
 msgid "SimpleMap Help"
 msgstr "Enlace a SimpleMap"
 
-#: simplemap.php:163
+#: simplemap.php:165
 msgid "SimpleMap settings saved."
 msgstr "Configuración de SimpleMap guardada."
 
-#: simplemap.php:262
+#: simplemap.php:268
 msgid "Class SimpleMap already declared!"
 msgstr "Class SimpleMap ha sido declarada ya!"
 
-#: simplemap.php:291
+#: simplemap.php:297
 msgid "Settings"
 msgstr "Configuración"
 
@@ -234,15 +234,40 @@ msgid "Address"
 msgstr "Dirección"
 
 #: admin/add-location.php:120
+#: admin/general-options.php:38
+#: admin/general-options.php:39
+#: admin/general-options.php:227
+#: admin/general-options.php:229
+#: admin/general-options.php:231
+#: admin/general-options.php:233
+#: admin/general-options.php:235
+#: admin/general-options.php:237
+#: admin/general-options.php:239
 msgid "City/Town"
 msgstr "Ciudad"
 
 #: admin/add-location.php:125
+#: admin/general-options.php:38
+#: admin/general-options.php:39
+#: admin/general-options.php:227
+#: admin/general-options.php:229
+#: admin/general-options.php:231
+#: admin/general-options.php:233
+#: admin/general-options.php:235
 #: admin/manage-db.php:339
 msgid "State/Province"
 msgstr "Estado/provincia"
 
 #: admin/add-location.php:130
+#: admin/general-options.php:38
+#: admin/general-options.php:39
+#: admin/general-options.php:227
+#: admin/general-options.php:229
+#: admin/general-options.php:231
+#: admin/general-options.php:233
+#: admin/general-options.php:235
+#: admin/general-options.php:237
+#: admin/general-options.php:239
 msgid "Zip/Postal Code"
 msgstr "Codigo Postal"
 
@@ -278,208 +303,223 @@ msgstr "URL"
 msgid "Please include <strong>http://</strong>"
 msgstr "Por favor, incluya <strong>http://</strong>"
 
-#: admin/general-options.php:52
+#: admin/general-options.php:60
 #, php-format
 msgid "%s Auto-load all locations %s is disabled because you have more than 100 locations in your database."
 msgstr ""
 
-#: admin/general-options.php:136
+#: admin/general-options.php:178
 msgid "Location Defaults"
 msgstr "Localizacion por defecto"
 
-#: admin/general-options.php:139
+#: admin/general-options.php:181
 #, fuzzy
 msgid "If most of your locations are in the same area, choose the country and state/province here to make adding new locations easier."
 msgstr "Si la mayoría de las localizaciones son del mismo estado, por favor, elígelo aquí para hacer los añadidos de forma mas sencilla."
 
-#: admin/general-options.php:145
+#: admin/general-options.php:187
 #, fuzzy
 msgid "Google Maps Domain"
 msgstr "Google Maps API Key"
 
-#: admin/general-options.php:161
+#: admin/general-options.php:203
 msgid "Default Country"
 msgstr "Pais por defecto"
 
-#: admin/general-options.php:177
+#: admin/general-options.php:219
 msgid "Default State/Province"
 msgstr "Default State/Province"
 
-#: admin/general-options.php:186
-#: admin/general-options.php:314
-#: admin/general-options.php:450
+#: admin/general-options.php:224
+#, fuzzy
+msgid "Address Format"
+msgstr "Dirección"
+
+#: admin/general-options.php:241
+#: admin/general-options.php:242
+#: admin/general-options.php:243
+#: admin/general-options.php:244
+#: admin/general-options.php:245
+#: admin/general-options.php:246
+#: admin/general-options.php:247
+msgid "Example"
+msgstr ""
+
+#: admin/general-options.php:256
+#: admin/general-options.php:384
+#: admin/general-options.php:520
 msgid "Save Options"
 msgstr "Opciones de almacenamiento"
 
-#: admin/general-options.php:199
+#: admin/general-options.php:269
 msgid "Map Configuration"
 msgstr "Configuracion del mapa"
 
-#: admin/general-options.php:202
+#: admin/general-options.php:272
 #, php-format
 msgid "See %s the Help page%s for an explanation of these options."
 msgstr ""
 
-#: admin/general-options.php:208
+#: admin/general-options.php:278
 msgid "Google Maps API Key"
 msgstr "Google Maps API Key"
 
-#: admin/general-options.php:211
+#: admin/general-options.php:281
 #, fuzzy, php-format
 msgid "%s Click here%s to sign up for a Google Maps API key for your domain."
 msgstr "para conseguir una clave para tu dominio de la API de Google Maps."
 
-#: admin/general-options.php:216
+#: admin/general-options.php:286
 #: admin/help.php:73
 msgid "Starting Location"
 msgstr "Localización principal"
 
-#: admin/general-options.php:218
+#: admin/general-options.php:288
 msgid "Latitude:"
 msgstr "Latitud:"
 
-#: admin/general-options.php:220
+#: admin/general-options.php:290
 msgid "Longitude:"
 msgstr "Longitud:"
 
-#: admin/general-options.php:228
+#: admin/general-options.php:298
 msgid "Distance Units"
 msgstr "Unidad de distancia"
 
-#: admin/general-options.php:235
+#: admin/general-options.php:305
 msgid "Miles"
 msgstr "Millas"
 
-#: admin/general-options.php:236
+#: admin/general-options.php:306
 msgid "Kilometers"
 msgstr "Kilómetros"
 
-#: admin/general-options.php:242
+#: admin/general-options.php:312
 msgid "Default Search Radius"
 msgstr "Radio de búsqueda por defecto"
 
-#: admin/general-options.php:256
+#: admin/general-options.php:326
 msgid "Number of Results to Display"
 msgstr ""
 
-#: admin/general-options.php:266
+#: admin/general-options.php:336
 msgid "Select \"No Limit\" to display all results within the search radius."
 msgstr ""
 
-#: admin/general-options.php:271
+#: admin/general-options.php:341
 #: admin/help.php:78
 #, fuzzy
 msgid "Auto-Load Database"
 msgstr "Gestionar la base de datos"
 
-#: admin/general-options.php:274
+#: admin/general-options.php:344
 msgid "No auto-load"
 msgstr ""
 
-#: admin/general-options.php:275
+#: admin/general-options.php:345
 #, fuzzy
 msgid "Auto-load search results"
 msgstr "Carga automática de direcciones"
 
-#: admin/general-options.php:276
+#: admin/general-options.php:346
 msgid "Auto-load all locations"
 msgstr ""
 
-#: admin/general-options.php:284
+#: admin/general-options.php:354
 #, fuzzy
 msgid "Stick to default location set above"
 msgstr "Estado por defecto"
 
-#: admin/general-options.php:289
+#: admin/general-options.php:359
 msgid "Default Zoom Level"
 msgstr "Nivel de zoom por defecto"
 
-#: admin/general-options.php:298
+#: admin/general-options.php:368
 msgid "1 is the most zoomed out (the whole world is visible) and 19 is the most zoomed in."
 msgstr "1 es el mínimo zoom (donde toda la tierra es visible) y 19 es el máximo."
 
-#: admin/general-options.php:303
+#: admin/general-options.php:373
 #: admin/help.php:89
 msgid "Special Location Label"
 msgstr "Etiqueta de localización especial"
 
-#: admin/general-options.php:337
+#: admin/general-options.php:407
 msgid "Map Style Defaults"
 msgstr ""
 
-#: admin/general-options.php:340
+#: admin/general-options.php:410
 #, php-format
 msgid "To insert SimpleMap into a post or page, type this shortcode in the body: %s"
 msgstr ""
 
-#: admin/general-options.php:346
+#: admin/general-options.php:416
 msgid "Map Size"
 msgstr "Tamaño del Mapa"
 
-#: admin/general-options.php:348
+#: admin/general-options.php:418
 msgid "Width:"
 msgstr "Ancho:"
 
-#: admin/general-options.php:350
+#: admin/general-options.php:420
 msgid "Height:"
 msgstr "Alto:"
 
-#: admin/general-options.php:352
+#: admin/general-options.php:422
 #, php-format
 msgid "Enter a numeric value with CSS units, such as %s or %s."
 msgstr "Introduzca un valor numerico con unidades CSS, como %s o %s"
 
-#: admin/general-options.php:357
+#: admin/general-options.php:427
 msgid "Default Map Type"
 msgstr "Mapa por defecto"
 
-#: admin/general-options.php:361
+#: admin/general-options.php:431
 #, fuzzy
 msgid "Road map"
 msgstr "Mapa normal"
 
-#: admin/general-options.php:368
+#: admin/general-options.php:438
 msgid "Satellite map"
 msgstr "Mapa por satélite"
 
-#: admin/general-options.php:375
+#: admin/general-options.php:445
 msgid "Hybrid map"
 msgstr "Mapa híbrido"
 
-#: admin/general-options.php:382
+#: admin/general-options.php:452
 msgid "Terrain map"
 msgstr "Mapa relieve"
 
-#: admin/general-options.php:390
+#: admin/general-options.php:460
 msgid "Theme"
 msgstr "Plantilla"
 
-#: admin/general-options.php:397
+#: admin/general-options.php:467
 msgid "Default Themes"
 msgstr "Plantilla por defecto"
 
-#: admin/general-options.php:405
+#: admin/general-options.php:475
 msgid "Custom Themes"
 msgstr "Plantillas propias"
 
-#: admin/general-options.php:414
+#: admin/general-options.php:484
 #, fuzzy, php-format
 msgid "To add your own theme, upload your own CSS file to a new directory in your plugins folder called %s simplemap-styles%s.  To give it a name, use the following header in the top of your stylesheet:"
 msgstr "Para añadir tu propio estilo, sube la hoja de estilos CSS a un nuevo directorio en la sección de plugins llamado"
 
-#: admin/general-options.php:423
+#: admin/general-options.php:493
 msgid "Display Search Form"
 msgstr "Mostrar el cajetín de búsqueda"
 
-#: admin/general-options.php:430
+#: admin/general-options.php:500
 msgid "Show the search form above the map"
 msgstr "Mostrar el cajetín sobre el mapa"
 
-#: admin/general-options.php:435
+#: admin/general-options.php:505
 msgid "SimpleMap Link"
 msgstr "Enlace a SimpleMap"
 
-#: admin/general-options.php:442
+#: admin/general-options.php:512
 msgid "Show the \"Powered by SimpleMap\" link"
 msgstr "Mostrar el enlace \"Creado por SimpleMap\""
 
@@ -778,18 +818,23 @@ msgstr "Por favor, introduzca el nombre, dirección, ciudad o el código postal 
 msgid "Powered by %s SimpleMap"
 msgstr "Mostrar el enlace \"Creado por SimpleMap\""
 
-#: includes/scripts.php:30
+#: includes/scripts.php:31
 msgid "Visit Website"
 msgstr ""
 
-#: includes/scripts.php:31
+#: includes/scripts.php:32
 msgid "Get Directions"
 msgstr ""
 
-#: includes/scripts.php:32
+#: includes/scripts.php:33
 #, fuzzy
 msgid "Location"
 msgstr "Añadir localización"
+
+#: includes/scripts.php:38
+#, fuzzy
+msgid "No results found."
+msgstr "No se han encontrado direcciones"
 
 #: includes/toolbar.php:6
 msgid "Go to the SimpleMap Home Page"

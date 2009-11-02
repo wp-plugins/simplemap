@@ -100,7 +100,7 @@ function searchLocationsNear(center, homeAddress, source, mapLock, categories) {
 		var results = document.getElementById('results');
 		results.innerHTML = '';
 		if (markers.length == 0) {
-			results.innerHTML = '<h3>No results found.</h3>';
+			results.innerHTML = '<h3>' + noresults_text + '</h3>';
 			map.setCenter(new GLatLng(default_lat,default_lng), zoom_level);
 			return;
 		}
@@ -196,9 +196,31 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 					if (address2 != '') {
 	html += '			<br />' + address2;
 					}
+					
+					if (address_format == 'town, province postalcode') {
+	html += '		<br />' + city + ', ' + state + ' ' + zip + '</p>';
+					}
+					else if (address_format == 'town province postalcode') {
 	html += '		<br />' + city + ' ' + state + ' ' + zip + '</p>';
+					}
+					else if (address_format == 'town-province postalcode') {
+	html += '		<br />' + city + '-' + state + ' ' + zip + '</p>';
+					}
+					else if (address_format == 'postalcode town-province') {
+	html += '		<br />' + zip + ' ' + city + '-' + state + '</p>';
+					}
+					else if (address_format == 'postalcode town, province') {
+	html += '		<br />' + zip + ' ' + city + ', ' + state + '</p>';
+					}
+					else if (address_format == 'postalcode town') {
+	html += '		<br />' + zip + ' ' + city + '</p>';
+					}
+					else if (address_format == 'town postalcode') {
+	html += '		<br />' + city + ' ' + zip + '</p>';
+					}
+					
 					if (phone != '') {
-	html += '			<p>' + phone;
+	html += '			<p>' + phone_text + ': ' + phone;
 						if (fax != '') {
 	html += '				<br />' + fax_text + ': ' + fax;
 						}
@@ -245,12 +267,14 @@ function createMarker(point, name, address, address2, city, state, zip, country,
 		
 		GEvent.addListener(marker, 'click', function() {
 			marker.openInfoWindowTabsHtml([new GInfoWindowTab(location_tab_text, html), new GInfoWindowTab(description_tab_text, html2)], {maxWidth: maxbubblewidth});
+			window.location = '#map_top';
 		});
 	}
 
 	else {
 		GEvent.addListener(marker, 'click', function() {
 			marker.openInfoWindowHtml(html, {maxWidth: maxbubblewidth});
+			window.location = '#map_top';
 		});
 	}
 	return marker;
@@ -285,12 +309,33 @@ function createSidebarEntry(marker, name, address, address2, city, state, zip, c
   if (address2 != '') {
   	html += '<br />' + address2;
   }
-  html += '<br />' + city + ' ' + state + ' ' + zip + '</address></div>';
+  
+	if (address_format == 'town, province postalcode') {
+		html += '<br />' + city + ', ' + state + ' ' + zip + '</address></div>';
+	}
+	else if (address_format == 'town province postalcode') {
+		html += '<br />' + city + ' ' + state + ' ' + zip + '</address></div>';
+	}
+	else if (address_format == 'town-province postalcode') {
+		html += '<br />' + city + '-' + state + ' ' + zip + '</address></div>';
+	}
+	else if (address_format == 'postalcode town-province') {
+		html += '<br />' + zip + ' ' + city + '-' + state + '</address></div>';
+	}
+	else if (address_format == 'postalcode town, province') {
+		html += '<br />' + zip + ' ' + city + ', ' + state + '</address></div>';
+	}
+	else if (address_format == 'postalcode town') {
+		html += '<br />' + zip + ' ' + city + '</address></div>';
+	}
+	else if (address_format == 'town postalcode') {
+		html += '<br />' + city + ' ' + zip + '</address></div>';
+	}
   
   // Phone & fax numbers
   html += '<div class="result_phone">';
   if (phone != '') {
-  	html += 'Phone: ' + phone;
+  	html += phone_text + ': ' + phone;
   }
   if (fax != '') {
   	html += '<br />' + fax_text + ': ' + fax;
