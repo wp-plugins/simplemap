@@ -1,3 +1,11 @@
+#map img {
+	background: none !important;
+	padding: none !important;
+	max-width: none !important;
+	max-height: none !important;
+	border: none !important;
+}
+
 body.toplevel_page_simplemap-simplemap small, body.simplemap_page_Add-Location small, body.simplemap_page_Manage-Database small, body.simplemap_page_Manage-Categories small, body.simplemap_page_Import-Export small {
 	color: #777;
 }

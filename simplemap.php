@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.2b3
+Version: 1.2b4
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
@@ -85,7 +85,8 @@ class SimpleMap {
 			'results_limit' => '20',
 			'address_format' => 'town, province postalcode',
 			'powered_by' => 'show',
-			'display_search' => 'show'
+			'display_search' => 'show',
+			'map_pages' => '0'
 		);
 		
 		$saved = get_option($this->db_option);
@@ -144,6 +145,10 @@ class SimpleMap {
 			$options['units'] = $_POST['units'];
 			$options['results_limit'] = $_POST['results_limit'];
 			$options['autoload'] = $_POST['autoload'];
+			$options['map_pages'] = $_POST['map_pages'];
+			
+			if ($_POST['map_pages'] == '' || !$_POST['map_pages'])
+				$options['map_pages'] = '0';
 				
 			if ($_POST['lock_default_location'])
 				$options['lock_default_location'] = 'lock';
@@ -172,6 +177,7 @@ class SimpleMap {
 		$default_lng = $options['default_lng'];
 		$default_state = $options['default_state'];
 		$default_domain = $options['default_domain'];
+		$map_pages = $options['map_pages'];
 		$lock_default_location = $options['lock_default_location'];
 		
 		$zoom_level = $options['zoom_level'];

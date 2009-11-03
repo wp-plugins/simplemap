@@ -1,3 +1,36 @@
+<?php
+header("Content-type: application/x-javascript");
+import_request_variables('g', 'sm_');
+?>
+
+var default_lat = <?php echo urldecode($sm_default_lat); ?>;
+var default_lng = <?php echo urldecode($sm_default_lng); ?>;
+var default_radius = <?php echo urldecode($sm_default_radius); ?>;
+var zoom_level = <?php echo urldecode($sm_zoom_level); ?>;
+var map_width = "<?php echo urldecode($sm_map_width); ?>";
+var map_height = "<?php echo urldecode($sm_map_height); ?>";
+var special_text = "<?php echo urldecode($sm_special_text); ?>";
+var units = "<?php echo urldecode($sm_units); ?>";
+var limit = "<?php echo urldecode($sm_results_limit); ?>";
+var plugin_url = "<?php echo urldecode($sm_plugin_url); ?>";
+<?php
+if ($sm_autoload == 'some' || $sm_autoload == 'all')
+	$autozoom = $sm_zoom_level;
+else
+	$autozoom = 'false';
+?>
+var autozoom = <?php echo $autozoom; ?>;
+var default_domain = "<?php echo urldecode($sm_default_domain); ?>";
+var address_format = "<?php echo urldecode($sm_address_format); ?>";
+var visit_website_text = "<?php echo urldecode($sm_visit_website_text); ?>";
+var get_directions_text = "<?php echo urldecode($sm_get_directions_text); ?>";
+var location_tab_text = "<?php echo urldecode($sm_location_tab_text); ?>";
+var description_tab_text = "<?php echo urldecode($sm_description_tab_text); ?>";
+var phone_text = "<?php echo urldecode($sm_phone_text); ?>";
+var fax_text = "<?php echo urldecode($sm_fax_text); ?>";
+var tags_text = "<?php echo urldecode($sm_tags_text); ?>";
+var noresults_text = "<?php echo urldecode($sm_noresults_text); ?>";
+
 var map;
 var geocoder;
 

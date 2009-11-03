@@ -375,6 +375,14 @@ jQuery(document).ready(function($) {
 											<input type="text" name="special_text" id="special_text" size="30" value="<?php echo $special_text; ?>" />
 										</td>
 									</tr>
+									
+									<tr valign="top">
+										<td><label for="map_pages"><?php _e('Map Page IDs', 'SimpleMap'); ?></label></td>
+										<td>
+											<input type="text" name="map_pages" id="map_pages" size="30" value="<?php echo $map_pages; ?>" /><br />
+											<small><em><?php _e('Enter the IDs of the pages/posts the map will appear on, separated by commas. The map scripts will only be loaded on those pages. Leave blank or enter 0 to load the scripts on all pages.', 'SimpleMap'); ?></em></small>
+										</td>
+									</tr>
 								
 								</table>
 								

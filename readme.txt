@@ -11,7 +11,7 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 == Description ==
 
-**Version 1.2b3 is a beta testing release. DO NOT USE IT IN A PRODUCTION ENVIRONMENT!**
+**Version 1.2b4 is a beta testing release. DO NOT USE IT IN A PRODUCTION ENVIRONMENT!**
 
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
@@ -85,6 +85,11 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.2b4 =
+* Cleaned up the scripts loaded in the head section of the page.
+* Added ability to specify page IDs on which to load the map scripts.
+* Separated CSS from Javascript in the head section to hopefully make it more compatible with the "Javascript to the Bottom" plugin.
 
 = 1.2b3 =
 * Fixed error where database table was not being created on install/activation of plugin
