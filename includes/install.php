@@ -1,7 +1,7 @@
 <?php
 $plugin_folder = $this->plugin_url;
 global $wpdb;
-$simplemap_db_version = '1.2b3';
+$simplemap_db_version = '1.2.1';
 require_once(ABSPATH . "wp-admin/upgrade-functions.php");
 $installed_ver = get_option('simplemap_db_version');
 

@@ -11,8 +11,6 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 == Description ==
 
-**Version 1.2b4 is a beta testing release. DO NOT USE IT IN A PRODUCTION ENVIRONMENT!**
-
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
 Key features include:
@@ -85,6 +83,9 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
 
 == Changelog ==
+
+= 1.2.1 =
+* Moved SimpleMap out of beta status and into a stable release
 
 = 1.2b4 =
 * Cleaned up the scripts loaded in the head section of the page.
@@ -226,7 +227,7 @@ If you want to help with any translation for this plugin, please don't hesitate 
 
 == License ==
 
-SimpleMap - the easy store locator for WordPress.
+SimpleMap - the easy store locator for WordPress.
 Copyright (C) 2009 Aliso the Geek.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

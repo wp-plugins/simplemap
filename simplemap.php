@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.2b4
+Version: 1.2.1
 Plugin URI: http://simplemap-plugin.com/
 Author: Alison Barrett
 Author URI: http://alisothegeek.com/
-Description: *This version is for beta testing only!* An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
+Description: An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 */
 	
 global $wp_version;
