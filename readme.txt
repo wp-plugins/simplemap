@@ -13,6 +13,8 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
+Please note: SimpleMap has some compatibility problems with WordPress MU.
+
 Key features include:
 
 * Manage locations from any country supported by Google Maps
