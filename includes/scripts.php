@@ -3,8 +3,11 @@
 SimpleMap Plugin
 scripts.php: Contains scripts to insert into <head>
 */
+//return; // TODO: Enqueue these correctly.
 global $wp_query;
-$thisID = $wp_query->post->ID;
+$thisID = 0;
+if ( is_object( $wp_query ) && is_object( $wp_query->post ) )
+	$thisID = $wp_query->post->ID;
 
 $pages = explode(',', $options['map_pages']);
 if (in_array($thisID, $pages) || $options['map_pages'] == '0' || is_admin()) :
@@ -44,7 +47,7 @@ function load() {
 //echo '<script type="text/javascript" src="'.$this->plugin_url.'js/functions.js"></script>'."\n";
 echo '<script type="text/javascript" src="'.$this->plugin_url.'js/functions.js.php?'.$r.'"></script>'."\n";
 echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-includes/js/jquery/jquery.js"></script>'."\n";
-if ($options['api_key'] != '') {
+if ( isset( $options['api_key'] ) && $options['api_key'] != '') {
 		echo '<script src="http://maps.google'.$options['default_domain'].'/maps?file=api&amp;v=2&amp;key='.$options['api_key'].'&amp;sensor=false" type="text/javascript"></script>'."\n";
 }
 echo "\n".'<!-- End of SimpleMap scripts ======================== -->'."\n"."\n";

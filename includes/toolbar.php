@@ -6,20 +6,20 @@
 		<a href="http://simplemap-plugin.com" target="_blank" title="<?php _e('Go to the SimpleMap Home Page', 'SimpleMap'); ?>"><?php _e('SimpleMap Home Page', 'SimpleMap'); ?></a>
 	</td>
 	<td class="sm-toolbar-item">
-		<a href="http://alisothegeek.com/forum/" target="_blank" title="<?php _e('Go to the SimpleMap Support Forums', 'SimpleMap'); ?>"><?php _e('Support Forums', 'SimpleMap'); ?></a>
+		<a href="https://simplemap.tenderapp.com/home" target="_blank" title="<?php _e('Go to the SimpleMap Support Forums', 'SimpleMap'); ?>"><?php _e('Support Forums', 'SimpleMap'); ?></a>
 	</td>
 	<td class="sm-toolbar-item">
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-			<input type="hidden" name="cmd" value="_s-xclick">
-			<input type="hidden" name="hosted_button_id" value="8923857">
-			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-			<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+		<input type="hidden" name="cmd" value="_s-xclick">
+		<input type="hidden" name="hosted_button_id" value="DTJBYXGQFSW64">
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
 		</form>
 	</td>
 </tr></table>
 
 <?php
-	if ($options['api_key'] == '')
+	if ( !isset( $options['api_key'] ) || $options['api_key'] == '')
 		echo '<div class="error"><p>'.__('You must enter an API key for your domain.', 'SimpleMap').' <a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap/simplemap.php">'.__('Enter a key on the General Options page.', 'SimpleMap').'</a></p></div>';
 		
 	if (get_option('simplemap_cats_using_ids') == 'false' || !get_option('simplemap_cats_using_ids')) {

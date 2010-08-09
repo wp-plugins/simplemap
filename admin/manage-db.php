@@ -74,20 +74,20 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		
 		// at the beginning
 		if ($paged - 5 < 1) {
-			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=manage-database&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
 			$page_numbers_start = 1;
 			$page_numbers_end = 9;
 		}
 		// at the end
 		else if ($paged + 5 > $number_of_pages) {
-			$dots1 = "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
+			$dots1 = "<a class='page-numbers' href='$current_page?page=manage-database&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
 			$page_numbers_start = $number_of_pages - 9;
 			$page_numbers_end = $number_of_pages;
 		}
 		// in the middle
 		else {
-			$dots1 = "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
-			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
+			$dots1 = "<a class='page-numbers' href='$current_page?page=manage-database&paged=1&orderby=$orderbyme'>1</a>&nbsp;&hellip;\n";
+			$dots2 = "&hellip;&nbsp;<a class='page-numbers' href='$current_page?page=manage-database&paged=$number_of_pages&orderby=$orderbyme'>$number_of_pages</a>\n";
 			$page_numbers_start = $paged - 4;
 			$page_numbers_end = $paged + 4;
 		}
@@ -105,7 +105,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=manage-database&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -114,13 +114,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=$i&orderby=$orderbyme'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=manage-database&paged=$i&orderby=$orderbyme'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=manage-database&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
@@ -131,10 +131,10 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		<thead>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo $orderbyarrow['name']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['name'] ) ? $orderbyarrow['name'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['address'] ) ? $orderbyarrow['address'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['phone'] ) ? $orderbyarrow['phone'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['category'] ) ? $orderbyarrow['category'] : ''; ?></a></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Tags', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
@@ -148,14 +148,14 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 		<tfoot>
 			<tr>
 				<!-- <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th> -->
-				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo $orderbyarrow['name']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo $orderbyarrow['address']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo $orderbyarrow['phone']; ?></a></th>
-				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=<?php echo urlencode(__('Manage Database', 'SimpleMap')); ?>&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php echo $orderbyarrow['category']; ?></a></th>
+				<th scope="col" class="manage-column" style="width: 15%;"><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=name"><?php _e('Name', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['name'] ) ? $orderbyarrow['name'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=address"><?php _e('Address', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['address'] ) ? $orderbyarrow['address'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=phone"><?php _e('Phone/Fax/URL', 'SimpleMap'); ?><?php echo isset( $orderbyarrow['phone'] ) ? $orderbyarrow['phone'] : ''; ?></a></th>
+				<th scope="col" class="manage-column" style=""><a href="<?php echo $current_page; ?>?page=manage-database&paged=<?php echo $paged; ?>&orderby=category"><?php _e('Category', 'SimpleMap'); ?><?php isset( $orderbyarrow['category'] ) ? $orderbyarrow['category'] : ''; ?></a></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Tags', 'SimpleMap'); ?></th>
 				<th scope="col" class="manage-column" style=""><?php _e('Description', 'SimpleMap'); ?></th>
 				
-				<?php if ($options['special_text'] != '') { ?>
+				<?php if ( isset( $options['special_text'] ) && $options['special_text'] != '') { ?>
 					<th scope="col" class="manage-column" style="width: 100px;"><?php echo $options['special_text']; ?></th>
 				<?php } ?>
 				
@@ -274,7 +274,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 				<span class="displaying-num"><?php _e('Displaying', 'SimpleMap'); ?> <?php echo ($start + 1); ?>&#8211;<?php echo ($end); ?> of <?php echo $count; ?></span>
 				<?php
 				if ($paged > 1)
-					echo "<a class='prev page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
+					echo "<a class='prev page-numbers' href='$current_page?page=manage-database&paged=".($paged - 1)."&orderby=$orderbyme'>&laquo;</a>\n";
 					
 				echo $dots1.' ';
 				
@@ -283,13 +283,13 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					if ($i == $paged)
 						echo "<span class='page-numbers current'>$i</span>\n";
 					else
-						echo "<a class='page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=$i&orderby=$orderbyme'>$i</a>\n";
+						echo "<a class='page-numbers' href='$current_page?page=manage-database&paged=$i&orderby=$orderbyme'>$i</a>\n";
 				}
 				
 				echo $dots2.' ';
 				
 				if ($paged < $number_of_pages - 1)
-					echo "<a class='next page-numbers' href='$current_page?page=".urlencode(__('Manage Database', 'SimpleMap'))."&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
+					echo "<a class='next page-numbers' href='$current_page?page=manage-database&paged=".($paged + 1)."&orderby=$orderbyme'>&raquo;</a>\n";
 				?>
 			</div>
 		</div>
@@ -312,7 +312,7 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 			<input type="hidden" name="store_lng" value="" />
 -->
 			<input type="hidden" name="altclass" value="" />
-			<input type="hidden" name="api_key" value="<?php echo $options['api_key']; ?>" />
+			<input type="hidden" name="api_key" value="<?php echo isset( $options['api_key'] ) ? $options['api_key'] : ''; ?>" />
 		
 			<fieldset style="width: 26%;"><div class="inline-edit-col">
 				<label for="store_name">
@@ -343,23 +343,23 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 					<option value="none">&mdash;</option>
 					<optgroup label="United States">
 						<?php
-						foreach ($states_list as $key => $value) {
-							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
-						}
+						//foreach ($states_list as $key => $value) {
+							//echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						//}
 						?>
 					</optgroup>
 					<optgroup label="Canada">
 						<?php
-						foreach ($canada_list as $key => $value) {
-							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
-						}
+						//foreach ($canada_list as $key => $value) {
+							//echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						//}
 						?>
 					</optgroup>
 					<optgroup label="Australia">
 						<?php
-						foreach ($australia_list as $key => $value) {
-							echo '<option value="'.$key.'">'.$value.'</option>'."\n";
-						}
+						//foreach ($australia_list as $key => $value) {
+							//echo '<option value="'.$key.'">'.$value.'</option>'."\n";
+						//}
 						?>
 					</optgroup>
 				</select><br />
