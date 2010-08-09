@@ -4,6 +4,11 @@ SimpleMap Plugin
 import-export.php: Displays the Import/Export admin page
 */
 
+
+$current_page = $_SERVER['SCRIPT_NAME'];
+$current_query = '?'.$_SERVER['QUERY_STRING'];
+$current_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
 ?>
 
 <script type="text/javascript">

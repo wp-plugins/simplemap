@@ -9,36 +9,32 @@ import_request_variables('pg', 'bcl_');
 include "../includes/connect-db.php";
 include "../includes/sminc.php";
 
-if ($bcl_action == 'delete') {
-
-	$query = "DELETE FROM ".$cat_table." WHERE id = '$bcl_del_id'";
-	$result = mysql_query($query) or die (mysql_error());
-	header("Location: {$_SERVER['HTTP_REFERER']}");
+if ( $bcl_action == 'delete' ) {
+	// Delete the category and return to the requesting script
+	$query = "DELETE FROM " . $cat_table . " WHERE id = '$bcl_del_id'";
+	$result = mysql_query( $query ) or die ( mysql_error() );
+	header( "Location: {$_SERVER['HTTP_REFERER']}" );
 	exit();
 
-}
-
-else if ($bcl_action == 'delete_all') {
-
+} else if ( $bcl_action == 'delete_all' ) {
+	// Delete all categories and return to the requesting script
 	$query = "DELETE FROM ".$cat_table;
 	$result = mysql_query($query) or die (mysql_error());
 	header("Location: {$_SERVER['HTTP_REFERER']}");
 	exit();
 	
-}
+} else {
 
-else {
+	if ( $bcl_action == 'edit' || $bcl_action == 'inline-save') {
 	
-	if ($bcl_action == 'edit' || $bcl_action == 'inline-save') {
+		// Fires when we are editing or doing an inline save for categories.
 		$query = "UPDATE $cat_table SET name = '$bcl_store_name' WHERE id = '$bcl_store_id'";
 		
-		$result = mysql_query($query);
-		if (!$result) {
-			die("Invalid query: " . mysql_error() . "<br />\nQuery: " . $query . "<br />\n");
-		}
-		else { 
-			$bcl_store_name = stripslashes($bcl_store_name);
-		?>
+		if ( !$result = mysql_query($query) ) {
+			die( "Invalid query: " . mysql_error() . "<br />\nQuery: " . $query . "<br />\n" );
+		} else { 
+			$bcl_store_name = stripslashes( $bcl_store_name );
+			?>
 			<tr id='post-<?php echo $bcl_store_id; ?>' class='<?php echo $bcl_altclass; ?>author-self status-publish iedit' valign="top">
 				<!-- <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="1" /></th> -->
 					<td class="post-title column-title"><strong><span class="row-title row_name"><?php echo $bcl_store_id; ?></span></strong></td>
@@ -55,21 +51,17 @@ else {
 			</tr>
 			<?php
 		}
-	}
-	else if ($bcl_action == 'add') {
+	} else if ( $bcl_action == 'add' ) {
+		// We're adding a new category
 		$query = "INSERT INTO $cat_table SET name = '$bcl_new_store_name'";
 		
-		$result = mysql_query($query);
-		if (!$result) {
+		if ( !$result = mysql_query( $query ) ) {
 			die("Invalid query: " . mysql_error() . "<br />\nQuery: " . $query . "<br />\n");
-		}
-		else {
-			$urlname = urlencode(stripslashes($bcl_store_name));
-			header("Location: {$_SERVER['HTTP_REFERER']}&added=$urlname");
+		} else {
+			$urlname = urlencode(stripslashes( $bcl_store_name ) );
+			header( "Location: {$_SERVER['HTTP_REFERER']}&added=$urlname" );
 			exit();
 		}
 	}
 }
-
-
 ?>
