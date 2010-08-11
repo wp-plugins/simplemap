@@ -86,6 +86,10 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
+= TRUNK =
+* Fixed bug in import process to prevent empty chars in variables
+* Fixed bug in import that was putting the wrong data in the wrong columns (zips are no longer populated with country)
+
 = 1.2.2 =
 * Modified URL references to admin pages to fix 'Do not have permissions' errors that occurred in WP 3.0
 * Modified the way existing form values are populated in the admin pages
