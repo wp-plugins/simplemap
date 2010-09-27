@@ -5,6 +5,10 @@ add-location.php: Displays the Add Location admin page
 */
 
 global $wpdb;
+
+$current_page = $_SERVER['SCRIPT_NAME'];
+$current_query = '?'.$_SERVER['QUERY_STRING'];
+$current_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 ?>
 
 <script type="text/javascript">
