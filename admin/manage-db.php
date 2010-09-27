@@ -225,7 +225,8 @@ include "../wp-content/plugins/simplemap/includes/states-array.php";
 						if ($row['state'])
 							echo "<span class='row_state'>".$row['state']."</span> ";
 						echo "<span class='row_zip'>".$row['zip']."</span>";
-						echo "<br /><span class='row_country'>".strtoupper($country_list[$row['country']])."</span>"; ?>
+						if ( isset( $country_list[$row['country']] ) )
+							echo "<br /><span class='row_country'>".strtoupper($country_list[$row['country']])."</span>"; ?>
 					</td>
 					
 					<td><span class="row_phone">

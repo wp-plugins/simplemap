@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 1.2.2
+Version: 1.2.3
 Plugin URI: http://simplemap-plugin.com/
 Author: Glenn Ansley
 Author URI: http://fullthrottledevelopment.com/
@@ -137,7 +137,7 @@ class SimpleMap {
 			$options['default_lng'] 	= $_POST['default_lng'];
 			$options['zoom_level'] 		= (int)$_POST['zoom_level'];
 			$options['default_radius'] 	= (int)$_POST['default_radius'];
-			$options['map_type'] 		= $_POST['map_type'];
+			$options['map_type'] 		= isset( $_POST['map_type'] ) ? esc_attr( $_POST['map_type'] ) : 'G_NORMAL_MAP';
 			$options['special_text'] 	= $_POST['special_text'];
 			$options['default_state'] 	= $_POST['default_state'];
 			$options['default_country']	= $_POST['default_country'];
@@ -152,7 +152,7 @@ class SimpleMap {
 			if ( $_POST['map_pages'] == '' || !$_POST['map_pages'] )
 				$options['map_pages'] = '0';
 				
-			if ( $_POST['lock_default_location'] )
+			if ( isset( $_POST['lock_default_location'] ) )
 				$options['lock_default_location'] = 'lock';
 			else
 				$options['lock_default_location'] = 'unlock';

@@ -12,7 +12,7 @@ if ( is_object( $wp_query ) && is_object( $wp_query->post ) )
 $pages = explode(',', $options['map_pages']);
 if (in_array($thisID, $pages) || $options['map_pages'] == '0' || is_admin()) :
 
-echo "\n".'<!-- SimpleMap version 1.2.1 ======================== -->'."\n"."\n";
+echo "\n".'<!-- SimpleMap version 1.2.3 ======================== -->'."\n"."\n";
 echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/'.$options['map_stylesheet'].'" type="text/css" />'."\n";
 echo '<link rel="stylesheet" href="'.$this->plugin_url.'includes/admin.css" type="text/css" />'."\n";
 //include $this->plugin_url.'js/functions.js.php';

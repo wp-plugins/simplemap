@@ -97,7 +97,7 @@ if ( isset( $action ) ) {
 				}
 			}
 		}
-		
+		//echo "<pre>";print_r( $fields ); die();
 		/*
 		echo "Column matches (your CSV column name = SimpleMap column name):<br />\n";
 		foreach ($fields as $key => $value) {
@@ -116,8 +116,9 @@ if ( isset( $action ) ) {
 			// This stores the values into a temporary array called $row
 			// and uses the standard field names for simplicity in this loop.
 			$row = array();
-			foreach ( $fields as $key => $value )
-				$row[$key] = $data[$value];
+			foreach ( $fields as $key => $value ) {
+				$row[$key] = isset( $data[$value] ) ? $data[$value] : '';
+			}
 			
 			// Add 'http://' to the URL if it isn't already there
 			if ( $row['url'] != '' ) {
@@ -139,9 +140,13 @@ if ( isset( $action ) ) {
 				$ready_to_insert = true;
 				
 			} else {
+				global $options;
 				
-				define( "MAPS_HOST", "maps.google.com" );
-				define( "KEY", $options['api_key'] );
+				if( !defined( "MAPS_HOST" ) )
+					define( "MAPS_HOST", "maps.google.com" );
+	
+				if ( !defined( "KEY" ) )
+					define( "KEY", $options['api_key'] );
 				
 				$geocodeAddress = $row['name'] . ', ' . $row['city'];
 				if ( $row['state'] )
@@ -159,7 +164,7 @@ if ( isset( $action ) ) {
 					$base_url = "http://" . MAPS_HOST . "/maps/geo?sensor=false&output=csv&key=" . KEY;
 					$request_url = $base_url . "&q=" . urlencode($geocodeAddress);
 					
-					if ( function_exists( curl_get_contents() ) )
+					if ( function_exists( 'curl_get_contents' ) )
 						$request_string = curl_get_contents( $request_url );
 					else
 						$request_string = file_get_contents( $request_url );
@@ -177,13 +182,15 @@ if ( isset( $action ) ) {
 						$ready_to_insert = true;
 					} else if ($status == '620') {
 					    // sent geocodes too fast
-					    $delay += 100000;
+					    $delay = 5000;
 					} else {
 						// failure to geocode
 						$geocode_pending = false;
 						$errors .= sprintf( __('Location "%s" failed to geocode, with status %s', 'SimpleMap' ), $row['name'], $status )."<br />";
 					}
-					usleep( $delay );
+					
+					if ( isset( $delay ) )
+						usleep( $delay );
 				}
 				
 				/* End Geocode
@@ -211,7 +218,7 @@ if ( isset( $action ) ) {
 		}
 			
 		if ( $errors != '' )
-			$errors = '<br />' . $errors;
+			$errors = '<br />' . $errors . "<br />Find out what the errors mean <a href='http://code.google.com/apis/maps/documentation/javascript/v2/reference.html#GGeoStatusCode.Constants' target='new'>here</a>";
 		
 		$message = urlencode( sprintf( __( '%d records imported successfully.', 'SimpleMap' ), $lines ) . $errors );
 

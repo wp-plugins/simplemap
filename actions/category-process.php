@@ -53,12 +53,13 @@ if ( $bcl_action == 'delete' ) {
 		}
 	} else if ( $bcl_action == 'add' ) {
 		// We're adding a new category
+
 		$query = "INSERT INTO $cat_table SET name = '$bcl_new_store_name'";
 		
 		if ( !$result = mysql_query( $query ) ) {
 			die("Invalid query: " . mysql_error() . "<br />\nQuery: " . $query . "<br />\n");
 		} else {
-			$urlname = urlencode(stripslashes( $bcl_store_name ) );
+			$urlname = urlencode(stripslashes( $bcl_new_store_name ) );
 			header( "Location: {$_SERVER['HTTP_REFERER']}&added=$urlname" );
 			exit();
 		}

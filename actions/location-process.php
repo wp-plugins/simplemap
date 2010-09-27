@@ -3,6 +3,7 @@
 SimpleMap Plugin
 location-process.php: Adds/edits/deletes a location from the database
 */
+//echo "<pre>"; print_r( $_POST ); die();
 
 import_request_variables('pg', 'bcl_');
 
@@ -38,27 +39,28 @@ if ( $bcl_action == 'delete' ) {
 	isset( $bcl_special_text_exists ) ? $options_specialtext = true : $options_specialtext = false;
 
 	// Get existing address from database to see if we need to re-do the geocoding
-	$result = mysql_query( "SELECT address, city, state, country FROM " . $table . " WHERE id = '$bcl_del_id'" );
-	while ( $row = mysql_fetch_array( $result ) ) {
-		$prev_address = $row['address'];
-		$prev_city = $row['city'];
-		$prev_state = $row['state'];
-		$prev_country = $row['country'];
-	}
-	
-	$needs_geocode = false;
-	
-	// Only geocode if the address has changed OR if one or both of the lat/lng fields are blank
-	if ( $bcl_action == 'edit' || $bcl_action == 'inline_save' ) {
-		if ( ( $prev_address != $bcl_store_address || $prev_city != $bcl_store_city || $prev_state != $bcl_store_state || $prev_country != $bcl_store_country) || ( $bcl_store_lat == '' || $bcl_store_lng == '' ) ) {
-			$needs_geocode = true;
+	if ( isset( $bcl_store_id ) ) {
+		$result = mysql_query( "SELECT address, city, state, country FROM " . $table . " WHERE id = '$bcl_store_id'" );
+		while ( $row = mysql_fetch_array( $result ) ) {
+			$prev_address = $row['address'];
+			$prev_city = $row['city'];
+			$prev_state = $row['state'];
+			$prev_country = $row['country'];
 		}
-	} else if ( $bcl_action == 'add' ) {
-		if ( $bcl_store_lat == '' || $bcl_store_lng == '' ) {
-			$needs_geocode = true;
+	}	
+		$needs_geocode = false;
+		
+		// Only geocode if the address has changed OR if one or both of the lat/lng fields are blank
+		if ( $bcl_action == 'edit' || $bcl_action == 'inline_save' ) {
+			if ( ( $prev_address != $bcl_store_address || $prev_city != $bcl_store_city || $prev_state != $bcl_store_state || $prev_country != $bcl_store_country) || ( $bcl_store_lat == '' || $bcl_store_lng == '' ) ) {
+				$needs_geocode = true;
+			}
+		} else if ( $bcl_action == 'add' ) {
+			if ( $bcl_store_lat == '' || $bcl_store_lng == '' ) {
+				$needs_geocode = true;
+			}
 		}
-	}
-	
+		
 	if ( $needs_geocode ) {
 	
 		define( "MAPS_HOST", "maps.google.com" );
