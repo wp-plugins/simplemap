@@ -1,14 +1,14 @@
 <?php
 
-if (file_exists("./wp-config.php")){include("./wp-config.php");}
-elseif (file_exists("../wp-config.php")){include("../wp-config.php");}
-elseif (file_exists("../../wp-config.php")){include("../../wp-config.php");}
-elseif (file_exists("../../../wp-config.php")){include("../../../wp-config.php");}
-elseif (file_exists("../../../../wp-config.php")){include("../../../../wp-config.php");}
-elseif (file_exists("../../../../../wp-config.php")){include("../../../../../wp-config.php");}
-elseif (file_exists("../../../../../../wp-config.php")){include("../../../../../../wp-config.php");}
-elseif (file_exists("../../../../../../../wp-config.php")){include("../../../../../../../wp-config.php");}
-elseif (file_exists("../../../../../../../../wp-config.php")){include("../../../../../../../../wp-config.php");}
+if (file_exists("./wp-load.php")){include("./wp-load.php");}
+elseif (file_exists("../wp-load.php")){include("../wp-load.php");}
+elseif (file_exists("../../wp-load.php")){include("../../wp-load.php");}
+elseif (file_exists("../../../wp-load.php")){include("../../../wp-load.php");}
+elseif (file_exists("../../../../wp-load.php")){include("../../../../wp-load.php");}
+elseif (file_exists("../../../../../wp-load.php")){include("../../../../../wp-load.php");}
+elseif (file_exists("../../../../../../wp-load.php")){include("../../../../../../wp-load.php");}
+elseif (file_exists("../../../../../../../wp-load.php")){include("../../../../../../../wp-load.php");}
+elseif (file_exists("../../../../../../../../wp-load.php")){include("../../../../../../../../wp-load.php");}
 
 $table = $table_prefix."simple_map";
 $cat_table = $table_prefix."simple_map_cats";
