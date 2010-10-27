@@ -4,6 +4,10 @@ SimpleMap Plugin
 general-options.php: Displays the General Options admin page
 */
 
+$current_page = $_SERVER['SCRIPT_NAME'];
+$current_query = '?'.$_SERVER['QUERY_STRING'];
+$current_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
 global $wpdb;
 $db_table_name = $this->table;
 $db_cat_table_name = $this->cat_table;
@@ -224,19 +228,19 @@ jQuery(document).ready(function($) {
 										<td width="150"><label for="address_format"><?php _e('Address Format', 'SimpleMap'); ?></label></td>
 										<td>
 											<select id="address_format" name="address_format">
-												<option value="town, province postalcode"<?php echo $selected_address_format['town, province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												<option value="town, province postalcode"<?php echo isset( $selected_address_format['town, province postalcode'] ) ? $selected_address_format['town, province postalcode'] : ''; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
 
-												<option value="town province postalcode"<?php echo $selected_address_format['town province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												<option value="town province postalcode"<?php echo isset( $selected_address_format['town province postalcode'] ) ? $selected_address_format['town province postalcode'] : ''; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
 												
-												<option value="town-province postalcode"<?php echo $selected_address_format['town-province postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												<option value="town-province postalcode"<?php echo isset( $selected_address_format['town-province postalcode'] ) ? $selected_address_format['town-province postalcode'] : ''; ?> /><?php echo '['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
 												
-												<option value="postalcode town-province"<?php echo $selected_address_format['postalcode town-province']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']'; ?>
+												<option value="postalcode town-province"<?php echo isset( $selected_address_format['postalcode town-province'] ) ? $selected_address_format['postalcode town-province'] : ''; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'] - ['.__('State/Province', 'SimpleMap').']'; ?>
 												
-												<option value="postalcode town, province"<?php echo $selected_address_format['postalcode town, province']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']'; ?>
+												<option value="postalcode town, province"<?php echo isset( $selected_address_format['postalcode town, province'] ) ? $selected_address_format['postalcode town, province'] : ''; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').'], ['.__('State/Province', 'SimpleMap').']'; ?>
 												
-												<option value="postalcode town"<?php echo $selected_address_format['postalcode town']; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').']'; ?>
+												<option value="postalcode town"<?php echo isset( $selected_address_format['postalcode town'] ) ? $selected_address_format['postalcode town'] : ''; ?> /><?php echo '['.__('Zip/Postal Code', 'SimpleMap').']&nbsp;&nbsp;['.__('City/Town', 'SimpleMap').']'; ?>
 												
-												<option value="town postalcode"<?php echo $selected_address_format['town postalcode']; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
+												<option value="town postalcode"<?php echo isset( $selected_address_format['town postalcode'] ) ? $selected_address_format['town postalcode'] : ''; ?> /><?php echo '['.__('City/Town', 'SimpleMap').']&nbsp;&nbsp;['.__('Zip/Postal Code', 'SimpleMap').']'; ?>
 											</select>
 											<span class="hidden" id="order_1"><br /><?php _e('Example', 'SimpleMap'); ?>: Minneapolis, MN 55403</span>
 											<span class="hidden" id="order_2"><br /><?php _e('Example', 'SimpleMap'); ?>: Minneapolis MN 55403</span>
@@ -269,7 +273,7 @@ jQuery(document).ready(function($) {
 						<h3><?php _e('Map Configuration', 'SimpleMap'); ?></h3>
 						
 						<div class="inside">
-							<p class="sub"><?php printf(__('See %s the Help page%s for an explanation of these options.', 'SimpleMap'), '<a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page='.urlencode(__('SimpleMap Help', 'SimpleMap')).'">','</a>&nbsp;'); ?></p>
+							<p class="sub"><?php printf(__('See %s the Help page%s for an explanation of these options.', 'SimpleMap'), '<a href="'.get_bloginfo('wpurl').'/wp-admin/admin.php?page=simplemap-help">','</a>&nbsp;'); ?></p>
 							
 							<div class="table">
 								<table class="form-table">
@@ -302,8 +306,8 @@ jQuery(document).ready(function($) {
 												unset($selected_units);
 												$selected_units[$units] = ' selected="selected"';
 												?>
-												<option value="mi"<?php echo $selected_units['mi']; ?>><?php _e('Miles', 'SimpleMap'); ?></option>
-												<option value="km"<?php echo $selected_units['km']; ?>><?php _e('Kilometers', 'SimpleMap'); ?></option>
+												<option value="mi"<?php echo isset( $selected_units['mi'] ) ? $selected_units['mi'] : ''; ?>><?php _e('Miles', 'SimpleMap'); ?></option>
+												<option value="km"<?php echo isset( $selected_units['km'] ) ? $selected_units['km'] : ''; ?>><?php _e('Kilometers', 'SimpleMap'); ?></option>
 											</select>
 										</td>
 									</tr>
@@ -315,7 +319,8 @@ jQuery(document).ready(function($) {
 												<?php
 												foreach ($search_radii as $value) {
 													$r = (int)$value;
-													echo "<option value='$value'".$selected_radius[$r].">$value $units</option>\n";
+													$selected_radius_value = isset( $selected_radius[$r] ) ? $selected_radius[$r] : '';
+													echo "<option value='$value'" . $selected_radius_value . ">$value $units</option>\n";
 												}
 												?>
 											</select>
@@ -326,10 +331,11 @@ jQuery(document).ready(function($) {
 										<td><label for="results_limit"><?php _e('Number of Results to Display', 'SimpleMap'); ?></label></td>
 										<td>
 											<select name="results_limit" id="results_limit">
-												<option value="0"<?php echo $selected_results_limit[0]; ?>>No Limit</option>
+												<option value="0"<?php echo isset( $selected_results_limit[0] ) ? $selected_results_limit[0] : ''; ?>>No Limit</option>
 												<?php
 												for ($i = 5; $i <= 50; $i += 5) {
-													echo "<option value=\"$i\"".$selected_results_limit[$i].">$i</option>\n";
+													$selected_results_limit_value = isset( $selected_results_limit[$i] ) ? $selected_results_limit[$i] : '';
+													echo "<option value=\"$i\"" . $selected_results_limit_value . ">$i</option>\n";
 												}
 												?>
 											</select><br />
@@ -341,9 +347,9 @@ jQuery(document).ready(function($) {
 										<td><label for="autoload"><?php _e('Auto-Load Database', 'SimpleMap'); ?></label></td>
 										<td>
 											<select name="autoload" id="autoload">
-												<option value="none"<?php echo $selected_autoload['none']; ?>><?php _e('No auto-load', 'SimpleMap'); ?></option>
-												<option value="some"<?php echo $selected_autoload['some']; ?>><?php _e('Auto-load search results', 'SimpleMap'); ?></option>
-												<option value="all"<?php echo $selected_autoload['all'].$disabled['all']; ?>><?php _e('Auto-load all locations', 'SimpleMap'); ?></option>
+												<option value="none"<?php echo isset( $selected_autoload['none'] ) ? $selected_autoload['none'] : ''; ?>><?php _e('No auto-load', 'SimpleMap'); ?></option>
+												<option value="some"<?php echo isset( $selected_autoload['some'] ) ? $selected_autoload['some'] : ''; ?>><?php _e('Auto-load search results', 'SimpleMap'); ?></option>
+												<option value="all"<?php echo isset( $selected_autoload['all'] ) ? $selected_autoload['all'] : ''; echo isset( $disabled['all'] ) ? $disabled['all'] : ''; ?>><?php _e('Auto-load all locations', 'SimpleMap'); ?></option>
 											</select>
 											<?php if ($disabledmsg != '') { echo '<br /><small><em>'.$disabledmsg.'</small></em>'; } ?>
 											<?php
@@ -361,7 +367,8 @@ jQuery(document).ready(function($) {
 											<select name="zoom_level" id="zoom_level">
 												<?php
 												for ($i = 1; $i <= 19; $i++) {
-													echo "<option value=\"$i\"".$selected_zoom[$i].">$i</option>\n";
+													$selected_zoom_value = isset( $selected_zoom[$i] ) ? $selected_zoom[$i] : '';
+													echo "<option value=\"$i\"" . $selected_zoom_value . ">$i</option>\n";
 												}
 												?>
 											</select><br />
@@ -434,31 +441,31 @@ jQuery(document).ready(function($) {
 									<tr valign="top">
 										<td><label for="map_type"><?php _e('Default Map Type', 'SimpleMap'); ?></label></td>
 										<td>
-											<div class="radio-thumbnail<?php echo $selected_type_div["G_NORMAL_MAP"]; ?>">
+											<div class="radio-thumbnail<?php echo isset( $selected_type["G_NORMAL_MAP"] ) ? $selected_type["G_NORMAL_MAP"] : ''; ?>">
 												<label style="display: block;" for="map_type_normal">
 													<img src="<?php echo $this->plugin_url; ?>images/map-type-normal.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Road map', 'SimpleMap'); ?><br />
-													<input type="radio" style="border: none;" name="map_type" id="map_type_normal" value="G_NORMAL_MAP"<?php echo $selected_type["G_NORMAL_MAP"]; ?> />
+													<input type="radio" style="border: none;" name="map_type" id="map_type_normal" value="G_NORMAL_MAP"<?php echo isset( $selected_type["G_NORMAL_MAP"] ) ? $selected_type["G_NORMAL_MAP"] : ''; ?> />
 												</label>
 											</div>
 											
-											<div class="radio-thumbnail<?php echo $selected_type_div["G_SATELLITE_MAP"]; ?>">
+											<div class="radio-thumbnail<?php echo isset( $selected_type["G_SATELLITE_MAP"] ) ? $selected_type["G_SATELLITE_MAP"] : ''; ?>">
 												<label style="display: block;" for="map_type_satellite">
 													<img src="<?php echo $this->plugin_url; ?>images/map-type-satellite.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Satellite map', 'SimpleMap'); ?><br />
-													<input type="radio" style="border: none;" name="map_type" id="map_type_satellite" value="G_SATELLITE_MAP"<?php echo $selected_type["G_SATELLITE_MAP"]; ?> />
+													<input type="radio" style="border: none;" name="map_type" id="map_type_satellite" value="G_SATELLITE_MAP"<?php echo isset( $selected_type["G_SATELLITE_MAP"] ) ? $selected_type["G_SATELLITE_MAP"] : ''; ?> />
 												</label>
 											</div>
 											
-											<div class="radio-thumbnail<?php echo $selected_type_div["G_HYBRID_MAP"]; ?>">
+											<div class="radio-thumbnail<?php echo isset( $selected_type["G_HYBRID_MAP"] ) ? $selected_type["G_HYBRID_MAP"] : ''; ?>">
 												<label style="display: block;" for="map_type_hybrid">
 													<img src="<?php echo $this->plugin_url; ?>images/map-type-hybrid.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Hybrid map', 'SimpleMap'); ?><br />
-													<input type="radio" style="border: none;" name="map_type" id="map_type_hybrid" value="G_HYBRID_MAP"<?php echo $selected_type["G_HYBRID_MAP"]; ?> />
+													<input type="radio" style="border: none;" name="map_type" id="map_type_hybrid" value="G_HYBRID_MAP"<?php echo isset( $selected_type["G_HYBRID_MAP"] ) ? $selected_type["G_HYBRID_MAP"] : ''; ?> />
 												</label>
 											</div>
 											
-											<div class="radio-thumbnail<?php echo $selected_type_div["G_PHYSICAL_MAP"]; ?>">
+											<div class="radio-thumbnail<?php echo isset( $selected_type["G_PHYSICAL_MAP"] ) ? $selected_type["G_PHYSICAL_MAP"] : ''; ?>">
 												<label style="display: block;" for="map_type_terrain">
 													<img src="<?php echo $this->plugin_url; ?>images/map-type-terrain.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Terrain map', 'SimpleMap'); ?><br />
-													<input type="radio" style="border: none;" name="map_type" id="map_type_terrain" value="G_PHYSICAL_MAP"<?php echo $selected_type["G_PHYSICAL_MAP"]; ?> />
+													<input type="radio" style="border: none;" name="map_type" id="map_type_terrain" value="G_PHYSICAL_MAP"<?php echo isset( $selected_type["G_PHYSICAL_MAP"] ) ? $selected_type["G_PHYSICAL_MAP"] : ''; ?> />
 												</label>
 											</div>
 										</td>
@@ -472,18 +479,20 @@ jQuery(document).ready(function($) {
 												unset($selected_style);
 												$selected_style[$map_stylesheet] = ' selected="selected"';
 												
-												echo '<optgroup label="'.__('Default Themes', 'SimpleMap').'">'."\n";
+												echo '<optgroup label="' . __('Default Themes', 'SimpleMap') . '">' . "\n";
 												foreach ($themes1 as $file => $name) {
 													$file_full = 'simplemap/styles/'.$file;
-													echo '<option value="'.$file_full.'"'.$selected_style[$file_full].'>'.$name.'</option>'."\n";
+													$selected_style_value = isset( $selected_style[$file_full] ) ? $selected_style[$file_full] : '';
+													echo '<option value="' . $file_full . '"' . $selected_style_value . '>' . $name . '</option>' . "\n";
 												}
-												echo '</optgroup>'."\n";
+												echo '</optgroup>' . "\n";
 												
 												if (!empty($themes2)) {
 													echo '<optgroup label="'.__('Custom Themes', 'SimpleMap').'">'."\n";
 													foreach ($themes2 as $file => $name) {
 														$file_full = 'simplemap-styles/'.$file;
-														echo '<option value="'.$file_full.'"'.$selected_style[$file_full].'>'.$name.'</option>'."\n";
+														$selected_style_value = isset( $selected_style[$file_full] ) ? $selected_style[$file_full] : '';
+														echo '<option value="' . $file_full . '"' . $selected_style_value . '>' . $name . '</option>' . "\n";
 													}
 													echo '</optgroup>'."\n";
 												}

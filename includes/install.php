@@ -2,7 +2,7 @@
 $plugin_folder = $this->plugin_url;
 global $wpdb;
 $simplemap_db_version = '1.2.1';
-require_once(ABSPATH . "wp-admin/upgrade-functions.php");
+require_once( ABSPATH . "wp-admin/includes/upgrade.php" );
 $installed_ver = get_option('simplemap_db_version');
 
 /* If table doesn't exist or database number is outdated, create or modify both tables ===================================*/
@@ -50,5 +50,4 @@ if (($wpdb->get_var("SHOW TABLES LIKE '".$this->table."'") != $this->table) || (
 }
 
 /* If updated tables already exist, do nothing ========================================================*/
-
 ?>

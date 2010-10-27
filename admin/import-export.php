@@ -4,6 +4,11 @@ SimpleMap Plugin
 import-export.php: Displays the Import/Export admin page
 */
 
+
+$current_page = $_SERVER['SCRIPT_NAME'];
+$current_query = '?'.$_SERVER['QUERY_STRING'];
+$current_uri = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
 ?>
 
 <script type="text/javascript">
@@ -37,7 +42,7 @@ jQuery(document).ready(function($) {
 							
 							<p><?php _e('Make sure your CSV has a header row that gives the field names (in English). A good example of a header row would be as follows:', 'SimpleMap'); ?></p>
 							
-							<p><em style="color: #777; font: italic 1.1em Georgia;"><?php _e('Name, Address, Address Line 2, City, State/Province, ZIP/Postal Code, Country, Phone, Fax, URL, Category, Tags, Description, Special (1 or 0), Latitude, Longitude', 'SimpleMap'); ?></em></p>
+							<p><em style="color: #777; font: italic 1.1em Georgia;"><?php _e('name,address,address2,city,state,zip,country,phone,fax,url,category,tags,description,special ( value should be 1 or 0),lat,lng', 'SimpleMap'); ?></em></p>
 							
 							<p><?php _e('You can import your file with or without quotation marks around each field. However, if any of your fields contain commas, you should enclose your fields in quotation marks. Single ( \' ) or double ( " ) quotation marks will work.', 'SimpleMap') ?></p>
 						
@@ -60,13 +65,15 @@ jQuery(document).ready(function($) {
 								
 								<p style="margin-top: 0;"><label for="uploadedfile"><?php _e('File to import (maximum size 2MB):', 'SimpleMap'); ?></label><input type="file" style="padding-left: 10px; border: none; font-size: 0.9em;" id="uploadedfile" name="uploadedfile" />
 								<br /><br />
+								<!--
 								<input type="checkbox" id="manual_latlng" name="manual_latlng" value="1" /> <label for="manual_latlng"><?php _e('Check this box if the locations in the file are already geocoded.', 'SimpleMap'); ?></label>
+								--><?php _e('We are now attempting to auto detect if the file is already geocoded.', 'SimpleMap'); ?>
 								</p>
 								<input type="submit" class="button-primary" value="<?php _e('Import CSV File', 'SimpleMap'); ?>" />
 							
 							</form>
 							
-							<p style="color: #777; font: italic 1.1em Georgia;"><?php _e('Importing a file may take several seconds; please be patient.', 'SimpleMap'); ?></p>
+							<p style="color: #777; font: italic 1.1em Georgia;"><?php _e('Importing a file may take several minutes; please be patient.', 'SimpleMap'); ?></p>
 							<div class="clear"></div>
 							
 						</div> <!-- inside -->
