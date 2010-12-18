@@ -1,11 +1,11 @@
 === SimpleMap ===
 
-Contributors: blepoxp, fullthrottledevelopment, aliso
+Contributors: blepoxp, fullthrottledevelopment
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: 1.2.4
+Tested up to: 3.1
+Stable tag: 2.0
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
@@ -86,15 +86,22 @@ Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a
 
 == Changelog ==
 
-= 1.2.4 =
-* Fixed some improper file includes that were causing errors on some servers.
-
-= 1.2.3 =
-* Fixed bug in import process to prevent empty chars in variables
-* Fixed bug in import that was putting the wrong data in the wrong columns (zips are no longer populated with country)
-* Fixed multiple unset index, unknown variable warnings and errors preventing imports form working on some systems.
-* Auto detect existing lat / lng values
-* Fixed error preventing manual addition of locations.
+= 2.0 =
+* First major overhaul since FullThrottle took over development
+* Custom Post Types and Taxonomies for Locations, Location Categories, and Location Tags.
+* All scripts and styles are now enqueued to prevent conflicts
+* Custom MySQL queries have been reduced to 1. The rest have been replaced by WordPress API functions.
+* Overhauled search form allows more control
+* Additional shortag attributes allows more search form flexibility
+* Drag and Drop map available on New / Edit Location screen to fine tune placement of location
+* Autoload of locations on by default.
+* Multiple bug fixes covered in switch to custom post types and WordPress DB API (functions and $wpdb)
+* Several hooks and filters added to code (more to come in the future)
+* Option added to General Options screen that allows complete deletion of all SimpleMap data
+* Revamped Import / Export process. Import process now allows fine tuning of column data
+* Ability to export legacy ( prior to version 2.0 ) data into CSV
+* Ability to completely remove legacy database tables and data
+* Ability to create categories / tags on the fly during CSV import
 
 = 1.2.2 =
 * Modified URL references to admin pages to fix 'Do not have permissions' errors that occurred in WP 3.0
