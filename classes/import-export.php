@@ -256,6 +256,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 															update_post_meta( $id, 'location_phone', $wpdb->prepare( $to_insert['phone'] ) );
 															update_post_meta( $id, 'location_fax', $wpdb->prepare( $to_insert['fax'] ) );
 															update_post_meta( $id, 'location_email', $wpdb->prepare( $to_insert['email'] ) );
+															update_post_meta( $id, 'location_url', $wpdb->prepare( $to_insert['url'] ) );
 															update_post_meta( $id, 'location_special', $wpdb->prepare( $to_insert['special'] ) );
 															update_post_meta( $id, 'location_lat', $wpdb->prepare( $to_insert['lat'] ) );
 															update_post_meta( $id, 'location_lng', $wpdb->prepare( $to_insert['lng'] ) );
