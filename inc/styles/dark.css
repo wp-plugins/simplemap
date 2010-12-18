@@ -1,19 +1,27 @@
 /*
-Theme Name: Light
+Theme Name: Dark
 */
 
-#map {
-border: 1px solid #999;
+#simplemap {
+border: 1px solid #666;
 color: #000;
 }
 
-#map a {
+#simplemap img {
+background: none !important;
+padding: none !important;
+max-width: none !important;
+max-height: none !important;
+border: none !important;
+}
+
+#simplemap a {
 color: #00c;
 background: none;
 text-decoration: none;
 }
 
-#map a:hover {
+#simplemap a:hover {
 background: none;
 text-decoration: underline;
 }
@@ -21,11 +29,11 @@ text-decoration: underline;
 #powered_by_simplemap {
 font-size: 0.75em;
 text-align: right;
-color: #999;
+color: #666;
 }
 
 #powered_by_simplemap a {
-color: #999;
+color: #666;
 text-decoration: underline;
 }
 
@@ -88,16 +96,16 @@ margin: 0;
 padding: 10px 5px;
 font-size: 0.9em;
 line-height: 1.2em;
-border-bottom: 1px solid #ccc;
+border-bottom: 1px solid #333;
 }
 
 div.result small {
 font-size: 0.7em;
-color: #999;
+color: #666;
 }
 
 div.result:hover {
-background: #ebf0f1;
+background: #191919;
 }
 
 div.result address {
@@ -115,8 +123,8 @@ border: none;
 }
 
 div.result .search-term {
-background: #ff6;
-color: #000;
+background: #004080;
+color: #fff;
 }
 
 div.result div.result_name {
@@ -155,6 +163,13 @@ padding-left: 20px;
 line-height: 20px;
 text-align: left;
 font-style: italic;
-background: url(../images/star.png) no-repeat left center;
+background: url( ../images/star.png ) no-repeat left center;
 }
 
+.location_search_title, .location_search_distance_cell, .location_search_category_cell {
+	font-weight:bold;
+}
+
+.no-linebreak {
+	white-space:nowrap;
+}
