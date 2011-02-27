@@ -344,6 +344,9 @@ class FT_Premium_Support_PluginUpdate_Checker {
 	 */
 	function getInstalledVersion() {
 		
+		if ( ! function_exists( 'get_plugins' ) )
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
 		$allPlugins = get_plugins();
 
 		if ( array_key_exists( $this->pluginFile, $allPlugins ) && array_key_exists( 'Version', $allPlugins[$this->pluginFile] ) )
