@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 2.0
+Version: 2.0.2
 Plugin URI: http://simplemap-plugin.com/
 Author: Glenn Ansley
 Author URI: http://fullthrottledevelopment.com/
@@ -19,7 +19,7 @@ if (version_compare($wp_version, "2.8", "<"))
 #### CONSTANTS ####
 
 	// Plugin Version Number
-	define('SIMPLEMAP_VERSION', '2.0');
+	define('SIMPLEMAP_VERSION', '2.0.2');
 	
 	// Define plugin path
 	if ( !defined( 'WP_CONTENT_DIR' ) ) {
