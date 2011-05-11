@@ -74,7 +74,7 @@ if ( !class_exists( 'SM_Options' ) ){
 				$new_options['address_format'] 			= ( isset( $_POST['address_format'] ) && !empty( $_POST['address_format'] ) ) ? $_POST['address_format'] : $default['address_format'];
 				$new_options['map_stylesheet'] 			= ( isset( $_POST['map_stylesheet'] ) && !empty( $_POST['map_stylesheet'] ) ) ? $_POST['map_stylesheet'] : $default['map_stylesheet'];
 				$new_options['units'] 					= ( isset( $_POST['units'] ) && !empty( $_POST['units'] ) ) ? $_POST['units'] : $default['units'];
-				$new_options['results_limit'] 			= ( isset( $_POST['results_limit'] ) && !empty( $_POST['results_limit'] ) ) ? $_POST['results_limit'] : $default['results_limit'];
+				$new_options['results_limit'] 			= ( isset( $_POST['results_limit'] ) ) ? absint( $_POST['results_limit'] ) : $default['results_limit'];
 				$new_options['autoload'] 				= ( isset( $_POST['autoload'] ) && !empty( $_POST['autoload'] ) ) ? $_POST['autoload'] : $default['autoload'];
 				$new_options['map_pages'] 				= ( isset( $_POST['map_pages'] ) ) ? absint( $_POST['map_pages'] ) : $default['map_pages'];
 				$new_options['lock_default_location'] 	= ( isset( $_POST['lock_default_location'] ) && !empty( $_POST['lock_default_location'] ) ) ? true : $default['lock_default_location'];
@@ -158,29 +158,6 @@ if ( !class_exists( 'SM_Options' ) ){
 							
 								<?php do_action( 'sm-general-options-normal-sortables-top' ); ?>
 								
-								<?php // Legacy data notice ?>
-								
-								<?php if ( $simple_map->legacy_tables_exist() ) : ?>
-
-									<div class="postbox" >
-										
-										<h3 style="background: #fff url( <?php echo SIMPLEMAP_URL; ?>/inc/images/blue-grad.png ) top left repeat-x;	color:#fff;	text-shadow:0 1px 0 #000;"><?php _e( 'Legacy Data', 'SimpleMap' ); ?></h3>
-											
-											<div class="inside" style="padding: 10px;">
-												<p class='howto'><?php _e( 'It appears that you have location data stored in legacy SimpleMap tables that existed prior to version 2.0. What would you like to do with that data?', 'SimpleMap' ); ?></p>
-												<p class='howto'><?php printf( __( 'Your choices are to export it here and reimport it on the <a href="%s">SimpleMap Import / Export page</a> or to just delete it.', 'SimpleMap' ), admin_url( 'admin.php?page=simplemap-import-export' ) ); ?></p>
-												<ul  style="list-style-type: disc; margin-left: 3em;">
-													<li><a href='<?php echo admin_url( 'admin.php?page=simplemap-import-export&amp;sm-action=export-legacy-csv' ); ?>'><?php _e( 'Export legacy data as a CSV file', 'SimpleMap' ); ?></a></li>
-													<li><a onClick="javascript:return confirm('<?php _e( 'Last chance! Pressing OK will delete all Legacy SimpleMap data.'); ?>')" href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=simplemap-import-export&sm-action=delete-legacy-simplemap' ), 'delete-legacy-simplemap' ); ?>" ><?php _e( 'Permanently delete the legacy data and tables', 'SimpleMap' ); ?></a></li>
-												</ul>
-											</div>
-									</div>
-	
-								<?php endif; ?>
-
-								
-								<?php // End legacy data notice ?>
-								
 								<div class="postbox">
 									
 									<h3><?php _e( 'Location Defaults', 'SimpleMap' ); ?></h3>
@@ -210,7 +187,7 @@ if ( !class_exists( 'SM_Options' ) ){
 														<select name="default_country" id="default_country">
 															<?php
 															foreach ( $simple_map->get_country_options() as $key => $value ) {
-																echo "<option value='" . $key . "' " . selected( $default_country, $value ) . ">" . $value . "</option>\n";
+																echo "<option value='" . $value . "' " . selected( $default_country, $value ) . ">" . $value . "</option>\n";
 															}
 															?>
 														</select>
@@ -261,7 +238,6 @@ if ( !class_exists( 'SM_Options' ) ){
 										
 									</div> <!-- inside -->
 								</div> <!-- postbox -->
-
 								
 								
 								<!-- #### MAP CONFIGURATION #### -->								

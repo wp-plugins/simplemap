@@ -1,11 +1,11 @@
-=== SimpleMap ===
+=== SimpleMap Store Locator ===
 
 Contributors: blepoxp, fullthrottledevelopment
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
 Requires at least: 2.8
 Tested up to: 3.1
-Stable tag: 2.0.2
+Stable tag: 2.2.2
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
@@ -13,14 +13,14 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
-http://www.youtube.com/watch?v=JznXI0YrqpY&hd=1
+Please note: SimpleMap has some compatibility problems with WordPress MU.
 
 Key features include:
 
 * Manage locations from any country supported by Google Maps
 * Manage an unlimited number of locations
 * Put a Google Map on any page or post that gives instant results to users
-* Users can enter a street address, city, state, or even the name of a location to search the database
+* Users can enter a street address, city, state, or zip to search the database
 * Customize the appearance of the map and results with your own themes
 * Use a familiar interface that fits seamlessly into the WordPress admin area
 * Import and export your database as a CSV file
@@ -82,15 +82,39 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 
 = What if I have a problem with SimpleMap, or find a bug? =
 
-Please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com) with any questions or concerns.
+Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/simplemap?forum_id=10) if you have a bug to report. Otherwise, you may access premium support inside the plugin dashboard.
 
 == Changelog ==
 
-= 2.0.2 =
-* Hotfix to resolve conflict with WP 3.1 admin bar
+= 2.2.2 =
+* Hotfix to resolve a conflict with WordPress 3.1
 
-= 2.0.1 =
-* Fixed bug that was preventing importing of URL from CSV file
+= 2.2.1 =
+* Added 'Loading' message to map when doing search
+* Added caching system to speed up repeated searches on systems with large amounts of locations
+* Added filters to compensate for WP Bug when more than 10k locations exist
+* Fixed bug that prevented locations from appearing when searched from widget and search form is hidden
+* Fixed bug that prevented categories and tags from being imported correctly on some systems
+* Fixed bug that prevented 'No Limit' option for number of results shown to be set.
+* Fixed autoload bug introduced in 2.2
+* Fixed bug that prevented changing of Default Country in options
+
+= 2.2 =
+* Added ability to customize map markers without hacking plugin files
+* Added ability to filter locations by meeting day and time
+* Added search widget
+* Added shortcode argument for custom search form title
+* Fixed errors that broke distance reporting
+* Fixed errors that locked up the edit screen with large number of locations
+* Fixed error that created bad XML link when no search results were found
+* Added several warning / error messages to UI
+* Fixed error that prevented custom style sheets from loading properly
+
+= 2.1 =
+* Added shortcode args to hide map
+* Added shortcode args to hide list of results
+* Added shortcode args to hide entire search box
+* Added shortcode args to override default lat / lng for individual maps
 
 = 2.0 =
 * First major overhaul since FullThrottle took over development
@@ -232,19 +256,18 @@ Theme Name: YOUR THEME NAME HERE
 
 Planned for future releases:
 
-* Custom map markers (that can vary by category)
-* User can choose to show or hide specific categories on map
-* Load scripts in <head> only on pages where the map is being displayed
+* UI for custom markers
+* Show map of single location
+* Search by Day / Time (great for groups)
+* Search by Date (great for traveling gigs / performances)
 
-To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment or [contact me](mailto:alison@alisothegeek.com).
+To suggest any new features, please visit [the SimpleMap home page](http://simplemap-plugin.com/) and leave a comment.
 
 == Credits ==
 
 = Code and Inspiration =
 
-* [Viadat Creations](http://www.viadat.com/) and their Store Locator plugin. This was the original inspiration for SimpleMap, and it was a huge help in writing & figuring out my own code.
-* [James Nierodzik](http://sparktivity.com/) for a little help with the code for the custom map markers, and the inspiration that led to the great customization tool I found.
-* [Pamela Fox](http://gmaps-utility-library-dev.googlecode.com/svn/tags/mapiconmaker/1.1/src/mapiconmaker.js) for said customization tool.
+* [Alison Barrett](http://alisothegeek.com/) Original developer and maintainer until June, 2010.
 
 = Translations =
 
@@ -253,12 +276,12 @@ To suggest any new features, please visit [the SimpleMap home page](http://simpl
 * Portugese (Brazil): Rodolfo Rodrigues at [ChEngineer Place](http://chengineer.com/)
 * Dutch: Jan-Albert Droppers at [Droppers.NL](http://droppers.nl)
 
-If you want to help with any translation for this plugin, please don't hesitate to [contact me](mailto:alison@alisothegeek.com). Any help translating is greatly appreciated! The updated `.POT` file is always included in every release, in the `lang` folder.
+If you want to help with any translation for this plugin, please don't hesitate to contact us. Any help translating is greatly appreciated! The updated `.POT` file is always included in every release, in the `lang` folder.
 
 == License ==
 
 SimpleMap - the easy store locator for WordPress.
-Copyright (C) 2009 Aliso the Geek.
+Copyright (C) 2010 FullThrottle Development, LLC.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

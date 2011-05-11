@@ -32,6 +32,31 @@ if ( !class_exists( 'SM_Help' ) ){
 						
 							<div id='normal-sortables' class='meta-box-sortables ui-sortable'>
 							
+								<a name="premium_features"></a>
+								<div class="postbox">
+					
+									<h3><?php _e( 'Premium Features', 'SimpleMap' ); ?></h3>
+									
+									<div class="inside" style="padding: 0 10px 10px 10px;">
+										
+										<div class="table">
+											<table class="form-table">
+																
+												<tr><td><?php _e( 'Custom category markers can now be used. Login to Premium support and look for the KB article for instructions.', 'SimpleMap' ); ?></td></tr>
+												<tr><td><?php _e( 'We now have a search widget. Login to Premium support and look for the KB article for instructions.', 'SimpleMap' ); ?></td></tr>
+												
+											</table>
+										</div>
+										
+										<div class="clear"></div>
+										
+									</div> <!-- inside -->
+								</div> <!-- postbox -->
+								
+								<!-- =========================================
+								==============================================
+								========================================== -->
+							
 								<a name="displaying_your_map"></a>
 								<div class="postbox">
 					
@@ -47,6 +72,12 @@ if ( !class_exists( 'SM_Help' ) ){
 												<tr><td><?php _e( 'If you want only certain categories or tags to show on a map, insert shortcode like this, where the numbers are replaced with the ID numbers of your desired categories and tags:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap categories=2,5,14 tags=3,6,15]</code></td></tr>
 
 												<tr><td><?php _e( 'If you want to hide the category or tag filters on the search form, insert shortcode like this:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap show_categories_filter=false show_tags_filter=false]</code></td></tr>
+
+												<tr><td><?php _e( 'If you want to hide the map, insert shortcode like this:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap hide_map=true]</code></td></tr>
+
+												<tr><td><?php _e( 'If you want to hide the list of results, insert shortcode like this:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap hide_list=true]</code></td></tr>
+
+												<tr><td><?php _e( 'If you want to override the default lat / lng for a specific map, insert shortcode like this:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap default_lat='34.1346702' default_lng='-118.4389877']</code></td></tr>
 
 												<tr><td><?php _e( 'You can combine tag attributes as needed:', 'SimpleMap' ); ?> <code style="font-size: 1.2em; background: #ffffe0;">[simplemap categories=2,5,14 show_tags_filter=false]</code></td></tr>
 												

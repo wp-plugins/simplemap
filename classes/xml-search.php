@@ -11,7 +11,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 		function init_search() {
 			if ( isset( $_GET['sm-xml-search'] ) ) {
 				global $wpdb;
-				
+
 				$lat		= ! empty( $_GET['lat'] ) ? $_GET['lat'] : false;
 				$lng		= ! empty( $_GET['lng'] ) ? $_GET['lng'] : false;
 				$radius		= ! empty( $_GET['radius'] ) ? $_GET['radius'] : false;
@@ -34,7 +34,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					$limit = "LIMIT $limit";
 				else
 					$limit = '';
-									
+						
 				// Locations within specific distance or just get them all?
 				if ( $radius ) {
 					$distance_select = $wpdb->prepare( "( 3959 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) ) * sin( radians( lat ) ) ) ) AS distance", $lat, $lng, $lat ) . ', ';
@@ -66,7 +66,32 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 
 				$sql = apply_filters( 'sm-xml-search-locations-sql', $sql, $cats, $tags );
 
-				if ( $locations = $wpdb->get_results( $sql ) ) {
+				/* Create a cache for every sql query. 
+				 * Going to use transients and an array since wp_cache doesn't expire yet.
+				 * Separate array key, value for each query
+				 * This way I can kill the transient on location creation / update / deletion
+				 */
+    			$cache_key = 'simplemap-queries-cache';
+    			$query_key = md5( $sql );
+    			
+    			// Does transient exist?
+				if ( false === ( $cached_data = get_transient( $cache_key ) ) ) {
+
+					// Transient didn't exist, so query DB
+					$locations = $wpdb->get_results( $sql );
+					$cached_data[$query_key] = $locations;
+					set_transient( $cache_key, $cached_data, apply_filters( 'sm-query-cache-period', 60 * 60 * 12 ) );
+	
+				} else {
+				
+					// Key didn't exist, so query DB
+					$locations = $wpdb->get_results( $sql );
+					$cached_data[$query_key] = $locations;
+					set_transient( $cache_key, $cached_data, apply_filters( 'sm-query-cache-period', 60 * 60 * 12 ) );
+
+				}  			
+		
+				if ( $locations ) {
 
 					// Start looping through all locations i found in the radius
 					foreach ( $locations as $key => $value ) {
@@ -77,7 +102,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 						
 						
 						// Defaults
-						$value->address = $value->address2 = $value->city = $value->state = $value->zip = $value->country = $value->phone = $value->fax = $value->email = $value->url = $value->special = $value->distance = $value->categories = $value->tags = '';
+						$value->address = $value->address2 = $value->city = $value->state = $value->zip = $value->country = $value->phone = $value->fax = $value->email = $value->url = $value->special = $value->categories = $value->tags = '';
 
 						// Process categories
 						if ( $cats && '' != $cats ) {
@@ -148,7 +173,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 							$value->email = get_post_meta( $value->ID, 'location_email', true );
 							$value->url = get_post_meta( $value->ID, 'location_url', true );
 							$value->special = get_post_meta( $value->ID, 'location_special', true );
-						
+
 							// Get all categories for this post
 							if ( $loc_cats = wp_get_object_terms( $value->ID, 'sm-category' ) ) {
 								$loc_cat_names = '';
@@ -173,8 +198,11 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					}
 
 					$locations = apply_filters( 'sm-xml-search-locations', $locations, $cats, $tags );
-					
+
 					$this->print_xml( $locations );
+				} else {
+					// Print empty XML
+					$this->print_xml( new stdClass() );
 				}
 				
 			}

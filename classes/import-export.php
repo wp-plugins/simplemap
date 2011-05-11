@@ -191,7 +191,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 										include_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
 										if ( file_exists( $_POST['file_location'] ) && $csv = new parseCSV() ) {
 											
-											$csv->auto( SIMPLEMAP_PATH . '/temp-csv.csv' );
+											$csv->auto( SIMPLEMAP_PATH . '/sm-temp-csv.csv' );
 											
 											if ( isset( $csv->data ) ) {
 											
@@ -201,10 +201,10 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 													
 													// Give me 20 seconds for each location. That should be more than enough time.
 													set_time_limit ( 20 );
-													
+
 													// Convert assoc to int array since I can't trust the headings from the user
 													$location = array_values( $location );
-													
+
 													// Use the information the user gave me via select boxes to map columns to correct attributes
 													foreach( $sm_locations->get_location_data_types() as $key => $value ) {
 														
@@ -246,6 +246,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 														$vars['post_status'] = 'publish';
 														$vars['post_content'] = $wpdb->prepare( $to_insert['description'] );
 														
+														// Insert into WordPress post table
 														if ( $id = wp_insert_post( $vars ) ) {
 															update_post_meta( $id, 'location_address', $wpdb->prepare( $to_insert['address'] ) );
 															update_post_meta( $id, 'location_address2', $wpdb->prepare( $to_insert['address2'] ) );
@@ -266,7 +267,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																
 																// Place comma seperatred CSV categories into array
 																$cats = explode( ',', $to_insert['category'] );
-																
+												
 																// Loop through array. If category exists, assoc it with the location
 																// If category doesn't exist, create it and associate it.
 																foreach( (array) $cats as $key => $name ) {
@@ -275,12 +276,13 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																	if ( '' != $name || ! empty( $name ) ) {
 																	
 																		// Grab or create and grab the category ID
-																		if ( ! $cat_obj = get_term_by( 'name', $name, 'sm-category' ) )
-																			$category_id = wp_insert_term( $name, 'sm-category' );
-																		else
+																		if ( ! $cat_obj = get_term_by( 'name', $name, 'sm-category' ) ) {
+																			$cat_array = wp_insert_term( $name, 'sm-category' );
+																			$category_id = $cat_array['term_id'];
+																		} else {
 																			$category_id = $cat_obj->term_id;
-																		
-																		
+																		}
+																																				
 																		// This is just a failsafe. It also gives us access to vars teh WP API created rather than from the CSV
 																		if ( $category = get_term( (int) $category_id, 'sm-category' ) ) {
 						
@@ -312,13 +314,15 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																	if ( '' != $name || ! empty( $name ) ) {
 																		
 																		// Grab or create and grab the tag ID
-																		if ( ! $tag_obj = get_term_by( 'name', $name, 'sm-tag' ) )
-																			$tag_id = wp_insert_term( $name, 'sm-tag' );
-																		else
+																		if ( ! $tag_obj = get_term_by( 'name', $name, 'sm-tag' ) ) {
+																			$tag_array = wp_insert_term( $name, 'sm-tag' );
+																			$tag_id = $tag_array['term_id'];
+																		} else {
 																			$tag_id = $tag_obj->term_id;
+																		}
 																		
 																		// This is just a failsafe. It also gives us access to vars teh WP API created rather than from the CSV
-																		if ( $tag = get_term( (int) $tag_id, 'sm-tag' ) ) {
+																		if ( ! is_wp_error( $tag_id ) && $tag = get_term( (int) $tag_id, 'sm-tag' ) ) {
 	
 																			if ( ! is_wp_error( $tag ) ) {
 																			
@@ -405,15 +409,15 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 										// Include CSV library
 										include_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
 
-										if ( move_uploaded_file( $_FILES['simplemap-csv-upload']['tmp_name'], SIMPLEMAP_PATH . '/temp-csv.csv' ) ) {
+										if ( move_uploaded_file( $_FILES['simplemap-csv-upload']['tmp_name'], SIMPLEMAP_PATH . '/sm-temp-csv.csv' ) ) {
 										
-											if ( $csv = new parseCSV( SIMPLEMAP_PATH . '/temp-csv.csv' ) ) {
+											if ( $csv = new parseCSV( SIMPLEMAP_PATH . '/sm-temp-csv.csv' ) ) {
 											
 												?>
 												<form action='' method='post'>
 												<input type='hidden' name='sm-action' value='import-csv' />
 												<input type='hidden' name='step' value='2' />
-												<input type='hidden' name='file_location' value='<?php echo SIMPLEMAP_PATH . '/temp-csv.csv'; ?>' />
+												<input type='hidden' name='file_location' value='<?php echo SIMPLEMAP_PATH . '/sm-temp-csv.csv'; ?>' />
 												<p><input type='submit' class="button-primary" value='<?php _e( 'Import CSV', 'SimpleMap' ); ?>' /></p>
 												<table>
 													<tr>
@@ -448,6 +452,8 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 												</table>
 												<?php
 											}
+										} else {
+											_e( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . SIMPLEMAP_PATH . '</code>' ), 'SimpleMap' );
 										}
 										?>
 
@@ -574,9 +580,18 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 												
 												<p style="margin-top: 0;"><label for="simplemap-csv-upload"><?php _e('File to import (maximum size 2MB):', 'SimpleMap'); ?></label><input type="file" style="padding-left: 10px; border: none; font-size: 0.9em;" id="simplemap-csv-upload" name="simplemap-csv-upload" />
 												<br />
+												
+												<?php
+												// Warn them if the simplemap path is not writable
+												if ( ! is_writable( SIMPLEMAP_PATH ) )
+													echo "<br />" . __( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . SIMPLEMAP_PATH . '</code>' ), 'SimpleMap' );
+												?>
+												
 												</p>
-												<input type="submit" class="button-primary" value="<?php _e('Import CSV File', 'SimpleMap'); ?>" /> <?php printf( __( "Warning: You still need to enter an <a href='%s'>API key</a> if you need your locaitons geocoded.", 'SimpleMap' ), admin_url( "admin.php?page=simplemap" ) ); ?>
-											
+												<input type="submit" class="button-primary" value="<?php _e('Import CSV File', 'SimpleMap'); ?>" /> 
+												<?php if ( '' == $options['api_key'] ) : ?>
+													<?php printf( __( "Warning: You still need to enter an <a href='%s'>API key</a> if you need your locaitons geocoded.", 'SimpleMap' ), admin_url( "admin.php?page=simplemap" ) ); ?>
+												<?php endif; ?>
 											</form>
 											
 											<p style="color: #777; font: italic 1.1em Georgia;"><?php _e('Importing a file may take several seconds; please be patient.', 'SimpleMap'); ?></p>
@@ -674,13 +689,14 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 									<!-- #### LEGACY EXPORT #### -->
 									<div class="postbox" >
 										
-										<h3 style="background: #fff url( <?php echo SIMPLEMAP_URL; ?>/inc/images/blue-grad.png ) top left repeat-x;	color:#fff;	text-shadow:0 1px 0 #000;"><?php _e( 'Legacy Data', 'SimpleMap' ); ?></h3>
+										<h3><?php _e( 'Legacy Data', 'SimpleMap' ); ?></h3>
 											
 											<div class="inside" style="padding: 10px;">
 												<p class='howto'><?php _e( 'It appears that you have location data stored in legacy SimpleMap tables that existed prior to version 2.0. What would you like to do with that data?', 'SimpleMap' ); ?></p>
-												<p class='howto'><?php printf( __( 'Your choices are to export it here and reimport it on the <a href="%s">SimpleMap Import / Export page</a> or to just delete it.', 'SimpleMap' ), admin_url( 'admin.php?page=simplemap-import-export' ) ); ?></p>
+												
 												<ul  style="list-style-type: disc; margin-left: 3em;">
 													<li><a href='<?php echo admin_url( 'admin.php?page=simplemap-import-export&amp;sm-action=export-legacy-csv' ); ?>'><?php _e( 'Export legacy data as a CSV file', 'SimpleMap' ); ?></a></li>
+													<!--<li><a href=''><?php _e( 'Port all legacy data over to custom post types', 'SimpleMap' ); ?></a></li>-->
 													<li><a onClick="javascript:return confirm('<?php _e( 'Last chance! Pressing OK will delete all Legacy SimpleMap data.'); ?>')" href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=simplemap-import-export&sm-action=delete-legacy-simplemap' ), 'delete-legacy-simplemap' ); ?>" ><?php _e( 'Permanently delete the legacy data and tables', 'SimpleMap' ); ?></a></li>
 												</ul>
 											</div>

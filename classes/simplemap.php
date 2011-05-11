@@ -28,13 +28,16 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 			// Add hook for general options js file
 			add_action( 'init', array( &$this, 'general_options_js_script' ) );
+			
+			// Query vars
+			add_filter( 'query_vars', array( &$this, 'register_query_vars' ) );
 		}
 				
 		// This function generates the code to display the map
 		function display_map( $atts ) {
 
 			$options = $this->get_default_options();
-			$default_shortcode_atts = array( 'categories' => '', 'tags' => '', 'show_categories_filter' => 1, 'show_tags_filter' => 1 );
+			$default_shortcode_atts = array( 'search_title' => __( 'Find Locations Near:', 'SimpleMap' ), 'categories' => '', 'tags' => '', 'show_categories_filter' => 1, 'show_tags_filter' => 1, 'hide_map' => 0, 'hide_list' => 0, 'default_lat' => 0, 'default_lng' => 0 );
 			
 			$atts = shortcode_atts( $default_shortcode_atts, $atts );
 
@@ -46,39 +49,33 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 			$to_display = '';
 			
-			if ( $options['display_search'] == 'show' ) {
-				
-				$to_display .= $this->location_search_form( $atts );
-
-			}
+			$to_display .= $this->location_search_form( $atts );
 			
 			if ( isset( $options['powered_by'] ) && 1 == $options['powered_by'] ) {
 				$to_display .= '<div id="powered_by_simplemap">' . sprintf( __( 'Powered by %s SimpleMap', 'SimpleMap' ), '<a href="http://simplemap-plugin.com/" target="_blank">' ) . '</a></div>';
 			}
 
-			$to_display .= '<div id="simplemap" style="width: ' . $options['map_width'] . '; height: ' . $options['map_height'] . ';"></div>';
-			$to_display .= '<div id="results" style="width: ' . $options['map_width'] . ';"></div>';
+			// Hide map?
+			$hidemap = $hide_map ? "display:none; " : '';
+
+			// Hide list?
+			$hidelist = $hide_list ? "display:none; " : '';
+			
+			// Updating Div
+			$to_display .= '<div id="simplemap-updating" style="display:none;position:absolute; padding:10px; background:#fff; color:#000;vertical-align:middle;text-align:center;"><img style="vertical-align:middle;text-align:center;" src="' . SIMPLEMAP_URL . '/inc/images/loading.gif" alt="Loading new locations" /></div>';
+			
+			$to_display .= '<div id="simplemap" style="' . $hidemap . 'width: ' . $options['map_width'] . '; height: ' . $options['map_height'] . ';"></div>';
+			$to_display .= '<div id="results" style="' . $hidelist . 'width: ' . $options['map_width'] . ';"></div>';
 			$to_display .= '<script type="text/javascript">';
 			$to_display .= '(function($) { ';
 			$to_display .= '$(document).ready(function() {';
-			$to_display .= '	load_simplemap();';
+			$to_display .= '	load_simplemap( "' . esc_js( $default_lat ) . '", "' . esc_js( $default_lng ) . '");';
 
-			// Load initial locations with nothing selected
-			if ( isset( $options['autoload'] ) && 'none' != $options['autoload'] ) {
+			// Load Locations
+			$is_sm_search = isset( $_REQUEST['location_is_search_results'] ) ? 1 : 0;
+
+			$to_display .= 'searchLocations( ' . absint( $is_sm_search ) . ' ); ';
 			
-				if ( 'some' == $options['autoload'] ) {
-					
-					$to_display .= 'var autoLatLng = new GLatLng( default_lat, default_lng );';
-					$to_display .= 'searchLocationsNear( autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto", "' . $options['lock_default_location'] . '", "' . $cats_avail . '", "' . $tags_avail . '", "", "", "", "", "");';
-	
-				} else {
-					
-					$to_display .= 'var autoLatLng = new GLatLng( default_lat, default_lng );';
-					$to_display .= 'searchLocationsNear( autoLatLng, autoLatLng.lat() + ", " + autoLatLng.lng(), "auto_all", "' . $options['lock_default_location'] . '", "' . $cats_avail . '", "' . $tags_avail . '", "", "", "", "", "");';
-				
-				}
-			}
-	
 			$to_display .= '});';
 			$to_display .= '})(jQuery);';
 			$to_display .= '</script>';
@@ -91,7 +88,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			global $post;
 			
 			$options = $this->get_default_options();
-			$default_shortcode_atts = array( 'categories' => '', 'tags' => '', 'show_categories_filter' => 1, 'show_tags_filter' => 1 );
+			$default_shortcode_atts = array( 'search_title' => __( 'Find Locations Near:', 'SimpleMap' ), 'categories' => '', 'tags' => '', 'show_categories_filter' => 1, 'show_tags_filter' => 1, 'hide_map' => 0, 'hide_list' => 0, 'default_lat' => 0, 'default_lng' => 0 );
 			
 			$atts = shortcode_atts( $default_shortcode_atts, $atts );
 
@@ -103,28 +100,47 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			$cats_avail = $categories;
 			$tags_avail = $tags;
 			
+			// Form onsubmit, action, and method values
+			$on_submit = apply_filters( 'sm-location-search-onsubmit', ' onsubmit="searchLocations( 1 ); return false; "', $post->ID );
+			$action = apply_filters( 'sm-locaiton-search-method', get_permalink(), $post->ID );
+			$method = apply_filters( 'sm-location-search-method', 'post', $post->ID );			
+			
+			// Form Field Values
+			$address_value 		= get_query_var( 'location_search_address' );
+			$city_value 		= isset( $_REQUEST['location_search_city'] ) ? $_REQUEST['location_search_city'] : '';
+			$state_value 		= isset( $_REQUEST['location_search_state'] ) ? $_REQUEST['location_search_state'] : '';
+			$zip_value 			= get_query_var( 'location_search_zip' );
+			$radius_value	 	= isset( $_REQUEST['location_search_distance'] ) ? $_REQUEST['location_search_distance'] : $options['default_radius'];
+			$limit_value		= isset( $_REQUEST['location_search_limit'] ) ? $_REQUEST['location_search_limit'] : $options['results_limit'];
+			$is_sm_search		= isset( $_REQUEST['location_is_search_results'] ) ? 1 : 0;
+			
 			$location_search  = '<div id="map_search" >';
 			$location_search .= '<a name="map_top"></a>';
-			$location_search .= '<form onsubmit="searchLocations(); return false;" name="location_search_form" id="location_search_form" action="' . get_permalink() . '" method="post">';
-			$location_search .= '<table class="location_search">';
+			$location_search .= '<form ' . $on_submit . 'name="location_search_form" id="location_search_form" action="' . $action . '" method="' . $method . '">';
+			
+			if ( 'show' == $options['display_search'] )
+				$display_search = '';
+			else
+				$display_search = ' style="display:none;" ';
+			
+			$location_search .= '<table class="location_search"' . $display_search . '>';
 
 			$location_search .= apply_filters( 'sm-location-search-table-top', '', $post );
 
-			$location_search .= '<tr><td colspan="3" class="location_search_title">' . apply_filters( 'sm-location-search-title', __( 'Find Locations Near:', 'SimpleMap' ), $post->ID ) . '</td></tr>';
-			$location_search .= '<tr><td class="location_search_address_cell location_search_cell">' . __( 'Street', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_address_field" name="location_search_address" /></td>';
-			$location_search .= '<td class="location_search_city_cell location_search_cell">' . __( 'City', 'SimpleMap' ) . ':<br /><input type="text"  id="location_search_city_field" name="location_search_city" /></td>';
-			$location_search .= '<td class="location_search_state_cell location_search_cell">' . __( 'State', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_state_field" name="location_search_state" /></td>';
+			$location_search .= '<tr><td colspan="3" class="location_search_title">' . apply_filters( 'sm-location-search-title', $search_title, $post->ID ) . '</td></tr>';
+			$location_search .= '<tr><td class="location_search_address_cell location_search_cell">' . __( 'Street', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_address_field" name="location_search_address" value="' . esc_attr( $address_value ) . '" /></td>';
+			$location_search .= '<td class="location_search_city_cell location_search_cell">' . __( 'City', 'SimpleMap' ) . ':<br /><input type="text"  id="location_search_city_field" name="location_search_city" value="' . esc_attr( $city_value ) . '" /></td>';
+			$location_search .= '<td class="location_search_state_cell location_search_cell">' . __( 'State', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_state_field" name="location_search_state" value="' . esc_attr( $state_value ) . '" /></td>';
 			$location_search .= '</tr><tr>';
-			$location_search .= '<td class="location_search_zip_cell location_search_cell">' . __( 'Zip', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_zip_field" name="location_search_zip" /></td>';
+			$location_search .= '<td class="location_search_zip_cell location_search_cell">' . __( 'Zip', 'SimpleMap' ) . ':<br /><input type="text" id="location_search_zip_field" name="location_search_zip" value="' . esc_attr( $zip_value ) . '" /></td>';
 			$location_search .= '<td colspan="2"></td>';
 			$location_search .= '</tr><tr>';
 			$location_search .= '<td class="location_search_distance_cell location_search_cell">' . __( 'Select a distance', 'SimpleMap' ) . ':</td><td colspan="2"><select id="location_search_distance_field" name="location_search_distance" >';
 			
-			$default_radius = $options['default_radius'];
 
 			foreach ( $this->get_search_radii() as $value ) {
 				$r = (int) $value;
-				$location_search .= '<option value="' . $value . '"' . selected( $default_radius, $value, false ) . '>' . $value . ' ' . $options['units'] . "</option>\n";
+				$location_search .= '<option value="' . $value . '"' . selected( $radius_value, $value, false ) . '>' . $value . ' ' . $options['units'] . "</option>\n";
 			}
 		
 			$location_search .= '</select></td></tr>';
@@ -154,7 +170,8 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				// Print checkbox for each available cat
 				foreach( $cats_array as $key => $catid ) {
 					if( $term = get_term_by( 'id', $catid, 'sm-category' ) ) {
-						$cat_search .= '<label for="location_search_categories_field_' . esc_attr( $term->term_id ) . '" class="no-linebreak"><input type="checkbox" name="location_search_categories_field" id="location_search_categories_field_' . esc_attr( $term->term_id ) . '" value="' . esc_attr( $term->term_id ) . '" /> ' . esc_attr( $term->name ) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> ';
+						$cat_checked = isset( $_REQUEST['location_search_categories_' . esc_attr( $term->term_id ) . 'field'] ) ? ' checked="checked" ' : '';
+						$cat_search .= '<label for="location_search_categories_field_' . esc_attr( $term->term_id ) . '" class="no-linebreak"><input rel="location_search_categories_field" type="checkbox" name="location_search_categories_' . esc_attr( $term->term_id ) . 'field" id="location_search_categories_field_' . esc_attr( $term->term_id ) . '" value="' . esc_attr( $term->term_id ) . '" ' . $cat_checked . '/> ' . esc_attr( $term->name ) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> ';
 					}
 				}
 				
@@ -197,7 +214,8 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				// Print checkbox for each available tag
 				foreach( $tags_array as $key => $tagid ) {
 					if( $term = get_term_by( 'id', $tagid, 'sm-tag' ) ) {
-						$tag_search .= '<label for="location_search_tags_field_' . esc_attr( $term->term_id ) . '" class="no-linebreak"><input type="checkbox" name="location_search_tags_field" id="location_search_tags_field_' . esc_attr( $term->term_id ) . '" value="' . esc_attr( $term->term_id ) . '" /> ' . esc_attr( $term->name ) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> ';
+						$tag_checked = isset( $_REQUEST['location_search_tags_' . esc_attr( $term->term_id ) . 'field'] ) ? ' checked="checked" ' : '';
+						$tag_search .= '<label for="location_search_tags_field_' . esc_attr( $term->term_id ) . '" class="no-linebreak"><input rel="location_search_tags_field" type="checkbox" name="location_search_tags_' . esc_attr( $term->term_id ) . 'field" id="location_search_tags_field_' . esc_attr( $term->term_id ) . '" value="' . esc_attr( $term->term_id ) . '" ' . $tag_checked . '/> ' . esc_attr( $term->name ) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> ';
 					}
 				}
 				
@@ -214,6 +232,21 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 			$tag_search = apply_filters( 'sm-location-tag-search', $tag_search, $post );
 			$location_search .= $tag_search;
+			
+			// Default lat / lng from shortcode?
+			if ( ! $default_lat ) 
+				$default_lat = $options['default_lat'];
+			if ( ! $default_lng )
+				$default_lng = $options['default_lng'];
+			
+			$location_search .= "<input type='hidden' id='location_search_default_lat' value='" . $default_lat . "' />";
+			$location_search .= "<input type='hidden' id='location_search_default_lng' value='" . $default_lng . "' />";
+			
+			// Hidden value for limit
+			$location_search .= "<input type='hidden' id='location_search_limit' value='" . $limit_value . "' />";
+			
+			// Hidden value set to true if we got here via search
+			$location_search .= "<input type='hidden' id='location_is_search_results' name='sm-location-search' value='" . $is_sm_search . "' />";
 			
 			$location_search .= apply_filters( 'sm-location-search-before-submit', '', $post );
 			
@@ -238,8 +271,14 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				if ( ! in_array( $post->ID, explode( ',', $options['map_pages'] ) ) && ! in_array( 0, explode( ',', $options['map_pages'] ) ) )
 					return false;
 					
-				// Styles			
-				wp_enqueue_style( 'simplemap-map-style', SIMPLEMAP_URL . '/' . $options['map_stylesheet'] );
+				// Check for use of custom stylesheet and load styles
+				if ( strstr( $options['map_stylesheet'], 'simplemap-styles' ) )
+					$style_url = WP_CONTENT_URL . '/plugins/' . $options['map_stylesheet'];
+				else
+					$style_url = SIMPLEMAP_URL . '/' . $options['map_stylesheet'];
+				
+				// Load styles
+				wp_enqueue_style( 'simplemap-map-style', $style_url );
 						
 				// Scripts
 				wp_enqueue_script( 'simplemap-master-js', get_option( 'siteurl' ) . '/?simplemap-master-js', array( 'jquery' ) );
@@ -338,8 +377,9 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			var siteurl					= '<?php echo esc_js( get_option( 'siteurl' ) ); ?>';
 			var map;
 			var geocoder;
+			var autoload				= '<?php echo esc_js( $options['autoload'] ); ?>';
 
-			function load_simplemap() {
+			function load_simplemap( lat, lng ) {
 			  
 			  <?php 
 			  if ( '' == $options['api_key'] ) {
@@ -349,8 +389,14 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			  }
 			  ?>
 			  
+			  if ( lat == 0 )
+			  	lat = '<?php echo esc_js( $options['default_lat'] ); ?>';
+
+			  if ( lng == 0 )
+			  	lng = '<?php echo esc_js( $options['default_lng'] ); ?>';
+
 			  if ( GBrowserIsCompatible() ) {
-			    var latlng = new GLatLng( <?php echo esc_js( $options['default_lat'] ); ?>, <?php echo esc_js( $options['default_lng'] ); ?> );
+			    var latlng = new GLatLng( lat, lng );
 			    map = new GMap2( document.getElementById( 'simplemap') );
 			    map.setCenter( latlng, <?php echo esc_js( $options['zoom_level'] ); ?>, <?php echo esc_js( $options['map_type'] ); ?> );
 			    map.addControl( new GLargeMapControl3D() );
@@ -416,7 +462,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				});
 			}
 			
-			function searchLocations() {
+			function searchLocations( is_search ) {
 			
 				var address 	= document.getElementById('location_search_address_field').value;
 				var city 		= document.getElementById('location_search_city_field').value;
@@ -424,10 +470,14 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				var state 		= document.getElementById('location_search_state_field').value;
 				var zip 		= document.getElementById('location_search_zip_field').value;
 				var radius		= document.getElementById('location_search_distance_field').value;
-			 
+				var lat 		= document.getElementById('location_search_default_lat').value;
+				var lng 		= document.getElementById('location_search_default_lng').value;
+				var limit		= document.getElementById('location_search_limit').value; 
+				var searching	= document.getElementById('location_is_search_results').value;
+
 			 	// Do categories selected
 			 	var cats = '';
-			 	jQuery( 'input[name=location_search_categories_field]' ).each( function() {
+			 	jQuery( 'input[rel=location_search_categories_field]' ).each( function() {
 			 		if ( jQuery( this ).attr( 'checked' ) && jQuery( this ).attr( 'value' ) != null ) {
 			 			cats += jQuery( this ).attr( 'value' ) + ',';
 			 		}
@@ -435,7 +485,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 			 	// Do tags selected
 			 	var taggers = '';
-			 	jQuery( 'input[name=location_search_tags_field]' ).each( function() {
+			 	jQuery( 'input[rel=location_search_tags_field]' ).each( function() {
 			 		if ( jQuery( this ).attr( 'checked' ) && jQuery( this ).attr( 'value' ) != null ) {
 			 			taggers += jQuery( this ).attr( 'value' ) + ',';
 			 		}
@@ -463,6 +513,12 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				if ( query != null )
 					query = query.slice(0, -2);
 				
+				if ( limit == '' || limit == null )
+					limit = 0;
+
+				if ( radius == '' || radius == null )
+					radius = 0;
+										
 				// Categories
 				if ( cats != null )
 					categories = cats.slice(0, -1);
@@ -484,22 +540,39 @@ if ( !class_exists( 'Simple_Map' ) ) {
 					tags = 'OR,' + document.getElementById('avail_tags').value;
 
 			 	// Load default location if query is empty
-			 	if ( query == '' || query == null )
-			 		query = '<?php echo esc_js( $options['default_lat'] ); ?>, <?php echo esc_js( $options['default_lng'] ); ?>';
+			 	if ( query == '' || query == null ) {
+			 	
+			 		if ( lat != 0 && lng != 0 )
+			 			query = lat + ', ' + lng;
+			 		else
+			 			query = '<?php echo esc_js( $options['default_lat'] ); ?>, <?php echo esc_js( $options['default_lng'] ); ?>';
+			 	
+			 	}
+			 	
+			 	// Searching
+			 	if ( 1 == searching )
+			 		is_search = 1;
 
 
-				geocoder.getLatLng(query, function(latlng) {
-				if (!latlng) {
-				 latlng = new GLatLng(150,100);
-				 searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius );
-				} else {
-				 searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius );
-				}
+				geocoder.getLatLng( query, function( latlng ) {
+
+					if ( 'none' != autoload || is_search ) {
+				
+						if (! latlng) {
+							latlng = new GLatLng( 44.9799654, -93.2638361 );
+							searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius, limit );
+						} else {
+							searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius, limit );
+						}
+					
+					}
+					
 				});
 			}
 			
-			function searchLocationsNear( center, homeAddress, source, mapLock, categories, tags, address, city, state, zip, radius ) {
+			function searchLocationsNear( center, homeAddress, source, mapLock, categories, tags, address, city, state, zip, radius, limit ) {
 
+				// Radius
 				if ( radius != null && radius != '' ) {
 					radius = parseInt( radius );
 					if ( units == 'km' ) {
@@ -514,15 +587,20 @@ if ( !class_exists( 'Simple_Map' ) ) {
 					}
 				}
 
-				if ( source == 'auto_all' ) {
-					var searchUrl = siteurl + '?sm-xml-search=1&lat=' + center.lat() + '&lng=' + center.lng() + '&radius=0&namequery=' + homeAddress + '&limit=0&categories=' + categories + '&tags=' + tags + '&address=' + address + '&city=' + city + '&state=' + state + '&zip=' + zip;
-				} else {
-					var searchUrl = siteurl + '?sm-xml-search=1&lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit + '&categories=' + categories + '&tags=' + tags + '&address=' + address + '&city=' + city + '&state=' + state + '&zip=' + zip;
-				}
+				// Build search URL
+				var searchUrl = siteurl + '?sm-xml-search=1&lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit + '&categories=' + categories + '&tags=' + tags + '&address=' + address + '&city=' + city + '&state=' + state + '&zip=' + zip;
 
-				GDownloadUrl(searchUrl, function(data) {
+				// Display Updating Message and hide search results
+				jQuery( "#simplemap-updating" ).appendTo( map.getPane( G_MAP_FLOAT_SHADOW_PANE ) ).css( 'width', jQuery("#simplemap").width() + 'px' ).css( 'height', jQuery("#simplemap").height() + 'px' ).show();
+				jQuery( "#results" ).html( '' );
+				
+				GDownloadUrl( searchUrl, function(data) {
 					var xml = GXml.parse(data);
 					var markers = xml.documentElement.getElementsByTagName('marker');
+					
+					// Hide Updating Message
+					jQuery( "#simplemap-updating" ).hide();
+
 					map.clearOverlays();
 					
 					var results = document.getElementById('results');
@@ -582,7 +660,16 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			}
 			
 			function createMarker(point, name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, email, special, categories, tags, description) {
-				var marker = new GMarker(point);
+				
+				// Allow plugin users to define Maker Options (including custom images)
+				var markerOptions = false;
+				if ( 'function' == typeof window.simplemapCustomMarkers )
+					markerOptions = simplemapCustomMarkers( name, address, address2, city, state, zip, country, homeAddress, url, phone, fax, email, special, categories, tags, description );
+				
+				if ( markerOptions )
+					var marker = new GMarker( point, markerOptions );
+				else
+					var marker = new GMarker( point );
 				
 				var mapwidth = Number(stringFilter(map_width));
 				var mapheight = Number(stringFilter(map_height));
@@ -708,7 +795,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			
 			function createSidebarEntry(marker, name, address, address2, city, state, zip, country, distance, homeAddress, phone, fax, email, url, special, categories, tags, description) {
 			  var div = document.createElement('div');
-			  
+
 			  // Beginning of result
 			  var html = '<div class="result">';
 			  
@@ -720,6 +807,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			  // Name & distance
 			  html += '<div class="result_name">';
 			  html += '<h3 style="margin-top: 0; padding-top: 0; border-top: none;">' + name;
+			  
 			  if (distance.toFixed(1) != 'NaN') {
 			  	if (units == 'mi') {
 				  	html+= ' <small>' + distance.toFixed(1) + ' miles</small>';
@@ -1251,6 +1339,20 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			}
 			
 			return false;
+		}
+		
+		// Search form / widget query vars
+		function register_query_vars( $vars ) {
+				
+			$vars[] = 'location_search_address';
+			$vars[] = 'location_search_city';
+			$vars[]	= 'location_search_state';
+			$vars[] = 'location_search_zip';
+			$vars[] = 'location_search_distance';
+			$vars[] = 'location_search_limit';
+			$vars[] = 'location_is_search_results';
+//echo "<pre>";print_r( $vars );die();
+			return $vars;
 		}
 
 	}	

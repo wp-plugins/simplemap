@@ -14,11 +14,16 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			
 			// Save post meta
 			add_action( 'save_post', array( &$this, 'save_post_meta' ) );
+			
+			// Limit pages called for dropdown parent selector in quick edit
+			add_filter( 'parse_request', array( &$this, 'limit_edit_query' ) );
+			add_filter( 'quick_edit_dropdown_pages_args', array( &$this, 'limit_wp_dropdown_pages' ) );
+			add_filter( 'wp_dropdown_pages', array( &$this, 'modify_empty_wp_dropdown_pages' ) );
 		}
 		
 		// Register locations post type
 		function register_locations(){
-			
+
 			$args = array(	
 				'public' => true,
 				'publicly_queryable' => false,
@@ -98,6 +103,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			);
 			
 			register_taxonomy( 'sm-tag', 'sm-location', $args );
+
 		}
 		
 		// Add call back for meta box
@@ -111,7 +117,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 		// Add premium support box
 		function premium_support() {
 			
-			global $current_screen, $simplemap_ps, $current_user;
+			global $simplemap_ps, $current_user;
 			
 			get_current_user();
 			$status_key = md5( 'ft_premium_support_' . $simplemap_ps->product_id . '_' . sanitize_title_with_dashes( $simplemap_ps->site_url )  . '_' . sanitize_title_with_dashes( $simplemap_ps->server_url ) ) ;
@@ -564,6 +570,51 @@ if ( !class_exists( 'SM_Locations' ) ) {
             
             return $types;
 		}
+		
+		// Filter the main query run at top of edit.php
+		function limit_edit_query( $query ) {
+			global $current_screen, $wpdb;
+			
+			if ( is_object( $current_screen ) && 'edit-sm-location' == $current_screen->id ) {
+				
+				$sql = $wpdb->prepare( 'SELECT ID FROM `' . $wpdb->posts . '` WHERE post_type = "sm-location" AND post_status = "publish" LIMIT 10000' );
+				if ( 10000 == count( $wpdb->get_results( $sql ) ) ) {
+					$query->query_vars['posts_per_page'] = $query->query_vars['posts_per_archive_page'] = 1000;
+					add_action( 'in_admin_footer', array( &$this, 'print_excessive_locations_message' ) );
+				}
+				
+			}
+				
+			return $query;
+		}
+		
+		// Prints the excessive locations message
+		function print_excessive_locations_message() {
+			?>
+			<div id="message" class="error"><p><?php _e( '<strong>Warning</strong>: You have more than 10,000 locations in your database. We have limited the list here to 1,000. You may <strong>use the search field to access locations beyond the first 1,000</strong>.', 'SimpleMap' ); ?></p></div>
+			<?php
+		}
+		
+		// Filter get page dropdown if we have excessive locations
+		function limit_wp_dropdown_pages( $args ) {
+			global $current_screen;
+
+			if ( is_object( $current_screen ) && 'edit-sm-location' == $current_screen->id )
+				$args['include'] = 'This always returns an empty record set.'; 
+				
+			return $args;
+		}
+
+		// Related to limit_wp_dropdown_pages. Now fill in what I erased above with fake data
+		function modify_empty_wp_dropdown_pages( $output ) {
+			global $current_screen;
+
+			if ( is_object( $current_screen ) && 'edit-sm-location' == $current_screen->id )
+				$output = "<select ide='post_parent' name='post_parent'><option value='0'>" . __( 'Main Page (no parent)' ) . "</option></select>";
+				
+			return $output;
+		}
+
 	}
 }
 ?>

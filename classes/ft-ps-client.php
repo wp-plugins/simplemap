@@ -64,7 +64,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 			global $current_screen;
 
 			// Return false if we don't have initial config settings and this isn't a request from the host server
-			if ( ( ! $this->server_url || ! $this->product_id || ! $this->plugin_support_page_ids) && ( ! $this->confirming_request || ! $this->receiving_sso ) )
+			if ( ( ! $this->server_url || ! $this->product_id || ! isset( $this->plugin_support_page_ids ) ) && ( ! $this->confirming_request || ! $this->receiving_sso ) )
 				return;
 
 			// Fire in the hole!
@@ -135,7 +135,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 							}
 										
 						} else {
-							//echo "<pre>";print_r( $response );die();
+
 							// No premium support so lets fill the paypal button property
 							$this->paypal_button = add_query_arg( get_object_vars( $response->paypal_button->args ), $response->paypal_button->base );
 							delete_option( 'external_updates-' . $this->plugin_slug );
@@ -346,7 +346,7 @@ class FT_Premium_Support_PluginUpdate_Checker {
 		
 		if ( ! function_exists( 'get_plugins' ) )
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
+											
 		$allPlugins = get_plugins();
 
 		if ( array_key_exists( $this->pluginFile, $allPlugins ) && array_key_exists( 'Version', $allPlugins[$this->pluginFile] ) )
