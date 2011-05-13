@@ -86,6 +86,10 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 
 == Changelog ==
 
+= 2.2.2.3 =
+* Fixed div widths on options pages
+* Fixed Syntax errors
+
 = 2.2.2 =
 * Hotfix to resolve a conflict with WordPress 3.1
 

@@ -64,7 +64,7 @@ if ( !class_exists( 'SM_Options' ) ){
 				$new_options['map_height'] 				= ( isset( $_POST['map_height'] ) && !empty( $_POST['map_height'] ) ) ? $_POST['map_height'] : $default['map_height'];
 				$new_options['default_lat'] 			= ( isset( $_POST['default_lat'] ) && !empty( $_POST['default_lat'] ) ) ? $_POST['default_lat'] : $default['default_lat'] ;
 				$new_options['default_lng'] 			= ( isset( $_POST['default_lng'] ) && !empty( $_POST['default_lng'] ) ) ? $_POST['default_lng'] : $default['default_lng'] ;
-				$new_options['zoom_level'] 				= ( isset( $_POST['zoom_level'] ) && !empty( $_POST['zoom_level'] ) ) ? absint( $_POST['zoom_level'] ) : $default['zoom_level'] ;
+				$new_options['zoom_level'] 				= ( isset( $_POST['zoom_level'] ) ) ? absint( $_POST['zoom_level'] ) : $default['zoom_level'] ;
 				$new_options['default_radius'] 			= ( isset( $_POST['default_radius'] ) && !empty( $_POST['default_radius'] ) ) ? absint( $_POST['default_radius'] ) : $default['default_radius'] ;
 				$new_options['map_type'] 				= ( isset( $_POST['map_type'] ) && !empty( $_POST['map_type'] ) ) ? $_POST['map_type'] : $default['map_type'];
 				$new_options['special_text'] 			= ( isset( $_POST['special_text'] ) && !empty( $_POST['special_text'] ) ) ? $_POST['special_text'] : $default['special_text'];
@@ -95,7 +95,7 @@ if ( !class_exists( 'SM_Options' ) ){
 		
 		// Prints the options page
 		function print_page(){
-			global $simple_map;
+			global $simple_map, $wpdb;
 			$options = get_option( 'SimpleMap_options' );
 			if ( !isset( $options['api_key'] ) )
 				$options['api_key'] = '';
@@ -103,10 +103,11 @@ if ( !class_exists( 'SM_Options' ) ){
 			extract( $options );
 			
 			// Set Autoload Vars
-			$count = count( get_posts( array( 'post_type' => 'sm-location', 'post_status' => 'publish' ) ) );
-			if ( $count > 100 ) {
-				$disabled_autoload = true;
-				$disabledmsg = sprintf( __( '%s Auto-load all locations %s is disabled because you have more than 100 locations in your database.', 'SimpleMap' ), '<strong>', '</strong>' );
+            $count = count( $wpdb->get_col( "SELECT ID FROM `" . $wpdb->posts . "` WHERE post_type = 'sm-location' AND post_status = 'publish' LIMIT 250" ) );
+
+			if ( $count == 250 ) {
+				$disabled_autoload = false;
+                $disabledmsg = sprintf( __( 'You have to many locations to auto-load them all. Only the closest %d will be displayed if auto-load all is selected.', 'SimpleMap' ), '250' );
 			} else {
 				$disabled_autoload = false;
 				$disabledmsg = ''; 
@@ -187,7 +188,7 @@ if ( !class_exists( 'SM_Options' ) ){
 														<select name="default_country" id="default_country">
 															<?php
 															foreach ( $simple_map->get_country_options() as $key => $value ) {
-																echo "<option value='" . $value . "' " . selected( $default_country, $value ) . ">" . $value . "</option>\n";
+																echo "<option value='" . $key . "' " . selected( $default_country, $key ) . ">" . $value . "</option>\n";
 															}
 															?>
 														</select>
@@ -332,7 +333,9 @@ if ( !class_exists( 'SM_Options' ) ){
 															<option value="some" <?php selected( $autoload, 'some' ); ?>><?php _e('Auto-load search results', 'SimpleMap'); ?></option>
 															<option value="all" <?php selected( $autoload, 'all' );?> <?php disabled( $disabled_autoload ); ?>><?php _e('Auto-load all locations', 'SimpleMap'); ?></option>
 														</select>
-														<?php if ( $disabledmsg != '' ) { echo '<br /><small><em>' . esc_attr( $disabledmsg ) . '</small></em>'; } ?>
+                                                        <br />
+                                                        <small><em><?php _e( sprintf ( '%sNo auto-load%s shows map without any locations.%s%sAuto-load search results%s displays map based on default values for search form.%s%sAuto-load all%s ignores default search form values and loads all locations.', '<strong>', '</strong>', '<br />', '<strong>', '</strong>', '<br />', '<strong>', '</strong>' ) ); ?></em></small>
+                                                        <?php if ( $disabledmsg != '' ) { echo '<br /><small style="color:red";><em>' . $disabledmsg . '</small></em>'; } ?> 
 
 														<!--<br /><label for="lock_default_location" id="lock_default_location_label"><input type="checkbox" name="lock_default_location" id="lock_default_location" value="1" <?php checked( $lock_default_location ); ?> /> <?php _e('Stick to default location set above', 'SimpleMap'); ?></label>-->
 													</td>
@@ -342,6 +345,7 @@ if ( !class_exists( 'SM_Options' ) ){
 													<td><label for="zoom_level"><?php _e('Default Zoom Level', 'SimpleMap'); ?></label></td>
 													<td>
 														<select name="zoom_level" id="zoom_level">
+                                                            <option value='0' <?php selected( $zoom_level, 0 ); ?> >Auto Zoom</option>
 															<?php
 															for ( $i = 1; $i <= 19; $i++ ) {
 																echo "<option value='" . esc_attr( $i ) . "' " . selected( $zoom_level, $i ) . ">" . esc_attr( $i ) . "</option>\n";

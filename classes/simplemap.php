@@ -347,11 +347,6 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			header( "Content-type: application/x-javascript" );	
 			$options = $this->get_default_options();
 
-			if ( ( isset( $options['autoload'] ) && 'some' == $options['autoload'] || 'all' == $options['autoload'] ) )
-				$autozoom = $options['zoom_level'];
-			else
-				$autozoom = 'false';
-
 			?>
 			var default_lat 			= <?php echo esc_js( $options['default_lat'] ); ?>;
 			var default_lng 			= <?php echo esc_js( $options['default_lng'] ); ?>;
@@ -371,7 +366,6 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			var fax_text				= '<?php echo __( 'Fax', 'SimpleMap' ); ?>';
 			var tags_text				= '<?php echo __( 'Tags', 'SimpleMap' ); ?>';
 			var noresults_text			= '<?php echo __( 'No results found.', 'SimpleMap' ); ?>';
-			var autozoom 				= <?php echo esc_js( $autozoom ); ?>;
 			var default_domain 			= '<?php echo esc_js( $options['default_domain'] ); ?>';
 			var address_format 			= '<?php echo esc_js( $options['address_format'] ); ?>';
 			var siteurl					= '<?php echo esc_js( get_option( 'siteurl' ) ); ?>';
@@ -550,27 +544,35 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			 	}
 			 	
 			 	// Searching
-			 	if ( 1 == searching )
+			 	if ( 1 == searching || 1 == is_search ) {
 			 		is_search = 1;
+                    var source = 'search';
+                } else {
+                    is_search = 0;
+                    var source = 'initial_load';
+                }
 
 
 				geocoder.getLatLng( query, function( latlng ) {
 
 					if ( 'none' != autoload || is_search ) {
 				
+                        if ( 'all' == autoload && is_search !=1 ) {
+                            radius = '';
+                            limit = '';
+                        }
+
 						if (! latlng) {
 							latlng = new GLatLng( 44.9799654, -93.2638361 );
-							searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius, limit );
-						} else {
-							searchLocationsNear( latlng, query, "search", "unlock", categories, tags, address, city, state, zip, radius, limit );
-						}
-					
+                        }
+                        var query_type = 'all';
+                        searchLocationsNear( latlng, query, source, "unlock", query_type, categories, tags, address, city, state, zip, radius, limit );
 					}
 					
 				});
 			}
 			
-			function searchLocationsNear( center, homeAddress, source, mapLock, categories, tags, address, city, state, zip, radius, limit ) {
+			function searchLocationsNear( center, homeAddress, source, mapLock, query_type, categories, tags, address, city, state, zip, radius, limit ) {
 
 				// Radius
 				if ( radius != null && radius != '' ) {
@@ -578,7 +580,8 @@ if ( !class_exists( 'Simple_Map' ) ) {
 					if ( units == 'km' ) {
 					  	radius = parseInt( radius ) / 1.609344;
 					}
-					
+			    } else if ( autoload == 'all' ) {
+                    radius = '';
 				} else {
 					if ( units == 'mi' ) {
 					  	radius = parseInt( default_radius );
@@ -588,7 +591,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				}
 
 				// Build search URL
-				var searchUrl = siteurl + '?sm-xml-search=1&lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&limit=' + limit + '&categories=' + categories + '&tags=' + tags + '&address=' + address + '&city=' + city + '&state=' + state + '&zip=' + zip;
+				var searchUrl = siteurl + '?sm-xml-search=1&lat=' + center.lat() + '&lng=' + center.lng() + '&radius=' + radius + '&namequery=' + homeAddress + '&query_type=' + query_type + '&limit=' + limit + '&categories=' + categories + '&tags=' + tags + '&address=' + address + '&city=' + city + '&state=' + state + '&zip=' + zip;
 
 				// Display Updating Message and hide search results
 				jQuery( "#simplemap-updating" ).appendTo( map.getPane( G_MAP_FLOAT_SHADOW_PANE ) ).css( 'width', jQuery("#simplemap").width() + 'px' ).css( 'height', jQuery("#simplemap").height() + 'px' ).show();
@@ -637,13 +640,11 @@ if ( !class_exists( 'Simple_Map' ) ) {
 						results.appendChild(sidebarEntry);
 						bounds.extend(point);
 					}
-					if (source == "search") {
+					if (source == "search" || zoom_level = 0 ) {
 						var myzoom = (map.getBoundsZoomLevel(bounds) );
 						if ( myzoom > 18 )
 							myzoom = 18;
 						map.setCenter( bounds.getCenter(), myzoom );
-					} else if ( mapLock == "unlock" ) {
-						map.setCenter(bounds.getCenter(), autozoom);
 					}
 				});
 			}
@@ -734,7 +735,10 @@ if ( !class_exists( 'Simple_Map' ) ) {
 								
 								if (phone != '') {
 				html += '			<p>' + phone_text + ': ' + phone;
-									if (fax != '') {
+                                if (email != '') {
+                html += '       <br />' + email_text + ': <a href="mailto:' + email + '">' + email + '</a>';
+                                }
+								if (fax != '') {
 				html += '				<br />' + fax_text + ': ' + fax;
 									}
 				html += '			</p>';
@@ -846,11 +850,14 @@ if ( !class_exists( 'Simple_Map' ) ) {
 					html += '<br />' + city + ' ' + zip + '</address></div>';
 				}
 			  
-			  // Phone & fax numbers
+			  // Phone, email, and fax numbers
 			  html += '<div class="result_phone">';
 			  if (phone != '') {
 			  	html += phone_text + ': ' + phone;
 			  }
+              if (email != '') {
+                html += '<br />' + email_text + ': <a href="mailto:' + email + '">' + email + '</a>';
+              }
 			  if (fax != '') {
 			  	html += '<br />' + fax_text + ': ' + fax;
 			  }

@@ -16,6 +16,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 				$lng		= ! empty( $_GET['lng'] ) ? $_GET['lng'] : false;
 				$radius		= ! empty( $_GET['radius'] ) ? $_GET['radius'] : false;
 				$namequery	= ! empty( $_GET['namequery'] ) ? $_GET['namequery'] : false;
+                $query_type = ! empty( $_GET['query_type'] ) ? $_GET['query_type'] : 'distance';
 				$address	= ! empty( $_GET['address'] ) ? $_GET['address'] : false;
 				$city		= ! empty( $_GET['city'] ) ? $_GET['city'] : false;
 				$state		= ! empty( $_GET['state'] ) ? $_GET['state'] : false;
@@ -29,36 +30,41 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 				// Define my empty strings
 				$distance_select = $distance_having = $distance_order = '';
 
-				// Some limit love
-				if ( $limit )
-					$limit = "LIMIT $limit";
+                // We're going to do a hard limit to 250 for now.
+                if ( !$limit || $limit > 250 )
+                    $limit = 'LIMIT 250';
 				else
-					$limit = '';
+					$limit = 'LIMIT ' . absint( $limit );
 						
+                $limit = apply_filters( 'sm-xml-search-limit', $limit, $cats, $tags );
+                
 				// Locations within specific distance or just get them all?
+                $distance_select = $wpdb->prepare( "( 3959 * ACOS( COS( RADIANS(%s) ) * COS( RADIANS( lat_tbl.meta_value ) ) * COS( RADIANS( lng_tbl.meta_value ) - RADIANS(%s) ) + SIN( RADIANS(%s) ) * SIN( RADIANS( lat_tbl.meta_value ) ) ) ) AS distance", $lat, $lng, $lat ) . ', ';
+                $distance_order = 'distance, ';
+
 				if ( $radius ) {
-					$distance_select = $wpdb->prepare( "( 3959 * acos( cos( radians(%s) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(%s) ) + sin( radians(%s) ) * sin( radians( lat ) ) ) ) AS distance", $lat, $lng, $lat ) . ', ';
 					$distance_having = $wpdb->prepare( "HAVING distance < %d", $radius );
-					$distance_order = 'distance, ';
 				}
 				
 				// Build my Query		
 				$sql = $wpdb->prepare( "
 					SELECT 
-						lat, 
-						lng, 
-						$distance_select 
-						posts.* 
+                        lat_tbl.meta_value as lat,
+                        lng_tbl.meta_value as lng,
+                        $distance_select,
+                        posts.ID,
+                        posts.post_content,
+                        posts.post_title
 					FROM 
-						$wpdb->posts as posts, 
-						( SELECT lat_pm.meta_value as lat, lat_pm.post_id as lat_id FROM $wpdb->postmeta lat_pm WHERE lat_pm.meta_key = 'location_lat' ) as lat_tbl, 
-						( SELECT lng_pm.meta_value as lng, lng_pm.post_id as lng_id FROM $wpdb->postmeta lng_pm WHERE lng_pm.meta_key = 'location_lng' ) as lng_tbl  
+						$wpdb->posts as posts 
+                    INNER JOIN
+                        $wpdb->postmeta lat_tbl ON lat_tbl.post_id = posts.ID AND lat_tbl.meta_key = 'location_lat'
+                    INNER JOIN
+                        $wpdb->postmeta lng_tbl ON lng_tbl.post_id = posts.ID AND lng_tbl.meta_key = 'location_lng'
 					WHERE 
-						lat_id = posts.ID 
-						AND lng_id = posts.ID 
-						AND post_type = 'sm-location' 
-						AND post_status = 'publish' 
-					$distance_having				
+                        posts.post_type = 'sm-location' 
+                        AND posts.post_status = 'publsih' 
+                        $distance_having
 					ORDER BY 
 						$distance_order posts.post_name ASC
 					$limit
@@ -66,32 +72,10 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 
 				$sql = apply_filters( 'sm-xml-search-locations-sql', $sql, $cats, $tags );
 
-				/* Create a cache for every sql query. 
-				 * Going to use transients and an array since wp_cache doesn't expire yet.
-				 * Separate array key, value for each query
-				 * This way I can kill the transient on location creation / update / deletion
-				 */
-    			$cache_key = 'simplemap-queries-cache';
-    			$query_key = md5( $sql );
-    			
-    			// Does transient exist?
-				if ( false === ( $cached_data = get_transient( $cache_key ) ) ) {
-
-					// Transient didn't exist, so query DB
-					$locations = $wpdb->get_results( $sql );
-					$cached_data[$query_key] = $locations;
-					set_transient( $cache_key, $cached_data, apply_filters( 'sm-query-cache-period', 60 * 60 * 12 ) );
-	
-				} else {
-				
-					// Key didn't exist, so query DB
-					$locations = $wpdb->get_results( $sql );
-					$cached_data[$query_key] = $locations;
-					set_transient( $cache_key, $cached_data, apply_filters( 'sm-query-cache-period', 60 * 60 * 12 ) );
-
-				}  			
-		
-				if ( $locations ) {
+/**
+* THIS IS HORRIBLY OPTIMIZED. WORKIN GON IT.
+**/
+                if ( $locations = $wpdb->get_results( $sql ) ) {
 
 					// Start looping through all locations i found in the radius
 					foreach ( $locations as $key => $value ) {
@@ -182,7 +166,9 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 								}
 								if ( isset( $loc_cat_names ) )
 									$value->categories = implode( ', ', $loc_cat_names );
-							}
+							} else {
+                                $value->categories = '';
+                            }
 							
 							// Get all tags for this post
 							if ( $loc_tags = wp_get_object_terms( $value->ID, 'sm-tag' ) ) {
@@ -192,7 +178,9 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 								}
 								if ( isset( $loc_tag_names ) )
 									$value->tags = implode( ', ', $loc_tag_names );
-							}
+							} else {
+                                $value=>tags = '';
+                            }
 						
 						}
 					}
@@ -209,7 +197,6 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 		}
 		
 		// Prints the XML output
-		// TODO Cats and Tags
 		function print_xml( $dataset ) {
 			$dom 		= new DOMDocument( "1.0" );
 			$node 		= $dom->createElement( "markers" );

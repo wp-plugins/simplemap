@@ -231,16 +231,16 @@ class SM_Search_Widget extends WP_Widget {
 	function form( $instance ) {
 		
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
+		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		
 		$title 				= esc_attr( $instance['title'] );
-		$show_address 		= $instance['show_address'] ? (bool) $instance['show_address'] : false;
-		$show_city 			= $instance['show_city'] ? (bool) $instance['show_city'] : false;
-		$show_state 		= $instance['show_state'] ? (bool) $instance['show_state'] : false;
-		$show_zip 			= $instance['show_zip'] ? (bool) $instance['show_zip'] : false;
-		$show_categories 	= $instance['show_categories'] ? (bool) $instance['show_categories'] : false;
-		$show_tags 			= $instance['show_tags'] ? (bool) $instance['show_tags'] : false;
-		$show_distance 		= $instance['show_distance'] ? (bool) $instance['show_distance'] : false;
+		$show_address 		= isset( $instance['show_address'] ) ? (bool) $instance['show_address'] : false;
+		$show_city 			= isset( $instance['show_city'] ) ? (bool) $instance['show_city'] : false;
+		$show_state 		= isset( $instance['show_state'] ) ? (bool) $instance['show_state'] : false;
+		$show_zip 			= isset( $instance['show_zip'] ) ? (bool) $instance['show_zip'] : false;
+		$show_categories 	= isset( $instance['show_categories'] ) ? (bool) $instance['show_categories'] : false;
+		$show_tags 			= isset( $instance['show_tags'] ) ? (bool) $instance['show_tags'] : false;
+		$show_distance 		= isset( $instance['show_distance'] ) ? (bool) $instance['show_distance'] : false;
 		$categories 		= isset( $instance['categories'] ) ? esc_attr( $instance['categories'] ) : '';
 		$tags				= isset( $instance['tags'] ) ? esc_attr( $instance['tags'] ) : '';
 		$default_lat 		= isset( $instance['default_lat'] ) ? esc_attr( $instance['default_lat'] ) : 0;

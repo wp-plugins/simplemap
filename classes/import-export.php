@@ -543,7 +543,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 				
 						<div id='dashboard-widgets' class='metabox-holder'>
 						
-							<div class='postbox-container' style='max-width: 800px;'>
+							<div class='postbox-container' style='width: 49%;'>
 							
 								<div id='normal-sortables' class='meta-box-sortables ui-sortable'>
 								
