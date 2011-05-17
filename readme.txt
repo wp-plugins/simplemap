@@ -4,8 +4,8 @@ Contributors: blepoxp, fullthrottledevelopment
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
 Requires at least: 2.8
-Tested up to: 3.1
-Stable tag: 2.2.2
+Tested up to: 3.2
+Stable tag: 2.2.3
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
@@ -26,7 +26,7 @@ Key features include:
 * Import and export your database as a CSV file
 * Quick Edit function allows for real-time updates to the location database
 * Make certain locations stand out with a customizable tag (Most Popular, Ten-Year Member, etc.)
-* Easy-to-use settings page means you don't need to know any code to customize your map
+* Easy-to-use settings page means you don't need to know any code to customize your map 
 
 See the screenshots for examples of the plugin in action.
 
@@ -56,7 +56,7 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 You must have:
 
 * WordPress 2.8 or later
-* PHP 5 (or PHP 4 with the SimpleXML extension loaded)
+* PHP 5 (or PHP 4 with the SimpleXML extension loaded), DOMDocument class
 
 = How do I put SimpleMap on my website? =
 
@@ -86,8 +86,41 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 
 == Changelog ==
 
-= 2.2.2 =
-* Hotfix to resolve a conflict with WordPress 3.1
+= 2.2.3 =
+
+* Moved time consuming PHP loop to MySQL query. Very large speed improvments to search
+* Fixed bug returning false negatives with low limit + taxonomy combo on search
+* Added South Africa Google domain
+* Made Google Domains and Country names array filterable
+* Revamped functions that identify plugin path and plugin URL to work with SSL and non-standard setups
+* Minor CSS changes
+* Replace calls to get_option( 'site_url' ) with site_url()
+* Removed debugging code at top of XML-Search.php that was lowering PHP memory_limit
+* Fixed limit shortcode so that it works again
+* Add a fallback that geocodes new locations via JS when PHP doesn't work because of 620 status from Google
+* Added actions to the load_simplemap JS function
+* Added ability to use a select box for taxonomies in the search form (rather than checkboxes)
+* Fixed bug that allowed results to show up in search
+* Fixed bug preventing drag and drop location from updating address in some locations
+* Add a fallback XML generator for servers without DOMDocument Installed
+* Added ids to search form tr and td elements to allow manipulation via CSS / JS
+* Refactored parts of XML search script for optimization
+* Forced JS header as 200. Some hosts were reporting status for PHP as JS to be 400.
+* Added WP_IMPORTING flag while importing locations.
+* Fixed some HTML Validation issues in the Search form (have one more to root out)
+* Added additional filters to allow modifying search form labels without use of .pot file.
+* Removed stray testing code in simplemap.php
+* Reformulated the main search query to trim search results to 1/10 the time of that introduced in 2.0
+* Added multiple filters that allow for customization of text labels / tabs / visual elements in the map and search results
+* Added more than a dozen new shortcode arguments for overriding General Settings on a per map instance (see KB article on premium support site)
+* Removed caching system introduced in 2.2.1 as it was failing for large DBs and isn't needed with SQL revamps
+* Fixed country code problem in General Settings
+* Fixed bug that prevented default zoom level from working
+* Fixed bug that prevented auto load all locations in some setups
+* Limited total number of auto load locations. It proved impractical to load them all if you had a large DB
+* Added instructional descriptions to General Settings that proved confusing to users
+* Fixed bug preventing radius from working in some setups
+* Bug fixes are now in sync with premium version of plugin.
 
 = 2.2.1 =
 * Added 'Loading' message to map when doing search

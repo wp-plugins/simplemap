@@ -40,9 +40,9 @@ class SM_Search_Widget extends WP_Widget {
 		$default_lng	= $instance['default_lng'] ? $instance['default_lng'] : 0;
 		$simplemap_page	= $instance['simplemap_page'] ? $instance['simplemap_page'] : 2;
 
-		// Set categories and tags to available equivelants 
-		$cats_avail = $categories;
-		$tags_avail = $tags;
+		// Set categories, tags, days, and time to available equivelants 
+		$cats_avail		= $categories;
+		$tags_avail 	= $tags;
 
 		echo $before_widget;
 		if ( $title )
@@ -60,7 +60,7 @@ class SM_Search_Widget extends WP_Widget {
 		// Set action based on permalink structure
 		if ( ! $wp_rewrite->permalink_structure ) {
 			$method = 'get';
-			$action = get_option( 'siteurl' );
+			$action = site_url();
 		} else {
 			$method = 'post';
 			$action = get_permalink( absint( $simplemap_page ) );
@@ -231,16 +231,16 @@ class SM_Search_Widget extends WP_Widget {
 	function form( $instance ) {
 		
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
+		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		
 		$title 				= esc_attr( $instance['title'] );
-		$show_address 		= $instance['show_address'] ? (bool) $instance['show_address'] : false;
-		$show_city 			= $instance['show_city'] ? (bool) $instance['show_city'] : false;
-		$show_state 		= $instance['show_state'] ? (bool) $instance['show_state'] : false;
-		$show_zip 			= $instance['show_zip'] ? (bool) $instance['show_zip'] : false;
-		$show_categories 	= $instance['show_categories'] ? (bool) $instance['show_categories'] : false;
-		$show_tags 			= $instance['show_tags'] ? (bool) $instance['show_tags'] : false;
-		$show_distance 		= $instance['show_distance'] ? (bool) $instance['show_distance'] : false;
+		$show_address 		= isset( $instance['show_address'] ) ? (bool) $instance['show_address'] : false;
+		$show_city 			= isset( $instance['show_city'] ) ? (bool) $instance['show_city'] : false;
+		$show_state 		= isset( $instance['show_state'] ) ? (bool) $instance['show_state'] : false;
+		$show_zip 			= isset( $instance['show_zip'] ) ? (bool) $instance['show_zip'] : false;
+		$show_categories 	= isset( $instance['show_categories'] ) ? (bool) $instance['show_categories'] : false;
+		$show_tags 			= isset( $instance['show_tags'] ) ? (bool) $instance['show_tags'] : false;
+		$show_distance 		= isset( $instance['show_distance'] ) ? (bool) $instance['show_distance'] : false;
 		$categories 		= isset( $instance['categories'] ) ? esc_attr( $instance['categories'] ) : '';
 		$tags				= isset( $instance['tags'] ) ? esc_attr( $instance['tags'] ) : '';
 		$default_lat 		= isset( $instance['default_lat'] ) ? esc_attr( $instance['default_lat'] ) : 0;
@@ -278,6 +278,12 @@ class SM_Search_Widget extends WP_Widget {
 		
 		<p><label for="<?php echo $this->get_field_id( 'tags' ); ?>"><?php _e( 'Tags:', 'SimpleMap' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'tags' ); ?>" name="<?php echo $this->get_field_name( 'tags' ); ?>" type="text" value="<?php echo $tags; ?>" /></p>
+		
+		<p><label for="<?php echo $this->get_field_id( 'days' ); ?>"><?php _e( 'Days:', 'SimpleMap' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'days' ); ?>" name="<?php echo $this->get_field_name( 'days' ); ?>" type="text" value="<?php echo $days; ?>" /></p>
+		
+		<p><label for="<?php echo $this->get_field_id( 'times' ); ?>"><?php _e( 'Times:', 'SimpleMap' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'times' ); ?>" name="<?php echo $this->get_field_name( 'times' ); ?>" type="text" value="<?php echo $times; ?>" /></p>
 		
 		<p><label for="<?php echo $this->get_field_id( 'default_lat' ); ?>"><?php _e( 'Default Lat:', 'SimpleMap' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'default_lat' ); ?>" name="<?php echo $this->get_field_name( 'default_lat' ); ?>" type="text" value="<?php echo $default_lat; ?>" /></p>

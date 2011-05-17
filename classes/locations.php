@@ -9,16 +9,18 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			add_action( 'init', array( &$this, 'register_location_tags' ) );
 			
 			// Queue my JS
-			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_location_drag_drop_js' ) );
-			add_action( 'init', array( &$this, 'location_drag_drop_js' ) );
+			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_location_add_edit_js' ) );
+			add_action( 'init', array( &$this, 'location_add_edit_js' ) );
 			
 			// Save post meta
 			add_action( 'save_post', array( &$this, 'save_post_meta' ) );
+			add_action( 'wp_ajax_ajax_save_lat_lng', array( &$this, 'ajax_save_lat_lng' ) );
 			
 			// Limit pages called for dropdown parent selector in quick edit
 			add_filter( 'parse_request', array( &$this, 'limit_edit_query' ) );
 			add_filter( 'quick_edit_dropdown_pages_args', array( &$this, 'limit_wp_dropdown_pages' ) );
 			add_filter( 'wp_dropdown_pages', array( &$this, 'modify_empty_wp_dropdown_pages' ) );
+			
 		}
 		
 		// Register locations post type
@@ -27,6 +29,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			$args = array(	
 				'public' => true,
 				'publicly_queryable' => false,
+				'exclude_from_search' => true,
 				'show_ui' => true,
 				'capability_type' => 'post',
 				'hierarchical' => true,
@@ -105,7 +108,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			register_taxonomy( 'sm-tag', 'sm-location', $args );
 
 		}
-		
+
 		// Add call back for meta box
 		function location_meta_cb(){
 			add_meta_box( 'sm-location-premium-support', __( 'Premium Support', 'SimpleMap' ), array( &$this, 'premium_support' ), 'sm-location', 'side', 'high' );
@@ -191,6 +194,11 @@ if ( !class_exists( 'SM_Locations' ) ) {
 
 			?>
 				<p class="sub"><?php _e('You must enter either an address or a latitude/longitude. If you enter both, the address will not be geocoded and your latitude/longitude values will remain intact.', 'SimpleMap'); ?></p>
+
+				<div class='hidden updated below-h2' id='js-geo-encode-msg'>
+					<p><?php echo __( "Your Server's IP is over the geocode threshold set by Google so we had fallback to a Javascript function. <span id='sm_js_update_lat_lng_result'></span>", "SimpleMap" ); ?></p>
+				</div>
+
 				<div class="table">
 					<table class="form-table">
 
@@ -232,7 +240,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 								</select>
 							</td>
 						</tr>
-
+						
 						<!-- Lat / Lng -->						 
 						<tr valign="top">
 							<td><label for="location_lat"><?php _e('Latitude/Longitude', 'SimpleMap'); ?></label></td>
@@ -324,18 +332,18 @@ if ( !class_exists( 'SM_Locations' ) ) {
 		}
 		
 		// Enqueues the JS I need.
-		function enqueue_location_drag_drop_js() {
+		function enqueue_location_add_edit_js() {
 			global $current_screen, $post;
 
-			if ( !is_admin() || 'sm-location' != $current_screen->id )
+			if ( ! is_admin() || 'sm-location' != $current_screen->id )
 				return;
 				
-			wp_enqueue_script( 'sm-drag-drop-loaction-js', get_option( 'siteurl' ) . '/?sm-drag-drop-loaction-js=' . $post->ID, array( 'jquery' ) );
+			wp_enqueue_script( 'sm-drag-drop-loaction-js', site_url() . '/?sm-drag-drop-loaction-js=' . $post->ID, array( 'jquery' ) );
 			
 		}
 		
 		// Javascript for add / edit location page
-		function location_drag_drop_js() {
+		function location_add_edit_js() {
 			global $current_screen;
 			
 			$options = get_option( 'SimpleMap_options' );
@@ -363,7 +371,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			var marker;
 			var newAddress
 			
-			function initialize_drag_drop() {
+			function location_add_edit_js_init() {
 			  map = new GMap2( document.getElementById( "dragdrop_map_canvas" ) );
 			  map.setCenter( new GLatLng( <?php echo esc_js( $drag_drop_lat ); ?>,<?php echo esc_js( $drag_drop_lng ); ?> ), <?php echo esc_js( $drag_drop_zoom ); ?> );
 			  map.addControl( new GLargeMapControl3D() );
@@ -372,6 +380,43 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			  GEvent.addListener(map, "click", dragDropGetAddress);
 			  GEvent.addListener( marker, "dragend", dragDropGetAddressTest );
 			  geocoder = new GClientGeocoder();
+
+				<?php
+				// If PHP Geocode failed, do the ajax update
+				if ( $sm_js_update = get_post_meta( $postid, 'sm-needs-js-geocode', true ) ) {
+					$location_address_data = get_post_custom( $postid );
+					?>
+					jQuery( '#js-geo-encode-msg' ).removeClass( 'hidden' );
+					
+					// Do geocode
+					var geo_address = '<?php echo esc_js( $location_address_data['location_address'][0] . ' ' . $location_address_data['location_city'][0] . ' ' . $location_address_data['location_state'][0] . ' ' . $location_address_data['location_zip'][0] . ' ' . $location_address_data['location_country'][0] ); ?>';
+					geocoder.getLatLng(geo_address, function(latlng) {
+						jQuery( "#location_lat" ).attr( 'value', latlng.lat() );
+						jQuery( "#location_lng" ).attr( 'value', latlng.lng() );
+
+						var smdata = { 
+						    action:         'ajax_save_lat_lng',
+						    sm_id:			<?php echo esc_js( $postid ); ?>,
+						    sm_lat:			latlng.lat(),
+						    sm_lng:			latlng.lng()
+						};  
+						
+						jQuery.post( ajaxurl, smdata, function( response ) {
+						   jQuery( '#sm_js_update_lat_lng_result' ).html( response );
+						});
+						
+						// Set drag/drop map to new location
+						map.setCenter( new GLatLng( latlng.lat(),latlng.lng() ), <?php echo esc_js( $drag_drop_zoom ); ?> );
+						marker = new GMarker( map.getCenter(), {draggable: true, bouncy: true} );
+						map.addOverlay( marker );
+
+						jQuery( '#js-geo-encode-msg' ).removeClass( 'hidden' );
+					});
+					<?php
+					delete_post_meta( $postid, 'sm-needs-js-geocode' );
+				}
+				?>
+
 			}
 			
 			function dragDropGetAddressTest() {
@@ -403,7 +448,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			}
 			
 			jQuery(document).ready(function(){
-				initialize_drag_drop();
+				location_add_edit_js_init();
 			});
 			
 			function dragDropUpdateFormFields( response, place ) {
@@ -414,14 +459,18 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			}
 			
 			function dragDropUpdateAddress() {
-				
+
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare != null )
 				    newStreet = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
+				else if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.Thoroughfare != null )
+				    newStreet = place.AddressDetails.Country.AdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
 				else
 					newStreet = '';
-				
+
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName != null )
 				    newCity = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName;
+				else if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName != null )
+				    newCity = place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName;
 				else
 					newCity = '';
 				
@@ -432,6 +481,8 @@ if ( !class_exists( 'SM_Locations' ) ) {
 				    
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode.PostalCodeNumber != null )
 				    newZip = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode.PostalCodeNumber;
+				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode != null && place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode.PostalCodeNumber != null )
+				    newZip = place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode.PostalCodeNumber;
 				else
 				    newZip = '';
 				
@@ -453,6 +504,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 				jQuery("#location_country").val( newCountry );
 			}
 			<?php
+						
 			die();
 		}
 		
@@ -541,7 +593,13 @@ if ( !class_exists( 'SM_Locations' ) ) {
 						update_post_meta( $post, 'location_lat', $geocode_result['lat'] );
 						update_post_meta( $post, 'location_lng', $geocode_result['lng'] );
 					}
-				}			
+				} else if ( $geocode_result && isset( $geocode_result['status'] ) ) {
+					// Parse response
+					switch( $geocode_result['status'] ) {
+						case 620 :
+							update_post_meta( $post, 'sm-needs-js-geocode', 'true' );
+					}
+				}		
 			}
 		}
 		
@@ -560,6 +618,8 @@ if ( !class_exists( 'SM_Locations' ) ) {
             $types['url'] = __( 'URL', 'SimpleMap' );
             $types['category'] = __( 'Categories', 'SimpleMap' );
             $types['tags'] = __( 'Tags', 'SimpleMap' );
+            $types['days'] = __( 'Days', 'SimpleMap' );
+            $types['times'] = __( 'Times', 'SimpleMap' );
             $types['description'] = __( 'Description', 'SimpleMap' );
             $types['special'] = __( 'Special', 'SimpleMap' );
             $types['lat'] = __( 'Lat', 'SimpleMap' );
@@ -595,6 +655,29 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			<?php
 		}
 		
+		// Saves lat / lng data via ajax
+		function ajax_save_lat_lng() {
+		
+			// If we're missing a var, return false
+			if ( empty( $_POST['sm_lat'] ) || empty( $_POST['sm_lng'] ) || empty( $_POST['sm_id'] ) )
+				die( __( "It doesn't look like that worked either. Please try again later.", "SimpleMap" ) );
+			
+			// Save original lat for roleback if lng update fails
+			$orig_lat = get_post_meta( absint( $_POST['sm_id'] ), 'location_lat', esc_attr( $_POST['sm_lat'], true ) );
+			
+			// Update or return false
+			if ( ! update_post_meta( absint( $_POST['sm_id'] ), 'location_lat', esc_attr( $_POST['sm_lat'] ) ) )
+				die( __( "It doesn't look like that worked either. Please try again later.", "SimpleMap" ) );
+			if ( ! update_post_meta( absint( $_POST['sm_id'] ), 'location_lng', esc_attr( $_POST['sm_lng'] ) ) ) {
+				update_post_meta( absint( $_POST['sm_id'] ), 'location_lat', esc_attr( $orig_lat ) );
+				die( __( "It doesn't look like that worked either. Please try again later.", "SimpleMap" ) );
+			}
+			
+			// If we made it here, we're golden
+			die( __( "It looks like that worked!", "SimpleMap" ) );
+		
+		}
+		
 		// Filter get page dropdown if we have excessive locations
 		function limit_wp_dropdown_pages( $args ) {
 			global $current_screen;
@@ -614,7 +697,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 				
 			return $output;
 		}
-
+		
 	}
 }
 ?>

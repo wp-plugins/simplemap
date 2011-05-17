@@ -61,6 +61,10 @@ width: auto;
 margin: 10px auto;
 }
 
+#map_search label {
+float: left;
+}
+
 .markertext {
 font-size: 0.9em;
 line-height: 1.2em;
@@ -166,8 +170,9 @@ font-style: italic;
 background: url( ../images/star.png ) no-repeat left center;
 }
 
-.location_search_title, .location_search_distance_cell, .location_search_category_cell, .location_search_tag_cell {
+.location_search_title, .location_search_distance_cell, .location_search_cat_cell, .location_search_category_cell, .location_search_tag_cell, .location_search_day_cell, .location_search_time_cell {
 	font-weight:bold;
+	vertical-align:top;
 }
 
 .no-linebreak {

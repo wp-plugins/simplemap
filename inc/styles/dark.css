@@ -3,7 +3,7 @@ Theme Name: Dark
 */
 
 #simplemap {
-border: 1px solid #666;
+border: 1px solid #999;
 color: #000;
 }
 
@@ -29,11 +29,11 @@ text-decoration: underline;
 #powered_by_simplemap {
 font-size: 0.75em;
 text-align: right;
-color: #666;
+color: #999;
 }
 
 #powered_by_simplemap a {
-color: #666;
+color: #999;
 text-decoration: underline;
 }
 
@@ -59,6 +59,10 @@ width: auto;
 
 #searchForm p {
 margin: 10px auto;
+}
+
+#map_search label {
+float: left;
 }
 
 .markertext {
@@ -96,16 +100,16 @@ margin: 0;
 padding: 10px 5px;
 font-size: 0.9em;
 line-height: 1.2em;
-border-bottom: 1px solid #333;
+border-bottom: 1px solid #ccc;
 }
 
 div.result small {
 font-size: 0.7em;
-color: #666;
+color: #999;
 }
 
 div.result:hover {
-background: #191919;
+background: #ebf0f1;
 }
 
 div.result address {
@@ -123,8 +127,8 @@ border: none;
 }
 
 div.result .search-term {
-background: #004080;
-color: #fff;
+background: #ff6;
+color: #000;
 }
 
 div.result div.result_name {
@@ -166,8 +170,9 @@ font-style: italic;
 background: url( ../images/star.png ) no-repeat left center;
 }
 
-.location_search_title, .location_search_distance_cell, .location_search_category_cell {
+.location_search_title, .location_search_distance_cell, .location_search_cat_cell, .location_search_category_cell, .location_search_tag_cell, .location_search_day_cell, .location_search_time_cell {
 	font-weight:bold;
+	vertical-align:top;
 }
 
 .no-linebreak {

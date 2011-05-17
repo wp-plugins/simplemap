@@ -12,6 +12,9 @@ if ( !class_exists( 'SM_Admin' ) ){
 		function menu_shuffle(){
 			global $menu,$simple_map,$sm_options,$sm_help,$sm_import_export;
 
+			// Get options
+			$options = get_option( 'SimpleMap_options' );
+
 			// loop through menu and find the one I need to disable
 			foreach( $menu as $key => $value ) {
 				if ( in_array( 'edit.php?post_type=sm-location' , $value ) ) {

@@ -198,7 +198,7 @@ if ( !class_exists( 'SM_Help' ) ){
 
 										if ( ! url_has_ftps_for_item( $simplemap_ps ) ) : ?>
 										
-											<h4><?php printf( __( 'SimpleMap Premium Support Benefits', 'SimpleMap' ), esc_attr( get_option( 'siteurl' ) ) ); ?></h4>
+											<h4><?php printf( __( 'SimpleMap Premium Support Benefits', 'SimpleMap' ), esc_attr( site_url() ) ); ?></h4>
 											<p>
 												<?php printf( __( 'SimpleMap now offers a premium support package for the low cost of %s per year per domain.', 'SimpleMap' ), '$30.00 USD' ); ?>
 											</p>

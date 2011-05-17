@@ -33,7 +33,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 			$this->learn_more_link			= isset( $config['learn_more_link'] ) ? $config['learn_more_link'] : false;
 			$this->confirming_request 		= isset( $_GET['ft-ps-confirm-request'] ) ? $_GET['ft-ps-confirm-request'] : false;
 			$this->receiving_sso 			= isset( $_POST['ft-ps-receiving-sso'] ) ? $_POST['ft-ps-receiving-sso'] : false;
-			$this->site_url					= get_option( 'siteurl' );
+			$this->site_url					= site_url();
 
 			// Register actions
 			add_action( 'admin_head', array( &$this, 'init' ) );
@@ -346,7 +346,7 @@ class FT_Premium_Support_PluginUpdate_Checker {
 		
 		if ( ! function_exists( 'get_plugins' ) )
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-											
+
 		$allPlugins = get_plugins();
 
 		if ( array_key_exists( $this->pluginFile, $allPlugins ) && array_key_exists( 'Version', $allPlugins[$this->pluginFile] ) )

@@ -33,7 +33,6 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 						if ( $terms = wp_get_object_terms( $location->ID, 'sm-tag', array( 'fields' => 'names' ) ) )
 							$tags = implode( ',', $terms );
 						
-						
 						$content[] = array( 
 							'name' => esc_attr( $location->post_title ), 
 							'address' => esc_attr( get_post_meta( $location->ID, 'location_address', true ) ),
@@ -159,7 +158,10 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 		// Imports a CSV file to WordPress
 		function import_csv() {
 			global $simple_map, $sm_locations, $wpdb, $current_user;
-
+			
+			// Define Importing Constant
+			define( 'WP_IMPORTING', true );
+			
 			if ( isset( $_POST['sm-action'] ) && 'import-csv' == $_POST['sm-action'] && isset( $_POST['step'] ) && 2 == $_POST['step'] ) {
 				?>
 				<div class="wrap">
@@ -197,8 +199,14 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 											
 												echo "<ol style='list-style-type:decimal'>";
 
+												/* We're going to do some pre-processing to prevent WP's wp_get_unique_slug from pinging the database
+												 * a ridiculous amount of times in the even that this file is importing several thousand locations with
+												 * same name (like a franchise).
+												 */
+												$post_names = array();
+												
 												foreach( $csv->data as $row => $location ) {
-													
+																							
 													// Give me 20 seconds for each location. That should be more than enough time.
 													set_time_limit ( 20 );
 
@@ -237,6 +245,39 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																	$to_insert['lng'] = $geo['lng'];
 															}
 														}
+
+														// Prevent dup names before getting to wp_unique_slug function
+														
+														// Start by check to see if this post's name has been used before
+														if ( isset( $post_names[sanitize_title( $to_insert['name'] )] ) ) {
+															
+															// Set the int to the value of the post_name key (this is set the first time we import a post with this title).
+															$post_names_int = $post_names[sanitize_title( $to_insert['name'] )];
+															
+															// Just to be safe, lets make sure the incremented name doesn't exist. Loop till we find one available.
+															while( isset( $post_names[sanitize_title( $to_insert['name'] ) . '-' . $post_names_int] ) ) {
+																$post_names_int++;
+															}
+															
+															// Set the new unique slug
+															$unique_title = sanitize_title( $to_insert['name'] ) . '-' . $post_names_int;
+															
+															// Add the post_name to the post attributes array we're about to insert
+															$vars['post_name'] = $unique_title;
+															
+															// Update the original slug for this title with the new int
+															$post_names[sanitize_title( $to_insert['name'] )] = $post_names[$unique_title] = $post_names_int;
+
+														} else {
+															
+															// If we made it here, its the first time we're inserting a post with this title (this import anyway).
+															// Add it to the post attributes array we're about to send to wp_insert_post
+															$vars['post_name'] = sanitize_title( $to_insert['name'] );
+															
+															// Log this title as used in the post_names array with an int of 1
+															$post_names[sanitize_title( $to_insert['name'] )] = 1;
+															
+														}
 														
 														// Prep for WordPress function
 														wp_get_current_user();
@@ -271,6 +312,8 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																// Loop through array. If category exists, assoc it with the location
 																// If category doesn't exist, create it and associate it.
 																foreach( (array) $cats as $key => $name ) {
+																	
+																	$name = trim( $name );
 																	
 																	// Skip it if we have bad data
 																	if ( '' != $name || ! empty( $name ) ) {
@@ -309,6 +352,8 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 																// Loop through array. If tag exists, assoc it with the location
 																// If category doesn't exist, create it and associate it.
 																foreach( (array) $tags as $key => $name ) {
+																	
+																	$name = trim( $name );
 																	
 																	// Skip it if we have bad data
 																	if ( '' != $name || ! empty( $name ) ) {
@@ -543,7 +588,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 				
 						<div id='dashboard-widgets' class='metabox-holder'>
 						
-							<div class='postbox-container' style='max-width: 800px;'>
+							<div class='postbox-container' style='width:49%'>
 							
 								<div id='normal-sortables' class='meta-box-sortables ui-sortable'>
 								
@@ -648,7 +693,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 
 										if ( ! url_has_ftps_for_item( $simplemap_ps ) ) : ?>
 										
-											<h4><?php printf( __( 'SimpleMap Premium Support Benefits', 'SimpleMap' ), esc_attr( get_option( 'siteurl' ) ) ); ?></h4>
+											<h4><?php printf( __( 'SimpleMap Premium Support Benefits', 'SimpleMap' ), esc_attr( site_url() ) ); ?></h4>
 											<p>
 												<?php printf( __( 'SimpleMap now offers a premium support package for the low cost of %s per year per domain.', 'SimpleMap' ), '$30.00 USD' ); ?>
 											</p>

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 2.2.2
+Version: 2.2.3
 Plugin URI: http://simplemap-plugin.com/
 Author: Glenn Ansley
 Author URI: http://fullthrottledevelopment.com/
@@ -12,34 +12,46 @@ This plugin was originally created by Alison Barrett (http://alisothegeek.com/).
 	
 global $wp_version, $wpdb;
 
-$exit_msg = __('SimpleMap requires WordPress 2.8 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>', 'SimpleMap');
-if (version_compare($wp_version, "2.8", "<"))
-	exit($exit_msg);
+$exit_msg = __( 'SimpleMap requires WordPress 2.8 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Please update!</a>', 'SimpleMap' );
+if ( version_compare( $wp_version, "2.8", "<" ) )
+	exit( $exit_msg );
 
-//ini_set( 'memory_limit', '1024M' );
 #### CONSTANTS ####
 
 	// Plugin Version Number
-	define('SIMPLEMAP_VERSION', '2.2.2');
-	
+	define( 'SIMPLEMAP_VERSION', '2.2.3' );
+
+	if ( !defined( 'WP_PLUGIN_DIR' ) ) {
+		define( 'WP_PLUGIN_DIR', ABSPATH . 'wp-content/plugins' );
+	}
+
+	// If this file is in the plugin directory, proceed as normal.
+	if ( strpos( __FILE__, WP_PLUGIN_DIR ) === 0 ) {
+		$simplemap_file = plugin_basename( __FILE__ );
+	} else {
+		// This file is most likely marked as an active plugin, so let's find it that way.
+		$simplemap_plugins = preg_grep( '#/' . basename( __FILE__ ) . '$#', get_option( 'active_plugins', array() ) );
+		if ( !empty( $simplemap_plugins ) ) {
+			$simplemap_file = current( $simplemap_plugins );
+		} else {
+			// Last ditch effort to find the 'good' filename.
+			$simplemap_file = plugin_basename( $plugin ? $plugin : ( $mu_plugin ? $mu_plugin : ( $network_plugin ? $network_plugin : __FILE__ ) ) );
+		}
+	}
+	$simplemap_dir = dirname( $simplemap_file );
+
 	// Define plugin path
-	if ( !defined( 'WP_CONTENT_DIR' ) ) {
-		define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
-	}
-	define( 'SIMPLEMAP_PATH' , WP_CONTENT_DIR . '/plugins/' . basename( dirname(__FILE__) ) );
-	
+	define( 'SIMPLEMAP_PATH', WP_PLUGIN_DIR . '/' . $simplemap_dir );
+
 	// Define plugin URL
-	if ( !defined( 'WP_CONTENT_URL') ) {
-		define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
-	}
-	define( 'SIMPLEMAP_URL' , WP_CONTENT_URL . '/plugins/' . basename( dirname(__FILE__) ) );
+	define( 'SIMPLEMAP_URL', plugins_url() . '/' . $simplemap_dir );
 
 	// Table Names
 	if ( !defined( 'SIMPLEMAP_TABLE' ) )
 		define( 'SIMPLEMAP_TABLE', $wpdb->prefix . 'simple_map' );
 
 	if ( !defined( 'SIMPLEMAP_CAT_TABLE' ) )
-		define( 'SIMPLEMAP_CAT_TABLE' , $wpdb->prefix . 'simple_map_cats' );
+		define( 'SIMPLEMAP_CAT_TABLE', $wpdb->prefix . 'simple_map_cats' );
 		
 	// Map HOST
 	if ( !defined( 'SIMPLEMAP_MAPS_HOST' ) )
@@ -103,29 +115,4 @@ if (version_compare($wp_version, "2.8", "<"))
 	if ( class_exists( 'FT_Premium_Support_Client' ) && ( ! isset( $simplemap_ps ) || ! is_object( $simplemap_ps ) ) )
 		$simplemap_ps = new FT_Premium_Support_Client( $config );
 
-	/**
-	 * Adds discount notice to plugin on upgrade
-	 */
-	function sm_call_discount() {
-		
-		// Kill notice
-		if ( isset( $_GET['remove_sm_discount'] ) )
-			update_option( 'sm_show_discount', SIMPLEMAP_VERSION );
-		
-		if ( version_compare( get_option( 'sm_show_discount' ), SIMPLEMAP_VERSION, '<' ) )
-			add_action( 'admin_notices', 'sm_discount_notice' );
-		
-	}
-	add_action( 'admin_init', 'sm_call_discount' ); 
-	
-	/**
-	 * This displays the option to purchase with discount
-	 */
-	function sm_discount_notice() {
-	
-		$link = 'http://simplemap-plugin.com/?coupon=25percent';
-		$no_thanks = 'plugins.php?remove_sm_discount';
-		echo "<div class='update-nag'>" . sprintf( __( "Thanks for upgrading SimpleMap! Act now and get a 25%% discount on our premium features and support. Use coupon code: '25percent'?<br /><a href='%s' target='_blank'>Yes, I want the discount!</a> | <a href='%s'>No thanks</a>." ), $link, $no_thanks ) . "</div>";
-	 
-	}
 ?>
