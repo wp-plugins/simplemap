@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 2.2.3
+Version: 2.2.4
 Plugin URI: http://simplemap-plugin.com/
 Author: Glenn Ansley
 Author URI: http://fullthrottledevelopment.com/
@@ -19,7 +19,7 @@ if ( version_compare( $wp_version, "2.8", "<" ) )
 #### CONSTANTS ####
 
 	// Plugin Version Number
-	define( 'SIMPLEMAP_VERSION', '2.2.3' );
+	define( 'SIMPLEMAP_VERSION', '2.2.4' );
 
 	if ( !defined( 'WP_PLUGIN_DIR' ) ) {
 		define( 'WP_PLUGIN_DIR', ABSPATH . 'wp-content/plugins' );
@@ -114,5 +114,32 @@ if ( version_compare( $wp_version, "2.8", "<" ) )
 	);
 	if ( class_exists( 'FT_Premium_Support_Client' ) && ( ! isset( $simplemap_ps ) || ! is_object( $simplemap_ps ) ) )
 		$simplemap_ps = new FT_Premium_Support_Client( $config );
+
+ /**
+     * Adds discount notice to plugin on upgrade
+     */
+    function sm_call_discount() {
+
+        // Kill notice
+        if ( isset( $_GET['remove_sm_discount'] ) )
+            update_option( 'sm_show_discount', SIMPLEMAP_VERSION );
+
+        if ( version_compare( get_option( 'sm_show_discount' ), SIMPLEMAP_VERSION, '<' ) )
+            add_action( 'admin_notices', 'sm_discount_notice' );
+
+    }
+    add_action( 'admin_init', 'sm_call_discount' );
+
+    /**
+     * This displays the option to purchase with discount
+     */
+    function sm_discount_notice() {
+
+        $link = 'http://simplemap-plugin.com/2011/06/premium-support-price-increase/';
+        $no_thanks = 'plugins.php?remove_sm_discount';
+        echo "<div class='update-nag'>" . sprintf( __( "SimpleMap Premium Support is increasing from 30.00 a year to $42.00 a year on June 25! Puchase it now before the price increases.<br /><a href='%s' target='_blank'>Purchase for $30 now</a> | <a href='%s'>Remove notification</a>." ), $link, $no_thanks ) . "</div>";
+
+    }
+
 
 ?>
