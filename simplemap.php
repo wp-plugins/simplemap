@@ -128,7 +128,7 @@ if ( version_compare( $wp_version, "2.8", "<" ) )
             add_action( 'admin_notices', 'sm_discount_notice' );
 
     }
-    add_action( 'admin_init', 'sm_call_discount' );
+    //add_action( 'admin_init', 'sm_call_discount' );
 
     /**
      * This displays the option to purchase with discount
