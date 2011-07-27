@@ -8,6 +8,9 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 
 		// Inits the search process. Collects default options, search options, and queries DB
 		function init_search() {
+            // Remove addThis plugin conflict
+            remove_filter( 'the_title', 'at_title_check' );
+
 			if ( isset( $_GET['sm-xml-search'] ) ) {
 				global $wpdb;
 
