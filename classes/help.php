@@ -1,16 +1,13 @@
 <?php
-if ( !class_exists( 'SM_Help' ) ){
-	class SM_Help{
-		
+if ( !class_exists( 'SM_Help' ) ) {
+	class SM_Help {
 		// Prints the options page
 		function print_page(){
 			global $simple_map;
-			$options = get_option( 'SimpleMap_options' );
-			if ( !isset( $options['api_key'] ) )
-				$options['api_key'] = '';
-				
+			$options = $simple_map->get_options();
+
 			extract( $options );
-			
+
 			?>
 			<div class="wrap">
 					

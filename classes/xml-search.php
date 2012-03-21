@@ -8,11 +8,9 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 
 		// Inits the search process. Collects default options, search options, and queries DB
 		function init_search() {
-            // Remove addThis plugin conflict
-            remove_filter( 'the_title', 'at_title_check' );
-
 			if ( isset( $_GET['sm-xml-search'] ) ) {
-				global $wpdb;
+				global $wpdb, $simple_map;
+				remove_filter( 'the_title', 'at_title_check' );
 
 				$defaults = array(
 					'lat' => false,
@@ -27,6 +25,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					'onlyzip' => false,
 					'country' => false,
 					'limit' => false,
+					'pid'	=> 0,
 				);
 				$input = array_filter( array_intersect_key( $_GET, $defaults ) ) + $defaults;
 
@@ -55,6 +54,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 				$distance_order = 'distance, ';
 
 				if ( $input['radius'] ) {
+					$input['radius'] = ( $input['radius'] < 1 ) ? 1 : $input['radius'];
 					$distance_having = $wpdb->prepare( "HAVING distance < %d", $input['radius'] );
 				}
 
@@ -110,7 +110,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 						posts.ID
 						$distance_having
 					ORDER BY
-						$distance_order posts.post_name ASC
+						" . apply_filters( 'sm-location-sort-order', $distance_order . ' posts.post_name ASC', $input ) . "
 					$limit
 				" );
 
@@ -131,6 +131,9 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					'location_special' => 'special',
 				);
 
+				$options = $simple_map->get_options();
+				$show_permalink = !empty( $options['enable_permalinks'] );
+
 				if ( $locations = $wpdb->get_results( $sql ) ) {
 					// Start looping through all locations i found in the radius
 					foreach ( $locations as $key => $value ) {
@@ -145,135 +148,54 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 							}
 						}
 
+						$value->postid = $value->ID;
+						$value->name = apply_filters( 'the_title', $value->post_title );
+
+						$the_content = trim( $value->post_content );
+						if ( !empty( $the_content ) ) {
+							$the_content = apply_filters( 'the_content', $the_content );
+						}
+						$value->description = $the_content;
+
+						$value->permalink = '';
+						if ( $show_permalink ) {
+							$value->permalink = get_permalink( $value->ID );
+							$value->permalink = apply_filters( 'the_permalink', $value->permalink );
+						}
+
 						// List all terms for all taxonomies for this post
+						$value->taxes = array();
 						foreach ( $smtaxes as $taxonomy => $tax_value ) {
 							$phpsafe_tax = str_replace( '-', '_', $taxonomy );
-							$local_taxes = $local_tax_names = '';
+							$local_tax_names = '';
 
 							// Get all taxes for this post
-							if ( $loc_taxes = wp_get_object_terms( $value->ID, $taxonomy ) ) {
-								$loc_tax_names = '';
-
-								foreach( $loc_taxes as $loc_tax ) {
-									$loc_tax_names[] = $loc_tax->name;
-								}
-
-								if ( isset( $loc_tax_names ) ) {
-									$value->$phpsafe_tax = implode( ', ', $loc_tax_names );
-								}
-							} else {
-								$value->$phpsafe_tax = '';
+							if ( $local_taxes = wp_get_object_terms( $value->ID, $taxonomy, array( 'fields' => 'names' ) ) ) {
+								$local_tax_names = implode( ', ', $local_taxes );
 							}
+
+							$value->taxes[$phpsafe_tax] = $local_tax_names;
 						}
 					}
-
-					$locations = apply_filters( 'sm-xml-search-locations', $locations );
-
-					$this->print_xml( $locations, $smtaxes );
 				} else {
 					// Print empty XML
-					$this->print_xml( new stdClass(), $smtaxes );
+					$locations = array();
 				}
+
+				$locations = apply_filters( 'sm-xml-search-locations', $locations );
+				$this->print_json( $locations, $smtaxes );
 			}
 		}
 
-		// Prints the XML output
-		function print_xml( $dataset, $smtaxes ) {
-			header("Content-type: text/xml");
+		// Prints the JSON output
+		function print_json( $dataset, $smtaxes ) {
+			header( 'Status: 200 OK', false, 200 );
+			header( 'Content-type: application/json' );
+			do_action( 'sm-xml-search-headers' );
 
-			do_action( 'sm-print-xml', $dataset, $smtaxes );
+			do_action( 'sm-print-json', $dataset, $smtaxes );
 
-			if ( class_exists( 'DOMDocument' ) ) {
-				$dom 		= new DOMDocument( "1.0" );
-				$node 		= $dom->createElement( "markers" );
-				$markers 	= $dom->appendChild( $node );
-				$attr_func	= 'setAttribute';
-			}
-			elseif ( class_exists( 'SimpleXMLElement' ) ) {
-				$markers	= new SimpleXMLElement( '<markers />' );
-				$attr_func	= 'addAttribute';
-			}
-
-			if ( isset( $markers ) ) {
-				// Loop through dataset
-				foreach ( $dataset as $key => $location ) {
-					if ( isset( $dom ) ) {
-						$node 		= $dom->createElement( "marker" );
-						$newnode 	= $markers->appendChild( $node );
-					}
-					else {
-						$newnode 	= $markers->addChild( 'marker' );
-					}
-
-					$newnode->$attr_func( "name", apply_filters( 'the_title', $location->post_title ) );
-					$newnode->$attr_func( "description", apply_filters( 'the_content', $location->post_content ) );
-					$newnode->$attr_func( "lat", esc_attr( $location->lat ) );
-					$newnode->$attr_func( "lng", esc_attr( $location->lng ) );
-					$newnode->$attr_func( "distance", esc_attr( $location->distance ) );
-					$newnode->$attr_func( "address", esc_attr( $location->address ) );
-					$newnode->$attr_func( "address2", esc_attr( $location->address2 ) );
-					$newnode->$attr_func( "city", esc_attr( $location->city ) );
-					$newnode->$attr_func( "state", esc_attr( $location->state ) );
-					$newnode->$attr_func( "zip", esc_attr( $location->zip ) );
-					$newnode->$attr_func( "country", esc_attr( $location->country ) );
-					$newnode->$attr_func( "phone", esc_attr( $location->phone ) );
-					$newnode->$attr_func( "fax", esc_attr( $location->fax ) );
-					$newnode->$attr_func( "url", esc_attr( $location->url ) );
-					$newnode->$attr_func( "email", esc_attr( $location->email ) );
-					$newnode->$attr_func( "special", esc_attr( $location->special ) );
-
-					// Add all terms for this location's taxonomies
-					foreach ( $smtaxes as $taxonomy => $tax_value ) {
-						$phpsafe_tax = str_replace( '-', '_', $taxonomy );
-						$newnode->$attr_func( $phpsafe_tax, esc_attr( $location->$phpsafe_tax ) );
-					}
-				}
-
-				if ( isset( $dom ) ) {
-					echo $dom->saveXML();
-				}
-				else {
-					echo $markers->asXML();
-				}
-			}
-			else {
-				$markers = array();
-				foreach ( $dataset as $key => $location ) {
-					$fields = array(
-						'name' => apply_filters( 'the_title', $location->post_title ),
-						'description' => apply_filters( 'the_content', $location->post_content ),
-						'lat' => esc_attr( $location->lat ),
-						'lng' => esc_attr( $location->lng ),
-						'distance' => esc_attr( $location->distance ),
-						'address' => esc_attr( $location->address ),
-						'address2' => esc_attr( $location->address2 ),
-						'city' => esc_attr( $location->city ),
-						'state' => esc_attr( $location->state ),
-						'zip' => esc_attr( $location->zip ),
-						'country' => esc_attr( $location->country ),
-						'phone' => esc_attr( $location->phone ),
-						'fax' => esc_attr( $location->fax ),
-						'url' => esc_attr( $location->url ),
-						'email' => esc_attr( $location->email ),
-						'special' => esc_attr( $location->special ),
-					);
-					foreach ( $smtaxes as $taxonomy => $tax_value ) {
-						$phpsafe_tax = str_replace( '-', '_', $taxonomy );
-						$fields[$phpsafe_tax] = esc_attr( $location->$phpsafe_tax );
-					}
-
-					$marker = '<marker ';
-					foreach ( $fields as $field => $value ) {
-						$marker .= $field . '="' . $value . '" ';
-					}
-					$marker .= '/>';
-
-					$markers[] = $marker;
-				}
-
-				echo '<?xml version="1.0"?>' . "\n". '<markers>' . implode( '', $markers ) . '</markers>';
-			}
-
+			echo json_encode( $dataset );
 			die();
 		}
 	}
