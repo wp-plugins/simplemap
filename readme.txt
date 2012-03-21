@@ -11,6 +11,8 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 == Description ==
 
+http://www.youtube.com/watch?v=JznXI0YrqpY
+
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
 Key features include:
