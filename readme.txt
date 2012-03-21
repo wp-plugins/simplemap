@@ -3,9 +3,9 @@
 Contributors: blepoxp, fullthrottledevelopment
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
-Requires at least: 2.8
-Tested up to: 3.2
-Stable tag: 2.2.5
+Requires at least: 3.0
+Tested up to: 3.3
+Stable tag: 2.4.4
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
@@ -13,20 +13,18 @@ SimpleMap is an easy-to-use international store locator plugin that uses Google 
 
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
 
-http://www.youtube.com/watch?v=JznXI0YrqpY&hd=1
-
 Key features include:
 
+* Uses Google Maps API v 3
 * Manage locations from any country supported by Google Maps
 * Manage an unlimited number of locations
 * Put a Google Map on any page or post that gives instant results to users
-* Users can enter a street address, city, state, or even the name of a location to search the database
+* Users can enter a street address, city, state, or zip to search the database
 * Customize the appearance of the map and results with your own themes
 * Use a familiar interface that fits seamlessly into the WordPress admin area
 * Import and export your database as a CSV file
-* Quick Edit function allows for real-time updates to the location database
 * Make certain locations stand out with a customizable tag (Most Popular, Ten-Year Member, etc.)
-* Easy-to-use settings page means you don't need to know any code to customize your map 
+* Easy-to-use settings page means you don't need to know any code to customize your map
 
 See the screenshots for examples of the plugin in action.
 
@@ -36,10 +34,8 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 1. Upload the entire `simplemap` folder to your `/wp-content/plugins/` folder.
 2. Go to the 'Plugins' page in the menu and activate the plugin.
-3. Go to [Google Maps](http://code.google.com/apis/maps/signup.html) to sign up for an API key for your domain.
-4. Enter the API key in the 'General Options' page of SimpleMap.
-5. Type `[simplemap]` into any Post or Page you want SimpleMap to be displayed in.
-6. Enter some locations in the database and start enjoying the plugin!
+3. Type `[simplemap]` into any Post or Page you want SimpleMap to be displayed in.
+4. Enter some locations in the database and start enjoying the plugin!
 
 == Screenshots ==
 
@@ -55,7 +51,7 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 You must have:
 
-* WordPress 2.8 or later
+* WordPress 3.0 or later
 * PHP 5 (or PHP 4 with the SimpleXML extension loaded), DOMDocument class
 
 = How do I put SimpleMap on my website? =
@@ -64,17 +60,11 @@ Simply insert the following shortcode into any page or post: `[simplemap]`
 
 = I've put in the shortcode, but my map isn't showing up. Why? =
 
-First, check to make sure you have a Google Maps API key entered on the General Options page. The map won't display if you don't have a key.
-
 If the search form is showing up, but the map is blank, it's probably a Javascript error. Check to see if any other plugins are throwing Javascript errors before the SimpleMap Javascript gets loaded.
 
 = What is the "Special Location Label"? =
 
 This is meant to flag certain locations with a specific label. It shows up in the search results with a gold star next to it. Originally this was developed for an organization that wanted to highlight people that had been members for more than ten years. It could be used for something like that, or for "Favorite Spots," or "Free Wi-Fi," or anything you want. You can also leave it blank to disable it.
-
-= Why can't my map load more than 100 search results at a time? =
-
-On most browsers, loading more than 100 locations at once will really slow things down. In some cases, such as a slower internet connection, it can crash the browser completely. I put that limit on there to prevent that from happening.
 
 = Can I suggest a feature for SimpleMap? =
 
@@ -84,21 +74,92 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 
 Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/simplemap?forum_id=10) if you have a bug to report. Otherwise, you may access premium support inside the plugin dashboard.
 
-== Upgrade Notice ==
-* Minor update to workaround conflict with AddThis plugin. Fixes no results issue.
-
 == Changelog ==
 
-= 2.2.5 =
-* Minor update to workaround conflict with AddThis plugin. Fixes no results issue.
+= 2.4.4 =
+* Added filters to menu item permissions
+* Don't display map updating image if map is hidden
+* Show error if over Google API limit
+* Added ability to to show description in search results with a filter
+* Fixed typo with call to wp_get_current_user
+* Fixed bug that prevented locations less than 1KM from being returned
+* Passing current WordPress post/page ID to search script
+* Fixed bug that created memory errors when large amount of locations were deleted at once
+* Fixed bug that created memory errors on medium size DBs during export. Still need to refactor for large exports
+* Change locations from heirarchical to non-hierarchical to avoid poor WP query
+* Fixed error that prevented permalink map from rendering in IE
 
-= 2.2.4 =
-* Updating POT files
-* Notice of premium service cost increase on June 25, 2011.
+= 2.4.3 =
+* Added filter to allow devs to remove loading image
+* Added filter to allow devs to change sort order
+* Added language options for Google Maps API call to allow for additional localization
+* Changed the name of the CSV class to prevent conflicts with other plugins
+* Removed some random characters appearing in location pages
+* Change HTTP/1.1 200 OK header to Status: 200 OK', false, 200
+* Added ability to hide bubble description with filter
+* Switch paramater order in call to maps.googleapis.com that was causing errors
+* Fixed permalink error
+* Added auto-locate options to experimental features
 
-= 2.2.3 =
+= 2.4.2 =
+* Changed XML in search class to json
+* Fix broken taxonomy filters
+* Fix error caused when deleting locations where no categories exist
+* Changed query params to get directions links to reflect Googles changes
+* Fixed display bug associated with "Now Loading" image when small maps are used.
+* Forced 200 status in header of xml-search.php script
 
-* Moved time consuming PHP loop to MySQL query. Very large speed improvments to search
+= 2.4.1 =
+* Revamped the way we pass locaitonData and searchData back and forth between JS functions (placed in objects)
+* Made custom JS function for Custom Markers future proof (this is not backwards compatible but will be from here out)
+* Fixed errors in options-general.php
+* Fixed bad tabbing that snuck into the code
+* Fixed autoload bug introduced in 2.4
+* Fixed taxonomy shortcodes.
+
+= 2.4 =
+* Added ability to turn on location permalinks
+* Google Maps API version 3
+* Streetview
+* Options to activate permalinks for locations
+* Foundation for templating system
+* Added ability to delete all locations but to preserve settings
+* Added cancel link to second stage of import process
+* Added code to remove a hook added by the AddThis plugin that breaks results
+* Added map_type and zoom_level to shortcode options
+* Relax permissions on SM menu items
+* Applied label filters for categories in widget (to match search form)
+* Allow custom taxonomies to be integrated into the SimpleMap API and attached to the sm-location custom post type
+* Allow for custom taxonomies to be imported and created on the fly
+* Added ability to span table cells via shortcode
+* Added markers to titles
+* Added autoload shortcode
+* Fixed error where not all categories are imported in some instances
+* Don’t autozoom search results on initial page load
+* Changed location of temp XML upload file and added the blog id to file handle for ** * MultiSite configurations
+* Added missing filters for search form text
+* Only pass non-empty post_content through 'the_content' filter in case submit button is not included, attached an invisible submit button so that hitting Enter in the address fields still works
+* Reorganized column counting function and added in safety limitations to avoid all rows from being combined when the column count doesn't exactly match
+* W3C and performance enhancements
+* Only save options when they have changed
+* Fixed the lat / lng and zoom settings on a permalink location map
+* Fixed error causing 404 for location permalinks after initial activation
+* Added a pin to indicate search lat/lng location as well as additional pin colors that can be set with a filter
+* Fixed error message appearing in some instances of deleting locations from General Options screen
+* Import / Export modification to make sure we convert old CSV values to new ones.
+* Added region to Google Maps API call to fix default google domain
+* Added some additional CSS classes to map bubbles and search results divs
+* Fixed some JS errors that broke search results in some cases
+* Fixed issue that prevented adsense from showing in some instances
+* Template class refining
+* Enabled custom markers for permalink pages
+* Made taxonomy information available on permalink page
+* Fix autoload shortcode argument
+* Added titles to markers
+* Additional actions, filters, whitespace formatting, and notifications
+
+= 2.3.4 =
+* Refactored XML Search query. Very large speed improvments to search
 * Fixed bug returning false negatives with low limit + taxonomy combo on search
 * Added South Africa Google domain
 * Made Google Domains and Country names array filterable
@@ -107,30 +168,41 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 * Replace calls to get_option( 'site_url' ) with site_url()
 * Removed debugging code at top of XML-Search.php that was lowering PHP memory_limit
 * Fixed limit shortcode so that it works again
+
+= 2.3.3 =
 * Add a fallback that geocodes new locations via JS when PHP doesn't work because of 620 status from Google
 * Added actions to the load_simplemap JS function
 * Added ability to use a select box for taxonomies in the search form (rather than checkboxes)
 * Fixed bug that allowed results to show up in search
 * Fixed bug preventing drag and drop location from updating address in some locations
+
+= 2.3.2 =
 * Add a fallback XML generator for servers without DOMDocument Installed
 * Added ids to search form tr and td elements to allow manipulation via CSS / JS
 * Refactored parts of XML search script for optimization
+* More hooks
 * Forced JS header as 200. Some hosts were reporting status for PHP as JS to be 400.
 * Added WP_IMPORTING flag while importing locations.
 * Fixed some HTML Validation issues in the Search form (have one more to root out)
+
+= 2.3.1 =
 * Added additional filters to allow modifying search form labels without use of .pot file.
 * Removed stray testing code in simplemap.php
-* Reformulated the main search query to trim search results to 1/10 the time of that introduced in 2.0
+
+= 2.3 =
+* Revamped the search form making it extremly flexible via shortcode arguments (see KB article on premium support site)
+* Reformulated the main search query to trim search results to 1/10 the time of that introduced in 2.0 (more work still to be done here)
 * Added multiple filters that allow for customization of text labels / tabs / visual elements in the map and search results
 * Added more than a dozen new shortcode arguments for overriding General Settings on a per map instance (see KB article on premium support site)
-* Removed caching system introduced in 2.2.1 as it was failing for large DBs and isn't needed with SQL revamps
+* Added 2 new optional taxonomies (Days and Times)
+* Added optional ability to add Google Adwords for maps overlay to map
+* Removed caching system introduced in 2.2.1 as it was failing for large DBs
 * Fixed country code problem in General Settings
 * Fixed bug that prevented default zoom level from working
 * Fixed bug that prevented auto load all locations in some setups
 * Limited total number of auto load locations. It proved impractical to load them all if you had a large DB
 * Added instructional descriptions to General Settings that proved confusing to users
 * Fixed bug preventing radius from working in some setups
-* Bug fixes are now in sync with premium version of plugin.
 
 = 2.2.1 =
 * Added 'Loading' message to map when doing search
@@ -295,6 +367,10 @@ To give it a name that shows up in the **Theme** drop-down menu (instead of the 
 Theme Name: YOUR THEME NAME HERE
 */`
 
+== Upgrade Notice ==
+
+= 2.4 =
+* Major upgrades. .org version is jumping from 2.2.2 to 2.4: See http://gln.to/yuwu8 for details
 == Other Notes ==
 
 Planned for future releases:

@@ -65,6 +65,24 @@ margin: 10px auto;
 float: left;
 }
 
+#map_search .float_text_left {
+float: left;
+padding-right: 5px;
+}
+
+#simplemap-updating {
+display:none;
+background:#fff;
+color:#000;
+vertical-align:middle;
+text-align:center;
+}
+
+#simplemap-updating img {
+vertical-align:middle;
+text-align:center;
+}
+
 .markertext {
 font-size: 0.9em;
 line-height: 1.2em;
@@ -170,11 +188,30 @@ font-style: italic;
 background: url( ../images/star.png ) no-repeat left center;
 }
 
-.location_search_title, .location_search_distance_cell, .location_search_cat_cell, .location_search_category_cell, .location_search_tag_cell, .location_search_day_cell, .location_search_time_cell {
-	font-weight:bold;
-	vertical-align:top;
+.location_search_title, .location_search_distance_cell, .location_search_taxonomy_cell {
+font-weight:bold;
+vertical-align:top;
 }
 
 .no-linebreak {
-	white-space:nowrap;
+white-space:nowrap;
+}
+
+.sm-single-location-default-template {
+padding:3px;
+}
+
+.sm-single-map {
+float:left;
+width:105px;
+}
+
+.sm-single-location-data {
+margin-left:105px;
+}
+
+.sm-single-location-data-ul {
+list-style-type:none;
+padding-left:0;
+margin-left:0;
 }

@@ -5,9 +5,8 @@ if ( !class_exists( 'SM_Locations' ) ) {
 		function sm_locations(){
 			// Register my locations on init hook
 			add_action( 'init', array( &$this, 'register_locations' ) );
-			add_action( 'init', array( &$this, 'register_location_categories' ) );
-			add_action( 'init', array( &$this, 'register_location_tags' ) );
-			
+			add_action( 'init', array( &$this, 'register_location_taxonomies' ) );
+
 			// Queue my JS
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_location_add_edit_js' ) );
 			add_action( 'init', array( &$this, 'location_add_edit_js' ) );
@@ -21,23 +20,41 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			add_filter( 'quick_edit_dropdown_pages_args', array( &$this, 'limit_wp_dropdown_pages' ) );
 			add_filter( 'wp_dropdown_pages', array( &$this, 'modify_empty_wp_dropdown_pages' ) );
 			
-		}
-		
-		// Register locations post type
-		function register_locations(){
+			// Flush cache on manual location updates
+			add_action( 'save_post', array( &$this, 'flush_cache_data' ) );
+			add_action( 'trash_post', array( &$this, 'flush_cache_data' ) );
+			add_action( 'untrash_post', array( &$this, 'flush_cache_data' ) );
+			add_action( 'edit_post', array( &$this, 'flush_cache_data' ) );
+			add_action( 'delete_post', array( &$this, 'flush_cache_data' ) );
 
-			$args = array(	
+		}
+
+		// Register locations post type
+		function register_locations() {
+			global $simple_map;
+
+			$args = array();
+			$options = $simple_map->get_options();
+			if ( !empty( $options['enable_permalinks'] ) ) {
+				$args += array(
+					'publicly_queryable' => true,
+					'exclude_from_search' => false,
+					'rewrite' => array( 'slug' => $options['permalink_slug'] ),
+				);
+			}
+
+			$args += array(
 				'public' => true,
 				'publicly_queryable' => false,
 				'exclude_from_search' => true,
 				'show_ui' => true,
 				'capability_type' => 'post',
-				'hierarchical' => true,
+				'hierarchical' => false,
 				'rewrite' => false,
 				'query_var' => 'sm-location',
 				'register_meta_box_cb' => array( &$this, 'location_meta_cb' ),
 				'supports' => array(),
-				'labels' => array( 
+				'labels' => array(
 					'name' => 'Locations',
 					'singular_name' => 'Location',
 					'add_new_item' => 'Add New Location',
@@ -49,64 +66,56 @@ if ( !class_exists( 'SM_Locations' ) ) {
 					'not_found_in_trash' => 'No Locations found in trash',
 				)
 			);
-			
+
 			// Register it
 			register_post_type( 'sm-location', $args );
 		}
-		
-		// Register custom taxonomy for location categories
-		function register_location_categories(){
-			$args = array( 
-				'labels' => array(
-					'name' => 'Location Categories',
-					'singular_name' => 'Location Category',
-					'search_items' => 'Search Categories',
-					'popular_items' => 'Popular Categories',
-					'all_items' => 'All Categories',
-					'parent_item' => 'Parent Category',
-					'parent_item_colon' => 'Parent Category:',
-					'edit_item' => 'Edit Category',
-					'update_item' => 'Update Category',
-					'add_new_item' => 'Add New Category',
-					'new_item_name' => 'New Category Name',
-					'separate_items_with_commas' => 'Separate categories with commas',
-					'add_or_remove_items' => 'Add or remove categories',
-					'choose_from_most_used' => 'Choose from the most used categories'
-				),
-				'hierarchical' => true,
-				'rewrite' => false,
-				'show_tagcloud' => false
-			);
-			
-			register_taxonomy( 'sm-category', 'sm-location', $args );
-		}
-		
-		// Register custom taxonomy for location tags
-		function register_location_tags(){
-			$args = array( 
-				'labels' => array(
-					'name' => 'Location Tags',
-					'singular_name' => 'Location Tag',
-					'search_items' => 'Search Tags',
-					'popular_items' => 'Popular Tags',
-					'all_items' => 'All Tags',
-					'parent_item' => 'Parent Tag',
-					'parent_item_colon' => 'Parent Tag:',
-					'edit_item' => 'Edit Tag',
-					'update_item' => 'Update Tag',
-					'add_new_item' => 'Add New Tag',
-					'new_item_name' => 'New Tag Name',
-					'separate_items_with_commas' => 'Separate tags with commas',
-					'add_or_remove_items' => 'Add or remove tags',
-					'choose_from_most_used' => 'Choose from the most used tags'
-				),
-				'hierarchical' => false,
-				'rewrite' => false,
-				'show_tagcloud' => false
-			);
-			
-			register_taxonomy( 'sm-tag', 'sm-location', $args );
 
+		// Register custom taxonomies for locations
+		function register_location_taxonomies() {
+			global $simple_map;
+			$options = $simple_map->get_options();
+
+			foreach ( $options['taxonomies'] as $taxonomy => $tax_info ) {
+				$this->register_location_taxonomy( $taxonomy, $tax_info );
+			}
+		}
+
+		// Register custom taxonomy for locations
+		function register_location_taxonomy( $taxonomy, $tax_info ) {
+			if ( taxonomy_exists( $taxonomy ) ) {
+				return;
+			}
+
+			$tax_info += array(
+				'singular' => $taxonomy,
+				'plural' => $taxonomy,
+				'hierarchical' => false,
+			);
+
+			$args = array( 
+				'labels' => array(
+					'name' => 'Location ' . $tax_info['plural'],
+					'singular_name' => 'Location ' . $tax_info['singular'],
+					'search_items' => 'Search ' . $tax_info['plural'],
+					'popular_items' => 'Popular ' . $tax_info['plural'],
+					'all_items' => 'All ' . $tax_info['plural'],
+					'parent_item' => 'Parent ' . $tax_info['singular'],
+					'parent_item_colon' => 'Parent ' . $tax_info['singular'] . ':',
+					'edit_item' => 'Edit ' . $tax_info['singular'],
+					'update_item' => 'Update ' . $tax_info['singular'],
+					'add_new_item' => 'Add New ' . $tax_info['singular'],
+					'new_item_name' => 'New ' . $tax_info['singular'] . ' Name',
+					'separate_items_with_commas' => 'Separate ' . strtolower( $tax_info['plural'] ) . ' with commas',
+					'add_or_remove_items' => 'Add or remove ' . strtolower( $tax_info['plural'] ),
+					'choose_from_most_used' => 'Choose from the most used ' . strtolower( $tax_info['plural'] ),
+				),
+				'hierarchical' => $tax_info['hierarchical'],
+				'rewrite' => false,
+				'show_tagcloud' => false
+			);
+			
+			register_taxonomy( $taxonomy, 'sm-location', $args );
 		}
 
 		// Add call back for meta box
@@ -122,9 +131,9 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			
 			global $simplemap_ps, $current_user;
 			
-			get_current_user();
+			wp_get_current_user();
 			$status_key = md5( 'ft_premium_support_' . $simplemap_ps->product_id . '_' . sanitize_title_with_dashes( $simplemap_ps->site_url )  . '_' . sanitize_title_with_dashes( $simplemap_ps->server_url ) ) ;
-			$sso_key = md5( 'ft_premium_sso_' . $current_user->id . '_' . $simplemap_ps->product_id . '_' . sanitize_title_with_dashes( $simplemap_ps->site_url )  . '_' . sanitize_title_with_dashes( $simplemap_ps->server_url ) );
+			$sso_key = md5( 'ft_premium_sso_' . $current_user->ID . '_' . $simplemap_ps->product_id . '_' . sanitize_title_with_dashes( $simplemap_ps->site_url )  . '_' . sanitize_title_with_dashes( $simplemap_ps->server_url ) );
 			
 			// Set status from transient if not set via global
 			if ( '' == $simplemap_ps->ps_status && '' != get_transient( $status_key ) )
@@ -180,7 +189,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 		// Geographic Location Information
 		function geo_location( $post ){
 			global $simple_map, $hook_suffix;
-			$options = get_option( 'SimpleMap_options' );
+			$options = $simple_map->get_options();
 			
 			// Location data
 			$location_address 	= get_post_meta( $post->ID, 'location_address', true ) ? get_post_meta( $post->ID, 'location_address', true ) : '';
@@ -256,7 +265,8 @@ if ( !class_exists( 'SM_Locations' ) ) {
 
 		// Additional Information
 		function additional_information( $post ){
-			$options = get_option( 'SimpleMap_options' );
+			global $simple_map;
+			$options = $simple_map->get_options();
 
 			$location_phone 	= get_post_meta( $post->ID, 'location_phone', true ) ? get_post_meta( $post->ID, 'location_phone', true ) : '';
 			$location_fax 		= get_post_meta( $post->ID, 'location_fax', true ) ? get_post_meta( $post->ID, 'location_fax', true ) : '';
@@ -313,7 +323,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 		// This function contains the little map with the marker
 		function location_drag_drop( $post ) {
 			global $simple_map;
-			$options = get_option( 'SimpleMap_options' );
+			$options = $simple_map->get_options();
 			
 			// Location data
 			$location_address 	= get_post_meta( $post->ID, 'location_address', true ) ? get_post_meta( $post->ID, 'location_address', true ) : '';
@@ -338,48 +348,59 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			if ( ! is_admin() || 'sm-location' != $current_screen->id )
 				return;
 				
-			wp_enqueue_script( 'sm-drag-drop-loaction-js', site_url() . '/?sm-drag-drop-loaction-js=' . $post->ID, array( 'jquery' ) );
+			wp_enqueue_script( 'sm-drag-drop-location-js', site_url() . '/?sm-drag-drop-location-js=' . $post->ID, array( 'jquery' ) );
 			
 		}
 		
 		// Javascript for add / edit location page
 		function location_add_edit_js() {
-			global $current_screen;
+			global $current_screen, $simple_map;
 			
-			$options = get_option( 'SimpleMap_options' );
+			$options = $simple_map->get_options();
 			
-			if ( !isset( $_GET['sm-drag-drop-loaction-js'] ) )
+			if ( !isset( $_GET['sm-drag-drop-location-js'] ) )
 				return;
 			
-			$postid = (int)	$_GET['sm-drag-drop-loaction-js'];
+			$postid = (int)	$_GET['sm-drag-drop-location-js'];
 			
 			$drag_drop_lat = get_post_meta( $postid, 'location_lat', true ) ? get_post_meta( $postid, 'location_lat', true ) : '40.730885';
 			$drag_drop_lng = get_post_meta( $postid, 'location_lng', true ) ? get_post_meta( $postid, 'location_lng', true ) : '-73.997383';
 			$drag_drop_zoom = ( $drag_drop_lat == '40.730885' ) ? 2 : 17;
 			
-			header( "Content-type: application/x-javascript" );	
+			header( "Content-type: application/x-javascript" );
 
-
+			/*
 			if ( '' == $options['api_key'] ) {
 				die( "alert( '" . esc_js( __( "You will need to enter your API key in general options before your addresses will be coded properly.", 'SimpleMap' ) ) . "');" );
 			}
-			
+			*/
 			?>
 			var map;
 			var geocoder;
 			var address;
 			var marker;
-			var newAddress
-			
+			var place;
+
 			function location_add_edit_js_init() {
-			  map = new GMap2( document.getElementById( "dragdrop_map_canvas" ) );
-			  map.setCenter( new GLatLng( <?php echo esc_js( $drag_drop_lat ); ?>,<?php echo esc_js( $drag_drop_lng ); ?> ), <?php echo esc_js( $drag_drop_zoom ); ?> );
-			  map.addControl( new GLargeMapControl3D() );
-			  marker = new GMarker( map.getCenter(), {draggable: true, bouncy: true} );
-			  map.addOverlay( marker );
-			  GEvent.addListener(map, "click", dragDropGetAddress);
-			  GEvent.addListener( marker, "dragend", dragDropGetAddressTest );
-			  geocoder = new GClientGeocoder();
+				var latlng = new google.maps.LatLng( <?php echo esc_js( $drag_drop_lat ); ?>, <?php echo esc_js( $drag_drop_lng ); ?> );
+				var myOptions = {
+					zoom: <?php echo esc_js( $drag_drop_zoom ); ?>,
+					center: latlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				map = new google.maps.Map( document.getElementById( "dragdrop_map_canvas" ), myOptions );
+
+				marker = new google.maps.Marker({
+					position: latlng,
+					map: map,
+					draggable: true,
+					animation: google.maps.Animation.DROP
+				});
+
+				google.maps.event.addListener( map, 'click', dragDropGetAddress );
+				google.maps.event.addListener( marker, 'dragend', dragDropGetAddressTest );
+
+				geocoder = new google.maps.Geocoder();
 
 				<?php
 				// If PHP Geocode failed, do the ajax update
@@ -387,30 +408,41 @@ if ( !class_exists( 'SM_Locations' ) ) {
 					$location_address_data = get_post_custom( $postid );
 					?>
 					jQuery( '#js-geo-encode-msg' ).removeClass( 'hidden' );
-					
+
 					// Do geocode
 					var geo_address = '<?php echo esc_js( $location_address_data['location_address'][0] . ' ' . $location_address_data['location_city'][0] . ' ' . $location_address_data['location_state'][0] . ' ' . $location_address_data['location_zip'][0] . ' ' . $location_address_data['location_country'][0] ); ?>';
-					geocoder.getLatLng(geo_address, function(latlng) {
-						jQuery( "#location_lat" ).attr( 'value', latlng.lat() );
-						jQuery( "#location_lng" ).attr( 'value', latlng.lng() );
+					geocoder.geocode( { 'address': geo_address }, function( results, status ) {
+						if ( status == google.maps.GeocoderStatus.OK ) {
+							var latlng = results[0].geometry.location;
+							jQuery( "#location_lat" ).attr( 'value', latlng.lat() );
+							jQuery( "#location_lng" ).attr( 'value', latlng.lng() );
 
-						var smdata = { 
-						    action:         'ajax_save_lat_lng',
-						    sm_id:			<?php echo esc_js( $postid ); ?>,
-						    sm_lat:			latlng.lat(),
-						    sm_lng:			latlng.lng()
-						};  
-						
-						jQuery.post( ajaxurl, smdata, function( response ) {
-						   jQuery( '#sm_js_update_lat_lng_result' ).html( response );
-						});
-						
-						// Set drag/drop map to new location
-						map.setCenter( new GLatLng( latlng.lat(),latlng.lng() ), <?php echo esc_js( $drag_drop_zoom ); ?> );
-						marker = new GMarker( map.getCenter(), {draggable: true, bouncy: true} );
-						map.addOverlay( marker );
+							var smdata = {
+								action:			'ajax_save_lat_lng',
+								sm_id:			<?php echo esc_js( $postid ); ?>,
+								sm_lat:			latlng.lat(),
+								sm_lng:			latlng.lng()
+							};
 
-						jQuery( '#js-geo-encode-msg' ).removeClass( 'hidden' );
+							jQuery.post( ajaxurl, smdata, function( response ) {
+								jQuery( '#sm_js_update_lat_lng_result' ).html( response );
+							});
+
+							// Set drag/drop map to new location
+							map.setCenter( latlng );
+							map.setZoom( <?php echo esc_js( $drag_drop_zoom ); ?> );
+							marker = new google.maps.Marker({
+								map: map,
+								position: latlng,
+								draggable: true,
+								animation: google.maps.Animation.DROP
+							});
+
+							jQuery( '#js-geo-encode-msg' ).removeClass( 'hidden' );
+						}
+						else {
+							alert("Geocode was not successful for the following reason: " + status);
+						}
 					});
 					<?php
 					delete_post_meta( $postid, 'sm-needs-js-geocode' );
@@ -418,84 +450,117 @@ if ( !class_exists( 'SM_Locations' ) ) {
 				?>
 
 			}
-			
+
 			function dragDropGetAddressTest() {
-				address = marker.getPoint();
-			    geocoder.getLocations( address, dragDropShowAddress );
+				var latlng = marker.getPosition();
+				geocoder.geocode( { 'latLng': latlng }, dragDropShowAddress );
 			}
-			
-			function dragDropGetAddress( overlay, latlng ) {
-			  if (latlng != null) {
-			    address = latlng;
-			    geocoder.getLocations( latlng, dragDropShowAddress );
-			  }
+
+			function dragDropGetAddress( event ) {
+				if ( event.latlng != null ) {
+					geocoder.geocode( { 'latLng': event.latlng }, dragDropShowAddress );
+				}
 			}
-			
-			function dragDropShowAddress(response ) {
-			  map.clearOverlays();
-			  if (!response || response.Status.code != 200) {
-			    alert("Status Code:" + response.Status.code);
-			    map.addOverlay(marker);
-			  } else {
-			    place = response.Placemark[0];
-			    point = new GLatLng(place.Point.coordinates[1],place.Point.coordinates[0]);
-			    marker = new GMarker( point, {draggable: true, bouncy: true} );
-			    map.addOverlay(marker);
-			   	newAddress = place.address;
-			 	dragDropUpdateFormFields( response, place );
-			    GEvent.addListener( marker, "dragend", dragDropGetAddressTest );
-			  }
+
+			function dragDropShowAddress( results, status ) {
+				marker.setMap(null);
+				if ( status != google.maps.GeocoderStatus.OK ) {
+					alert("Geocoder failed due to: " + status);
+					map.addOverlay(marker);
+				} else {
+					var latlng = results[0].geometry.location;
+					marker = new google.maps.Marker({
+						map: map,
+						position: latlng,
+						draggable: true,
+						animation: google.maps.Animation.DROP
+					});
+					
+					dragDropUpdateFormFields( latlng );
+					place = results[0];
+
+					google.maps.event.addListener( marker, 'dragend', dragDropGetAddressTest );
+				}
 			}
 			
 			jQuery(document).ready(function(){
 				location_add_edit_js_init();
 			});
 			
-			function dragDropUpdateFormFields( response, place ) {
-			  jQuery( "#location_lat" ).attr( 'value', place.Point.coordinates[1] );
-			  jQuery( "#location_lng" ).attr( 'value', place.Point.coordinates[0] );
-			  jQuery( "#latlng_dontforget" ).hide();
-			  jQuery( "#latlng_updated" ).fadeIn();
+			function dragDropUpdateFormFields( latlng ) {
+				jQuery( "#location_lat" ).attr( 'value', latlng.lat() );
+				jQuery( "#location_lng" ).attr( 'value', latlng.lng() );
+				jQuery( "#latlng_dontforget" ).hide();
+				jQuery( "#latlng_updated" ).fadeIn();
 			}
 			
 			function dragDropUpdateAddress() {
+				var newAddress = {};
+				for ( var i = 0; i < place.address_components.length; i++ ) {
+					var component = place.address_components[i];
+					newAddress[component.types[0]] = component.short_name;
+				}
 
+				var newStreet = '';
+				var newCity = '';
+				var newState = '';
+				var newZip = '';
+				var newCountry = '';
+
+				if ( newAddress.street_number ) {
+					newStreet += newAddress.street_number;
+				}
+				if ( newAddress.route ) {
+					if ( newStreet != '' ) {
+						newStreet += ' ';
+					}
+					newStreet += newAddress.route;
+				}
+
+				if ( newAddress.locality ) {
+					newCity += newAddress.locality;
+				}
+
+				if ( newAddress.administrative_area_level_1 ) {
+					newState += newAddress.administrative_area_level_1;
+				}
+
+				if ( newAddress.postal_code ) {
+					newZip += newAddress.postal_code;
+				}
+
+				if ( newAddress.country ) {
+					newCountry += newAddress.country;
+				}
+
+				/*
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare != null )
 				    newStreet = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
 				else if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.Thoroughfare != null )
 				    newStreet = place.AddressDetails.Country.AdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
-				else
-					newStreet = '';
 
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName != null )
 				    newCity = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName;
 				else if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName != null )
 				    newCity = place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName;
-				else
-					newCity = '';
 				
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName != null )
 				    newState = place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName;
-				else
-				    newState = '';
 				    
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode != null && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode.PostalCodeNumber != null )
 				    newZip = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.PostalCode.PostalCodeNumber;
 				if ( place.AddressDetails.Country.AdministrativeArea != null && place.AddressDetails.Country.AdministrativeArea.Locality != null && place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode != null && place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode.PostalCodeNumber != null )
 				    newZip = place.AddressDetails.Country.AdministrativeArea.Locality.PostalCode.PostalCodeNumber;
-				else
-				    newZip = '';
 				
 				if ( place.AddressDetails.Country != null && place.AddressDetails.Country.CountryNameCode != null )
 				    newCountry = place.AddressDetails.Country.CountryNameCode;
-				else
-					newCountry = '';
 				
 				oldStreet = jQuery("#location_address").attr( 'value' );
 				oldCity = jQuery("#location_address").attr( 'value' );
 				oldState = jQuery("#location_address").attr( 'value' );
 				oldZip = jQuery("#location_address").attr( 'value' );
 				oldCountry = jQuery("#location_address").attr( 'value' );
+				*/
 
 				jQuery("#location_address").attr( 'value', newStreet );
 				jQuery("#location_city").attr( 'value', newCity );
@@ -504,7 +569,6 @@ if ( !class_exists( 'SM_Locations' ) ) {
 				jQuery("#location_country").val( newCountry );
 			}
 			<?php
-						
 			die();
 		}
 		
@@ -516,10 +580,10 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			if ( ! is_object( $current_screen ) || 'sm-location' != $current_screen->id || 'sm-location' != $current_screen->post_type )
 				return;
 			
-			$options = get_option( 'SimpleMap_options' );
+			$options = $simple_map->get_options();
 			$post_object = get_post( $post );
 			
-			$api_key = ( isset( $options['api_key'] ) && !empty( $options['api_key'] ) ) ? $options['api_key'] : '';
+			//$api_key = ( isset( $options['api_key'] ) && !empty( $options['api_key'] ) ) ? $options['api_key'] : '';
 			
 			// Grab old data
 			$location_address 	= get_post_meta( $post, 'location_address', true ) ? get_post_meta( $post, 'location_address', true ) : ' ';
@@ -585,10 +649,10 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			$updated_lat = get_post_meta( $post, 'location_lat', true );
 			$updated_lng = get_post_meta( $post, 'location_lng', true );
 
-			if ( $location_address != $updated_address || $location_city != $updated_city || $location_state != $updated_state || $location_zip != $updated_zip || $location_country != $updated_country || '' == $updated_lat || '' == $updated_lng && isset( $options['api_key'] ) ) {
-				$geocode_result = $simple_map->geocode_location( $updated_address, $updated_city, $updated_state, $updated_zip, $updated_country, $api_key );
-				
-				if ( $geocode_result && isset( $geocode_result['status'] ) && $geocode_result['status'] == 200 ) {
+			if ( $location_address != $updated_address || $location_city != $updated_city || $location_state != $updated_state || $location_zip != $updated_zip || $location_country != $updated_country || '' == $updated_lat || '' == $updated_lng ) {
+				$geocode_result = $simple_map->geocode_location( $updated_address, $updated_city, $updated_state, $updated_zip, $updated_country, '' );
+
+				if ( $geocode_result && isset( $geocode_result['status'] ) && $geocode_result['status'] == 'OK' ) {
 					if ( isset( $geocode_result['lat'] ) && isset( $geocode_result['lng'] ) ) {
 						update_post_meta( $post, 'location_lat', $geocode_result['lat'] );
 						update_post_meta( $post, 'location_lng', $geocode_result['lng'] );
@@ -597,38 +661,11 @@ if ( !class_exists( 'SM_Locations' ) ) {
 					// Parse response
 					switch( $geocode_result['status'] ) {
 						case 620 :
+						case 'OVER_QUERY_LIMIT' :
 							update_post_meta( $post, 'sm-needs-js-geocode', 'true' );
 					}
 				}		
 			}
-		}
-		
-		// All location data
-		function get_location_data_types() {
-			
-			$types['name'] = __( 'Name', 'SimpleMap' );
-            $types['address'] = __( 'Address', 'SimpleMap' );
-            $types['address2'] = __( 'Address 2', 'SimpleMap' );
-            $types['city'] = __( 'City', 'SimpleMap' );
-            $types['state'] = __( 'State', 'SimpleMap' );
-            $types['country'] = __( 'Country', 'SimpleMap' );
-            $types['zip'] = __( 'Zip', 'SimpleMap' );
-            $types['phone'] = __( 'Phone', 'SimpleMap' );
-            $types['fax'] = __( 'Fax', 'SimpleMap' );
-            $types['url'] = __( 'URL', 'SimpleMap' );
-            $types['category'] = __( 'Categories', 'SimpleMap' );
-            $types['tags'] = __( 'Tags', 'SimpleMap' );
-            $types['days'] = __( 'Days', 'SimpleMap' );
-            $types['times'] = __( 'Times', 'SimpleMap' );
-            $types['description'] = __( 'Description', 'SimpleMap' );
-            $types['special'] = __( 'Special', 'SimpleMap' );
-            $types['lat'] = __( 'Lat', 'SimpleMap' );
-            $types['lng'] = __( 'Lng', 'SimpleMap' );
-            $types['email'] = __( 'Email', 'SimpleMap' );
-            
-            $types = apply_filters( 'sm-data-types', $types );
-            
-            return $types;
 		}
 		
 		// Filter the main query run at top of edit.php
@@ -698,6 +735,15 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			return $output;
 		}
 		
+		// Flushes location cached data
+		function flush_cache_data( $id=0 ) {
+
+			if ( 'sm-location' == get_post_type( $id ) || 'force' == $id )
+				delete_transient( 'simplemap-queries-cache' );
+
+			
+		}
+
 	}
 }
 ?>

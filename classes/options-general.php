@@ -1,94 +1,134 @@
 <?php
-if ( !class_exists( 'SM_Options' ) ){
+if ( !class_exists( 'SM_Options' ) ) {
 	class SM_Options{
-		
+
 		// update options of form submission
 		function sm_options() {
 			add_action( 'admin_init', array( &$this, 'update_options' ) );
 		}
-		
+
 		// Processes Options form if loaded
-		function update_options(){
+		function update_options() {
 			global $simple_map, $sm_locations;
 
 			// Delete all SimpleMap data.
 			if ( isset( $_GET['sm-action'] )  && 'delete-simplemap' == $_GET['sm-action'] ) {
-				
 				// Confirm we have both permisssion to do this and we have intent to do this.
-				if ( current_user_can( 'manage_options' ) && check_admin_referer( 'delete-simplemap' ) ) {
-					
+				if ( current_user_can( 'manage_options' ) && ( check_admin_referer( 'delete-simplemap-locations' ) || check_admin_referer( 'delete-simplemap' ) ) ) {
 					// Delete locations
-					if ( $locations = query_posts( array( 'post_type' => 'sm-location', 'posts_per_page' => -1 ) ) ) {
-						
+					while ( $locations = query_posts( array( 'post_type' => 'sm-location', 'posts_per_page' => 200 ) ) ) {
 						// Delete posts (and therby postmeta as well). Second arg bypasses trash
 						foreach ( $locations as $key => $location ) {
 							set_time_limit( 20 ); 
 							wp_delete_post( $location->ID, true );
 						}
 					}
-					
-					// Delete categories and tags
-					$taxonomies = array( 'sm-category', 'sm-tag', 'sm-day', 'sm-time' );
+
+					$options = $simple_map->get_options();
+					$taxonomies = $options['taxonomies'];
+
+					$original_taxonomies = array_keys( $simple_map->get_taxonomy_settings() );
+
+					if ( is_array( $original_taxonomies ) ) {
+							foreach ( $original_taxonomies as $taxonomy ) {
+								$taxonomies[$taxonomy] = true;
+								if ( ! taxonomy_exists( $taxonomy ) ) {
+									$sm_locations->register_location_taxonomy( $taxonomy, array() );
+								}
+							}
+					}
+
+					// Delete taxonomy terms
 					$args = array( 'hide_empty' => 0 );
-					if ( $terms = get_terms( $taxonomies, $args ) ) {
-						foreach( $terms as $key => $term ) {
+					if ( $terms = get_terms( array_keys( $taxonomies ), $args ) ) {
+						foreach ( $terms as $key => $term ) {
 							wp_delete_term( $term->term_id, $term->taxonomy );
 						}
-						
 					}
-										
+
 					// Delete Options
-					if ( get_option( 'SimpleMap_options' ) ) {
+					if ( get_option( 'SimpleMap_options' ) && empty( $_GET['locations-only'] ) ) {
 						delete_option( 'SimpleMap_options' );
 					}
-					
+
 					do_action( 'sm-delete-all-data' );
-					
+
 					wp_safe_redirect( admin_url( 'admin.php?page=simplemap' ) );
 				}
 			}
 
-			$options = get_option( 'SimpleMap_options' );
-			$default = $simple_map->get_default_options();
+			$options = $simple_map->get_options();
 
 			// Update Options if form was submitted or if WordPress options doesn't exist yet.
-			if ( isset( $_POST['sm_general_options_submitted'] ) || ! isset( $options['map_width'] ) ) {
-				
-				if ( isset( $_POST['sm_general_options_submitted'] ) )
-					check_admin_referer( 'sm-general-options' );
-				
-				$new_options = array();
-				
-				// Validate POST Options
-				$new_options['api_key'] 				= ( isset( $_POST['api_key'] ) && !empty( $_POST['api_key'] ) ) ? $_POST['api_key'] : '';
-				$new_options['map_width'] 				= ( isset( $_POST['map_width'] ) && !empty( $_POST['map_width'] ) ) ? $_POST['map_width'] : $default['map_width'];
-				$new_options['map_height'] 				= ( isset( $_POST['map_height'] ) && !empty( $_POST['map_height'] ) ) ? $_POST['map_height'] : $default['map_height'];
-				$new_options['default_lat'] 			= ( isset( $_POST['default_lat'] ) && !empty( $_POST['default_lat'] ) ) ? $_POST['default_lat'] : $default['default_lat'] ;
-				$new_options['default_lng'] 			= ( isset( $_POST['default_lng'] ) && !empty( $_POST['default_lng'] ) ) ? $_POST['default_lng'] : $default['default_lng'] ;
-				$new_options['zoom_level'] 				= ( isset( $_POST['zoom_level'] ) ) ? absint( $_POST['zoom_level'] ) : $default['zoom_level'] ;
-				$new_options['default_radius'] 			= ( isset( $_POST['default_radius'] ) && !empty( $_POST['default_radius'] ) ) ? absint( $_POST['default_radius'] ) : $default['default_radius'] ;
-				$new_options['map_type'] 				= ( isset( $_POST['map_type'] ) && !empty( $_POST['map_type'] ) ) ? $_POST['map_type'] : $default['map_type'];
-				$new_options['special_text'] 			= ( isset( $_POST['special_text'] ) ) ? $_POST['special_text'] : $default['special_text'];
-				$new_options['default_state'] 			= ( isset( $_POST['default_state'] ) && !empty( $_POST['default_state'] ) ) ? $_POST['default_state'] : $default['default_state'];
-				$new_options['default_country']			= ( isset( $_POST['default_country'] ) && !empty( $_POST['default_country'] ) ) ? esc_attr( $_POST['default_country'] ) : $default['default_country'];
-				$new_options['default_domain'] 			= ( isset( $_POST['default_domain'] ) && !empty( $_POST['default_domain'] ) ) ? $_POST['default_domain'] : $default['default_domain'];
-				$new_options['address_format'] 			= ( isset( $_POST['address_format'] ) && !empty( $_POST['address_format'] ) ) ? $_POST['address_format'] : $default['address_format'];
-				$new_options['map_stylesheet'] 			= ( isset( $_POST['map_stylesheet'] ) && !empty( $_POST['map_stylesheet'] ) ) ? $_POST['map_stylesheet'] : $default['map_stylesheet'];
-				$new_options['units'] 					= ( isset( $_POST['units'] ) && !empty( $_POST['units'] ) ) ? $_POST['units'] : $default['units'];
-				$new_options['results_limit'] 			= ( isset( $_POST['results_limit'] ) ) ? absint( $_POST['results_limit'] ) : $default['results_limit'];
-				$new_options['autoload'] 				= ( isset( $_POST['autoload'] ) && !empty( $_POST['autoload'] ) ) ? $_POST['autoload'] : $default['autoload'];
-				$new_options['map_pages'] 				= isset( $_POST['map_pages'] ) ? $_POST['map_pages'] : $default['map_pages'];
-				$new_options['lock_default_location'] 	= ( isset( $_POST['lock_default_location'] ) && !empty( $_POST['lock_default_location'] ) ) ? true : $default['lock_default_location'];
-				$new_options['powered_by'] 				= ( isset( $_POST['powered_by'] ) && 'on' == $_POST['powered_by'] ) ? 1 : 0;
-				$new_options['display_search'] 			= ( isset( $_POST['display_search'] ) && !empty( $_POST['display_search'] ) ) ? $_POST['display_search'] : $default['display_search'];
+			if ( isset( $_POST['sm_general_options_submitted'] ) ) {
+				check_admin_referer( 'sm-general-options' );
 
-				$new_options = apply_filters( 'sm-new-general-options', $new_options, $default );
-				
-				if ( $new_options !== $default && update_option( 'SimpleMap_options', $new_options ) ) {
+				$new_options = $options;
+
+				// Validate POST Options
+				//$new_options['api_key'] 			= ( ! empty( $_POST['api_key'] ) ) ? $_POST['api_key'] : '';
+				$new_options['map_width']				= ( ! empty( $_POST['map_width'] ) ) ? $_POST['map_width'] : $options['map_width'];
+				$new_options['map_height']				= ( ! empty( $_POST['map_height'] ) ) ? $_POST['map_height'] : $options['map_height'];
+				$new_options['default_lat']				= ( ! empty( $_POST['default_lat'] ) ) ? $_POST['default_lat'] : $options['default_lat'] ;
+				$new_options['default_lng']				= ( ! empty( $_POST['default_lng'] ) ) ? $_POST['default_lng'] : $options['default_lng'] ;
+				$new_options['zoom_level']				= ( isset( $_POST['zoom_level'] ) ) ? absint( $_POST['zoom_level'] ) : $options['zoom_level'] ;
+				$new_options['default_radius']			= ( ! empty( $_POST['default_radius'] ) ) ? absint( $_POST['default_radius'] ) : $options['default_radius'] ;
+				$new_options['map_type']				= ( ! empty( $_POST['map_type'] ) ) ? $_POST['map_type'] : $options['map_type'];
+				$new_options['special_text']			= ( isset( $_POST['special_text'] ) ) ? $_POST['special_text'] : $options['special_text'];
+				$new_options['default_state']			= ( ! empty( $_POST['default_state'] ) ) ? $_POST['default_state'] : $options['default_state'];
+				$new_options['default_country']			= ( ! empty( $_POST['default_country'] ) ) ? esc_attr( $_POST['default_country'] ) : $options['default_country'];
+				$new_options['default_language']		= ( ! empty( $_POST['default_language'] ) ) ? esc_attr( $_POST['default_language'] ) : $options['default_language'];
+				$new_options['default_domain']			= ( ! empty( $_POST['default_domain'] ) ) ? $_POST['default_domain'] : $options['default_domain'];
+				$new_options['address_format']			= ( ! empty( $_POST['address_format'] ) ) ? $_POST['address_format'] : $options['address_format'];
+				$new_options['map_stylesheet']			= ( ! empty( $_POST['map_stylesheet'] ) ) ? $_POST['map_stylesheet'] : $options['map_stylesheet'];
+				$new_options['units']					= ( ! empty( $_POST['units'] ) ) ? $_POST['units'] : $options['units'];
+				$new_options['results_limit']			= ( isset( $_POST['results_limit'] ) ) ? absint( $_POST['results_limit'] ) : $options['results_limit'];
+				$new_options['autoload']				= ( ! empty( $_POST['autoload'] ) ) ? $_POST['autoload'] : $options['autoload'];
+				$new_options['map_pages']				= ( isset( $_POST['map_pages'] ) ) ? $_POST['map_pages'] : $options['map_pages'];
+				$new_options['lock_default_location']	= ( ! empty( $_POST['lock_default_location'] ) ) ? true : $options['lock_default_location'];
+				$new_options['powered_by']				= ( isset( $_POST['powered_by'] ) && 'on' == $_POST['powered_by'] ) ? 1 : 0;
+				$new_options['enable_permalinks'] 		= ( isset( $_POST['enable_permalinks'] ) && 'on' == $_POST['enable_permalinks'] ) ? 1 : 0;
+				$new_options['permalink_slug'] 			= ( ! empty( $_POST['permalink_slug'] ) ) ? $_POST['permalink_slug'] : $options['permalink_slug'];
+				$new_options['adsense_for_maps'] 		= ( isset( $_POST['adsense_for_maps'] ) && 'on' == $_POST['adsense_for_maps'] ) ? 1 : 0;
+				$new_options['adsense_pub_id'] 			= ( isset( $_POST['adsense_pub_id'] ) ) ? $_POST['adsense_pub_id'] : $options['adsense_pub_id'];
+				$new_options['adsense_channel_id'] 		= ( isset( $_POST['adsense_channel_id'] ) ) ? $_POST['adsense_channel_id'] : $options['adsense_channel_id'];
+				$new_options['adsense_max_ads'] 		= ( isset( $_POST['adsense_max_ads'] ) ) ? absint( $_POST['adsense_max_ads'] ) : $options['adsense_max_ads'];
+				$new_options['display_search'] 			= ( ! empty( $_POST['display_search'] ) ) ? $_POST['display_search'] : $options['display_search'];
+				$new_options['auto_locate']				= ( isset( $_POST['auto_locate'] ) ) ? $_POST['auto_locate'] : $options['auto_locate'];
+
+				foreach ( $new_options['taxonomies'] as $taxonomy => $tax_info ) {
+					if ( isset( $_POST['taxonomies'][$taxonomy]['active'] ) ) {
+						$new_tax_options = $_POST['taxonomies'][$taxonomy];
+						unset($new_tax_options['active']);
+						//echo 'UPDATE(' . $taxonomy . ' - ' . json_encode( array_diff_assoc( array_filter( $new_tax_options ), $tax_info ) ) . ')' . PHP_EOL;
+						$new_options['taxonomies'][$taxonomy] = array_filter( $new_tax_options ) + $tax_info;
+						unset($_POST['taxonomies'][$taxonomy]);
+					}
+					else {
+						//echo 'DISABLE(' . $taxonomy . ')' . PHP_EOL;
+						unset($new_options['taxonomies'][$taxonomy]);
+					}
+				}
+
+				if ( isset( $_POST['taxonomies'] ) ) {
+					foreach ( $_POST['taxonomies'] as $taxonomy => $tax_info ) {
+						if ( isset( $tax_info['active'] ) ) {
+							//echo 'ENABLE(' . $taxonomy . ')' . PHP_EOL;
+							$new_options['taxonomies'][$taxonomy] = $simple_map->get_taxonomy_settings( $taxonomy );
+						}
+					}
+				}
+
+				$new_options = apply_filters( 'sm-new-general-options', $new_options, $options );
+
+				if ( $new_options !== $options && update_option( 'SimpleMap_options', $new_options ) ) {
+					if ( $new_options['enable_permalinks'] !== $options['enable_permalinks'] || $new_options['permalink_slug'] !== $options['permalink_slug'] ) {
+                        update_option( 'sm-rewrite-rules', true );
+					}
+
 					do_action( 'sm-general-options-updated' );
 					wp_redirect( admin_url( 'admin.php?page=simplemap&sm-msg=1' ) );
 					die();
-
 				}
 			}
 			
@@ -97,16 +137,14 @@ if ( !class_exists( 'SM_Options' ) ){
 		// Prints the options page
 		function print_page(){
 			global $simple_map, $wpdb;
-			$options = get_option( 'SimpleMap_options' );
-			if ( !isset( $options['api_key'] ) )
-				$options['api_key'] = '';
-				
+			$options = $simple_map->get_options();
+
 			extract( $options );
 			
 			// Set Autoload Vars
-			$count = count( $wpdb->get_col( "SELECT ID FROM `" . $wpdb->posts . "` WHERE post_type = 'sm-location' AND post_status = 'publish' LIMIT 250" ) );
+			$count = $wpdb->get_col( "SELECT COUNT(ID) FROM `" . $wpdb->posts . "` WHERE post_type = 'sm-location' AND post_status = 'publish'" );
 
-			if ( $count == 250 ) {
+			if ( $count >= 250 ) {
 				$disabled_autoload = false; // let it happen. we're limiting to 500 in the query
 				$disabledmsg = sprintf( __( 'You have to many locations to auto-load them all. Only the closest %d will be displayed if auto-load all is selected.', 'SimpleMap' ), '250' );
 			} else {
@@ -176,7 +214,7 @@ if ( !class_exists( 'SM_Options' ) ){
 														<select name="default_domain" id="default_domain">
 															<?php
 															foreach ( $simple_map->get_domain_options() as $key => $value ) {
-																echo "<option value='" . $value . "' " . selected( $default_domain, $value ) . ">" . $key . " (" . $value . ")</option>\n";
+																echo "<option value='" . $value . "' " . selected( $default_domain, $value, false ) . ">" . $key . " (" . $value . ")</option>\n";
 															}
 															?>
 														</select>
@@ -189,7 +227,20 @@ if ( !class_exists( 'SM_Options' ) ){
 														<select name="default_country" id="default_country">
 															<?php
 															foreach ( $simple_map->get_country_options() as $key => $value ) {
-																echo "<option value='" . $key . "' " . selected( $default_country, $key ) . ">" . $value . "</option>\n";
+																echo "<option value='" . $key . "' " . selected( $default_country, $key, false ) . ">" . $value . "</option>\n";
+															}
+															?>
+														</select>
+													</td>
+												</tr>
+												
+												<tr valign="top">
+													<td width="150"><label for="default_language"><?php _e( 'Default Language', 'SimpleMap' ); ?></label></td>
+													<td>
+														<select name="default_language" id="default_language">
+															<?php
+															foreach ( $simple_map->get_language_options() as $key => $value ) {
+																echo "<option value='" . $key . "' " . selected( $default_language, $key, false ) . ">" . $value . "</option>\n";
 															}
 															?>
 														</select>
@@ -205,19 +256,19 @@ if ( !class_exists( 'SM_Options' ) ){
 													<td width="150"><label for="address_format"><?php _e( 'Address Format', 'SimpleMap' ); ?></label></td>
 													<td>
 														<select id="address_format" name="address_format">
-															<option value="town, province postalcode" <?php selected( $address_format, 'town, province postalcode' ); ?> /><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . '], [' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?>
+															<option value="town, province postalcode" <?php selected( $address_format, 'town, province postalcode' ); ?>><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . '], [' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?></option>
 			
-															<option value="town province postalcode" <?php selected( $address_format, 'town province postalcode' ); ?> /><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?>
+															<option value="town province postalcode" <?php selected( $address_format, 'town province postalcode' ); ?>><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?></option>
 															
-															<option value="town-province postalcode" <?php selected( $address_format, 'town-province postalcode' ); ?> /><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . '] - [' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __('Zip/Postal Code', 'SimpleMap' ) . ']'; ?>
+															<option value="town-province postalcode" <?php selected( $address_format, 'town-province postalcode' ); ?>><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . '] - [' . __( 'State/Province', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __('Zip/Postal Code', 'SimpleMap' ) . ']'; ?></option>
 															
-															<option value="postalcode town-province" <?php selected( $address_format, 'postalcode town-province' ); ?> /><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . '] - [' . __( 'State/Province', 'SimpleMap' ) . ']'; ?>
+															<option value="postalcode town-province" <?php selected( $address_format, 'postalcode town-province' ); ?>><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . '] - [' . __( 'State/Province', 'SimpleMap' ) . ']'; ?></option>
 															
-															<option value="postalcode town, province" <?php selected( $address_format, 'postalcode town, province' ); ?> /><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . '], [' . __( 'State/Province', 'SimpleMap' ) . ']'; ?>
+															<option value="postalcode town, province" <?php selected( $address_format, 'postalcode town, province' ); ?>><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . '], [' . __( 'State/Province', 'SimpleMap' ) . ']'; ?></option>
 															
-															<option value="postalcode town" <?php selected( $address_format, 'postalcode town' ); ?> /><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . ']'; ?>
+															<option value="postalcode town" <?php selected( $address_format, 'postalcode town' ); ?>><?php echo '[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'City/Town', 'SimpleMap' ) . ']'; ?></option>
 															
-															<option value="town postalcode" <?php selected( $address_format, 'town postalcode' ); ?> /><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?>
+															<option value="town postalcode" <?php selected( $address_format, 'town postalcode' ); ?>><?php echo '[' . __( 'City/Town', 'SimpleMap' ) . ']&nbsp;&nbsp;[' . __( 'Zip/Postal Code', 'SimpleMap' ) . ']'; ?></option>
 														</select>
 														<span class="hidden" id="order_1"><br /><?php _e( 'Example', 'SimpleMap' ); ?>: Minneapolis, MN 55403</span>
 														<span class="hidden" id="order_2"><br /><?php _e( 'Example', 'SimpleMap' ); ?>: Minneapolis MN 55403</span>
@@ -252,7 +303,7 @@ if ( !class_exists( 'SM_Options' ) ){
 										
 										<div class="table">
 											<table class="form-table">
-												
+												<?php /*
 												<tr valign="top">
 													<td width="150"><label for="api_key"><?php _e( 'Google Maps API Key', 'SimpleMap' ); ?></label></td>
 													<td>
@@ -260,11 +311,12 @@ if ( !class_exists( 'SM_Options' ) ){
 														<small><em><?php printf( __( '%s Click here%s to sign up for a Google Maps API key for your domain.', 'SimpleMap' ), '<a href="' . $simple_map->get_api_link() . '">', '</a>'); ?></em></small>
 													</td>
 												</tr>
+												*/ ?>
 												
 												<tr valign="top">
 													
 													<?php 
-													if ( '' != $options['api_key'] ) {
+													if ( TRUE ) {
 														$disabled_api = false;
 														$api_how_to = __( 'Type in an address, state, or zip to geocode the default location.', 'SimpleMap' );
 													} else {
@@ -286,7 +338,7 @@ if ( !class_exists( 'SM_Options' ) ){
 														</p>
 													</td>
 												</tr>
-												
+
 												<tr valign="top">
 													<td><label for="units"><?php _e( 'Distance Units', 'SimpleMap' ); ?></label></td>
 													<td>
@@ -303,7 +355,6 @@ if ( !class_exists( 'SM_Options' ) ){
 														<select name="default_radius" id="default_radius">
 															<?php
 															foreach ( $simple_map->get_search_radii() as $value ) {
-																$r = (int) $value;
 																echo "<option value='" . esc_attr( $value ) . "' " . selected( $value, $default_radius, false ) . ">" . esc_attr( $value ) . " " . esc_attr( $units ) . "</option>\n";
 															}
 															?>
@@ -322,7 +373,7 @@ if ( !class_exists( 'SM_Options' ) ){
 															}
 															?>
 														</select><br />
-														<small></small><span class='howto'><?php _e( 'Select "No Limit" to display all results within the search radius.', 'SimpleMap' ); ?></span></small>
+														<small><span class='howto'><?php _e( 'Select "No Limit" to display all results within the search radius.', 'SimpleMap' ); ?></span></small>
 													</td>
 												</tr>
 												
@@ -349,7 +400,7 @@ if ( !class_exists( 'SM_Options' ) ){
 															<option value='0' <?php selected( $zoom_level, 0 ); ?> >Auto Zoom</option>
 															<?php
 															for ( $i = 1; $i <= 19; $i++ ) {
-																echo "<option value='" . esc_attr( $i ) . "' " . selected( $zoom_level, $i ) . ">" . esc_attr( $i ) . "</option>\n";
+																echo "<option value='" . esc_attr( $i ) . "' " . selected( $zoom_level, $i, false ) . ">" . esc_attr( $i ) . "</option>\n";
 															}
 															?>
 														</select><br />
@@ -384,6 +435,90 @@ if ( !class_exists( 'SM_Options' ) ){
 									</div> <!-- inside -->
 								</div> <!-- postbox -->
 								
+								<!-- Optional Features -->
+								<div class="postbox">
+									
+									<h3><?php _e( 'Optional / Experimental Features', 'SimpleMap' ); ?></h3>
+									
+									<div class="inside">
+										<p class="sub"><?php printf( __( 'See %s the Help page%s for an explanation of these options.', 'SimpleMap' ), '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=simplemap-help">', '</a>&nbsp;' ); ?></p>
+										
+										<div class="table">
+											<table class="form-table">
+
+												<tr valign="top">
+													<td width="150"><?php _e( 'Permalinks', 'SimpleMap' ); ?></td>
+													<td>
+														<label for="enable_permalinks"><input type="checkbox" name="enable_permalinks" id="enable_permalinks" <?php checked( $enable_permalinks ); ?> /> <?php _e( 'Enable location permalinks?', 'SimpleMap' ); ?></label>
+														<br /><label for="permalink_slug"><small><?php _e( 'Location permalink folder?', 'SimpleMap' ); ?></small> <input type="text" name="permalink_slug" id="permalink_slug" value="<?php echo esc_attr( $permalink_slug ); ?>" /></label>
+													</td>
+												</tr>
+
+												<tr valign="top">
+													<td width="150"><?php _e( 'Location Taxonomies', 'SimpleMap' ); ?></td>
+													<td>
+													<?php
+													$standard_taxonomies = $simple_map->get_taxonomy_settings();
+													$taxonomies += $standard_taxonomies;
+													foreach ( $taxonomies as $taxonomy => $tax_info ) {
+														$safe = str_replace( '-', '_', $taxonomy );
+														$label = isset( $tax_info['description'] ) ? $tax_info['description'] : str_replace( 'sm-', '', $taxonomy );
+														$active = !empty( $options['taxonomies'][$taxonomy] );
+														echo '<label for="taxonomies_' . $safe . '"><input type="checkbox" name="taxonomies[' . $taxonomy . '][active]" id="taxonomies_' . $safe . '" ' . checked( $active, true, false ) . ' /> ' . __( 'Enable ' . $label . ' taxonomies?', 'SimpleMap' ) . '</label>';
+														echo '<br />';
+														if ( $active && !isset( $standard_taxonomies[$taxonomy] ) ) {
+															echo '<div style="margin: 5px 0px 5px 15px; padding: 5px; border: 1px solid #ccc;">';
+															echo '<label for="taxonomies_' . $safe . '_singular">' . __( 'Singular Form', 'SimpleMap' );
+															echo ': <input type="text" name="taxonomies[' . $taxonomy . '][singular]" id="taxonomies_' . $safe . '_singular" value="' . esc_attr( $tax_info['singular'] ) .  '" /></label>';
+															echo '<br />';
+															echo '<label for="taxonomies_' . $safe . '_plural">' . __( 'Plural Form', 'SimpleMap' );
+															echo ': <input type="text" name="taxonomies[' . $taxonomy . '][plural]" id="taxonomies_' . $safe . '_plural" value="' . esc_attr( $tax_info['plural'] ) .  '" /></label>';
+															echo '</div>';
+															echo '<br />';
+														}
+													}
+													?>
+													</td>
+												</tr>
+											
+												<tr valign="top">
+													<td width="150"><?php _e( 'Google Adsense for Maps', 'SimpleMap' ); ?></td>
+													<td>
+														<label for="adsense_for_maps"><input type="checkbox" name="adsense_for_maps" id="adsense_for_maps" <?php checked( $adsense_for_maps ); ?> /> <?php _e( 'Enable Adense for Maps?', 'SimpleMap' ); ?></label>
+														<br /><label for="adsense_pub_id"><small><?php _e( 'Default Adsense Publisher ID:', 'SimpleMap' ); ?></small> <input type="text" name="adsense_pub_id" id="adsense_pub_id" size="30" value="<?php echo esc_attr( $adsense_pub_id ); ?>" /></label>
+														<br /><label for="adsense_channel_id"><small><?php _e( 'Default Adsense Channel ID:', 'SimpleMap' ); ?></small> <input type="text" name="adsense_channel_id" id="adsense_channel_id" size="30" value="<?php echo esc_attr( $adsense_channel_id ); ?>" /></label>
+														<br /><label for="adsense_max_ads"><small><?php _e( 'Max number of ads on map:', 'SimpleMap' ); ?></small> <input type="text" name="adsense_max_ads" id="adsense_max_ads" size="10" value="<?php echo esc_attr( $adsense_max_ads ); ?>" /></label>
+													</td>
+												</tr>
+											
+												<tr valign="top">
+													<td><label for="auto_locate"><?php _e( 'Auto-detect Location', 'SimpleMap' ); ?></label></td>
+													<td>
+														<select name="auto_locate" id="auto_locate">
+															<?php
+															foreach ( $simple_map->get_auto_locate_options() as $value => $label ) {
+																echo "<option value='" . esc_attr( $value ) . "' " . selected( $value, $auto_locate, false ) . ">" . esc_attr( $label ) . "</option>\n";
+															}
+															?>
+														</select><br />
+														<small><span class='howto'><?php _e( 'IP based detection does not prompt the user for permission and is faster than HTML5. HTML5 is more precise.' ); ?></span></small>
+													</td>
+												</tr>
+
+											</table>
+											
+										</div>
+										
+										<p class="submit">
+											<input type="submit" class="button-primary" value="<?php _e( 'Save Options', 'SimpleMap' ) ?>" /><br /><br />
+										</p>
+										
+										<div class="clear"></div>
+										
+									</div>
+								</div>
+
+
 								<?php do_action( 'sm-general-options-normal-sortables-bottom' ); ?>
 								
 								</div>
@@ -474,31 +609,31 @@ if ( !class_exists( 'SM_Options' ) ){
 												<tr valign="top">
 													<td><label for="map_type"><?php _e( 'Default Map Type', 'SimpleMap' ); ?></label></td>
 													<td>
-														<div class="radio-thumbnail<?php if ( 'G_NORMAL_MAP' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
+														<div class="radio-thumbnail<?php if ( 'ROADMAP' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
 															<label style="display: block;" for="map_type_normal">
 																<img src="<?php echo SIMPLEMAP_URL; ?>/inc/images/map-type-normal.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Road map', 'SimpleMap'); ?><br />
-																<input type="radio" style="border: none;" name="map_type" id="map_type_normal" value="G_NORMAL_MAP" <?php checked( $map_type, 'G_NORMAL_MAP' ); ?> />
+																<input type="radio" style="border: none;" name="map_type" id="map_type_normal" value="ROADMAP" <?php checked( $map_type, 'ROADMAP' ); ?> />
 															</label>
 														</div>
 														
-														<div class="radio-thumbnail<?php if ( 'G_SATELLITE_MAP' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
+														<div class="radio-thumbnail<?php if ( 'SATELLITE' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
 															<label style="display: block;" for="map_type_satellite">
 																<img src="<?php echo SIMPLEMAP_URL; ?>/inc/images/map-type-satellite.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Satellite map', 'SimpleMap'); ?><br />
-																<input type="radio" style="border: none;" name="map_type" id="map_type_satellite" value="G_SATELLITE_MAP" <?php checked( $map_type, 'G_SATELLITE_MAP' ); ?> />
+																<input type="radio" style="border: none;" name="map_type" id="map_type_satellite" value="SATELLITE" <?php checked( $map_type, 'SATELLITE' ); ?> />
 															</label>
 														</div>
 														
-														<div class="radio-thumbnail<?php if ( 'G_HYBRID_MAP' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
+														<div class="radio-thumbnail<?php if ( 'HYBRID' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
 															<label style="display: block;" for="map_type_hybrid">
 																<img src="<?php echo SIMPLEMAP_URL; ?>/inc/images/map-type-hybrid.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Hybrid map', 'SimpleMap'); ?><br />
-																<input type="radio" style="border: none;" name="map_type" id="map_type_hybrid" value="G_HYBRID_MAP" <?php checked( $map_type, 'G_HYBRID_MAP' ); ?> />
+																<input type="radio" style="border: none;" name="map_type" id="map_type_hybrid" value="HYBRID" <?php checked( $map_type, 'HYBRID' ); ?> />
 															</label>
 														</div>
 														
-														<div class="radio-thumbnail<?php if ( 'G_PHYSICAL_MAP' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
+														<div class="radio-thumbnail<?php if ( 'TERRAIN' == $map_type ) { echo ' radio-thumbnail-current'; } ?>">
 															<label style="display: block;" for="map_type_terrain">
 																<img src="<?php echo SIMPLEMAP_URL; ?>/inc/images/map-type-terrain.jpg" width="100" height="100" style="border: 1px solid #999;" /><br /><?php _e('Terrain map', 'SimpleMap'); ?><br />
-																<input type="radio" style="border: none;" name="map_type" id="map_type_terrain" value="G_PHYSICAL_MAP" <?php checked( $map_type, 'G_PHYSICAL_MAP' ); ?> />
+																<input type="radio" style="border: none;" name="map_type" id="map_type_terrain" value="TERRAIN" <?php checked( $map_type, 'TERRAIN' ); ?> />
 															</label>
 														</div>
 													</td>
@@ -569,8 +704,9 @@ if ( !class_exists( 'SM_Options' ) ){
 									<h3><?php _e( 'Delete SimpleMap Data', 'SimpleMap' ); ?></h3>
 									
 									<div class="inside">
-										<p class="sub"><span style="color:red";><?php _e( 'CAUTION! Uninstalling SimpleMap will completely delete all current locations, categories, tags and options. This is irreversible.' , 'SimpleMap' ); ?></span></p>
-										<p style='text-align:center;'><a onClick="javascript:return confirm('<?php _e( 'Last chance! Pressing OK will delete all SimpleMap data.'); ?>')" href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=simplemap&sm-action=delete-simplemap' ), 'delete-simplemap' ); ?>" ><?php _e( 'Clicking this link will remove all data from the database.'); ?></a></p>
+										<p class="sub"><span style="color: red;"><?php _e( 'CAUTION! Uninstalling SimpleMap will completely delete all current locations, categories, tags and options. This is irreversible.' , 'SimpleMap' ); ?></span></p>
+										<p style='text-align:center;'><a onclick="javascript:return confirm('<?php _e( 'Last chance! Pressing OK will delete all SimpleMap locations. Your settings will not be deleted.'); ?>')" href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=simplemap&sm-action=delete-simplemap&locations-only=true' ), 'delete-simplemap-locations' ); ?>" ><?php _e( 'Clicking this link will remove all locations but preserve your settings.'); ?></a></p>
+										<p style='text-align:center;'><a onclick="javascript:return confirm('<?php _e( 'Last chance! Pressing OK will delete all SimpleMap data.'); ?>')" href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=simplemap&sm-action=delete-simplemap' ), 'delete-simplemap' ); ?>" ><?php _e( 'Clicking this link will remove all data from the database.'); ?></a></p>
 									</div>
 								</div>
 								
@@ -584,7 +720,7 @@ if ( !class_exists( 'SM_Options' ) ){
 					</div> <!-- dashboard-widgets -->
 					</form>
 					
-					<p style='float:right;margin-right:25px;'><a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64'>Donate via PayPal</a></p>
+					<p style='float:right;margin-right:25px;'><a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=DTJBYXGQFSW64'>Donate via PayPal</a></p>
 					
 					<div class="clear">
 					</div>

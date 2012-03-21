@@ -81,11 +81,11 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 		function init_premium_support() {
 
 			global $current_user;
-			get_current_user();
+			wp_get_current_user();
 			
 			// Check for premium support, sso, and paypal button transients
 			$status_key = md5( 'ft_premium_support_' . $this->product_id . '_' . sanitize_title_with_dashes( $this->site_url )  . '_' . sanitize_title_with_dashes( $this->server_url ) ) ;
-			$sso_key = md5( 'ft_premium_sso_' . $current_user->id . '_' . $this->product_id . '_' . sanitize_title_with_dashes( $this->site_url )  . '_' . sanitize_title_with_dashes( $this->server_url ) );
+			$sso_key = md5( 'ft_premium_sso_' . $current_user->ID . '_' . $this->product_id . '_' . sanitize_title_with_dashes( $this->site_url )  . '_' . sanitize_title_with_dashes( $this->server_url ) );
 			$paypal_button_key = md5( 'ft_premium_signup_' . $this->product_id . '_' . sanitize_title_with_dashes( $this->site_url )  . '_' . sanitize_title_with_dashes( $this->server_url ) );
 			$exp_option_key = '_ftpssu_' . md5( 'ftpssue-' . $this->product_id . '-' . sanitize_title_with_dashes( $this->site_url ) . '-' . sanitize_title_with_dashes( $this->server_url ) );
 
@@ -94,7 +94,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 
 				$body['ft-ps-status-request'] = true;
 				$body['site'] = urlencode( $this->site_url );
-				$body['user'] = $current_user->id;
+				$body['user'] = $current_user->ID;
 				$body['product'] = $this->product_id;
 				$body['email'] = urlencode( $current_user->user_email );
 				$body['nicename'] = urlencode( $current_user->user_nicename );
@@ -106,7 +106,14 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 
 						// Response found a server, lets see if it hit a script we recognize
 						$response = json_decode( $request['body'] );
-						
+
+						// Set the paypal button
+						if ( ! empty( $response->paypal_button->args ) && ! empty( $response->paypal_button->base) )
+							$this->paypal_button = add_query_arg( get_object_vars( $response->paypal_button->args ), $response->paypal_button->base );
+
+						// Set the expired flag
+						$this->support_expired = isset( $response->support_expired ) ? $response->support_expired : false;
+
 						// Do we have a premium status?
 						if ( isset( $response->support_status ) && $response->support_status ) {
 							
@@ -136,8 +143,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 										
 						} else {
 
-							// No premium support so lets fill the paypal button property
-							$this->paypal_button = add_query_arg( get_object_vars( $response->paypal_button->args ), $response->paypal_button->base );
+							// No premium support so lets delete the keys
 							delete_option( 'external_updates-' . $this->plugin_slug );
 							delete_option( $exp_option_key );
 						}
@@ -154,8 +160,38 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 			// Check server for auto update?
 			if ( $this->ps_status )
 				$ft_ps_client_auto_update = new FT_Premium_Support_PluginUpdate_Checker( $this->server_url . '?ft-pss-upgrade-request=1&ft-pss-upgrade-request-product-id=' . $this->product_id . '&ft-pss-upgrade-request-site=' . $this->site_url, $this->plugin_basename, 'simplemap', 1 	);
+
+                        // Maybe Nag Renewal
+                        $this->maybe_trigger_renewal_nag(); 
 		
 		}
+
+                function maybe_trigger_renewal_nag() {
+                        // Has support expired?
+                        if ( ! empty( $this->support_expired ) && ! is_object( $this->support_expired ) ) {
+                                add_action( 'admin_notices', array( $this, 'support_expired' ) );
+                                return;
+                        }
+
+                        if ( ! empty( $this->ps_status->exp_date ) ) {
+                                $onemonthout = $this->ps_status->exp_date - 2628000;
+                                // If we are within a month of expiration date
+                                if ( $onemonthout <= strtotime( 'now' ) ) {
+                                       add_action( 'admin_notices', array( $this, 'renew_soon' ) ); 
+                                }
+                        }
+
+                }
+
+                function support_expired() {
+                        $link = ( $this->paypal_button ) ? esc_url( $this->paypal_button ) : 'http://simplemap-plugin.com';
+                        echo "<div class='update-nag'>" . sprintf( __( "<strong style='color:red;'>Your license for SimpleMap has expired!</strong><br />You need to renew your license now for continued support and upgrades: <a href='%s' target='_blank'>Renew my license now</a>." ), $link ) . "</div>";  
+                }
+
+                function renew_soon() {
+                        $link = ( $this->paypal_button ) ? esc_url( $this->paypal_button ) : 'http://simplemap-plugin.com';
+                        echo "<div class='update-nag'>" . sprintf( __( "<strong style='color:red;'>SimpleMap is expiring soon!</strong><br />You will need to renew your license for continued support and upgrades: <a href='%s' target='_blank'>Renew my license now</a>." ), $link ) . "</div>";  
+                }
 		
 	}
 	

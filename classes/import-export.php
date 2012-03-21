@@ -9,32 +9,24 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 			add_action( 'admin_init', array( &$this, 'export_legacy_csv' ) );
 			add_action( 'admin_init', array( &$this, 'delete_legacy_tables' ) );
 		}
-		
+
 		// Exports a CSV file to WordPress
 		function export_csv() {
 			global $simple_map, $sm_locations;
-			
+
 			if ( isset( $_POST['sm-action'] ) && 'export-csv' == $_POST['sm-action'] ) {
-				
 				// Grab locations
-				if ( $locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => -1 ) ) ) {
-					
+				$content = array();
+				set_time_limit( 0 );
+				while ( $locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => 200 ) ) ) {
 					// Include CSV library
-					include_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
-					
-					foreach( $locations as $key => $location ) {
-						$cats = $tags = '';
-						
-						// Do Cats		
-						if ( $terms = wp_get_object_terms( $location->ID, 'sm-category', array( 'fields' => 'names' ) ) )
-							$cats = implode( ',', $terms );
-						
-						// Do Tags		
-						if ( $terms = wp_get_object_terms( $location->ID, 'sm-tag', array( 'fields' => 'names' ) ) )
-							$tags = implode( ',', $terms );
-						
-						$content[] = array( 
-							'name' => esc_attr( $location->post_title ), 
+					require_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
+
+					$taxonomies = get_object_taxonomies( 'sm-location' );
+
+					foreach ( $locations as $key => $location ) {
+						$location_data = array(
+							'name' => esc_attr( $location->post_title ),
 							'address' => esc_attr( get_post_meta( $location->ID, 'location_address', true ) ),
 							'address2' => esc_attr( get_post_meta( $location->ID, 'location_address2', true ) ),
 							'city' => esc_attr( get_post_meta( $location->ID, 'location_city', true ) ),
@@ -46,22 +38,31 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 							'fax' => esc_attr( get_post_meta( $location->ID, 'location_fax', true ) ),
 							'url' => esc_attr( get_post_meta( $location->ID, 'location_url', true ) ),
 							'description' => esc_attr( $location->post_content ),
-							'category' => esc_attr( $cats ),
-							'tags' => esc_attr( $tags ),
 							'special' => esc_attr( get_post_meta( $location->ID, 'location_special', true ) ),
 							'lat' => esc_attr( get_post_meta( $location->ID, 'location_lat', true ) ),
 							'lng' => esc_attr( get_post_meta( $location->ID, 'location_lng', true ) ),
 							'dateUpdated' => esc_attr( $location->post_modified )
 						);
-	
+
+						foreach ( $taxonomies as $tax ) {
+							$term_value = '';
+							if ( $terms = wp_get_object_terms( $location->ID, $tax, array( 'fields' => 'names' ) ) ) {
+								$term_value = implode( ',', $terms );
+							}
+							$location_data["tax_$tax"] = esc_attr( $term_value );
+						}
+
+						$content[] = $location_data;
 					}
 
-					$csv = new parseCSV();
-					$csv->output (true, 'simplemap.csv', $content, array('name','address','address2','city','state','zip','country','phone','email', 'fax','url','description','category','tags','special','lat','lng','dateUpdated' ) );
+				}
+
+				if ( ! empty( $content ) ) {
+					$csv = new smParseCSV();
+					$csv->output( true, 'simplemap.csv', $content, array_keys( reset( $content ) ) );
 					die();
 				}
 			}
-			
 		}
 
 		// Exports a LEGACY SimpleMap CSV file to WordPress
@@ -113,13 +114,12 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 	
 					}
 
-					$csv = new parseCSV();
+					$csv = new smParseCSV();
 					$csv->output (true, 'simplemap.csv', $content, array('name','address','address2','city','state','zip','country','phone','fax','url','description','category','tags','special','lat','lng','dateUpdated' ) );
 					die();
 
 				} else {
-					$csv = new parseCSV();
-					$csv->
+					$csv = new smParseCSV();
 					$csv->output (true, 'simplemap.csv', array( array( 'You have no locations in your legacy database' ) ) );
 					die();
 				}
@@ -155,58 +155,137 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 		
 		}
 
+		// All location data
+		function get_location_data_types( $init = array() ) {
+			static $types = null;
+
+			if ( empty( $types ) ) {
+				$types = array(
+					'name' => __( 'Name', 'SimpleMap' ),
+					'address' => __( 'Address', 'SimpleMap' ),
+					'address2' => __( 'Address 2', 'SimpleMap' ),
+					'city' => __( 'City', 'SimpleMap' ),
+					'state' => __( 'State', 'SimpleMap' ),
+					'zip' => __( 'Zip', 'SimpleMap' ),
+					'country' => __( 'Country', 'SimpleMap' ),
+					'phone' => __( 'Phone', 'SimpleMap' ),
+					'fax' => __( 'Fax', 'SimpleMap' ),
+					'email' => __( 'Email', 'SimpleMap' ),
+					'url' => __( 'URL', 'SimpleMap' ),
+					'description' => __( 'Description', 'SimpleMap' ),
+					'special' => __( 'Special', 'SimpleMap' ),
+					'lat' => __( 'Lat', 'SimpleMap' ),
+					'lng' => __( 'Lng', 'SimpleMap' ),
+				);
+
+				$legacy_types = array(
+					'category' => __( 'Legacy Taxonomy: Categories', 'SimpleMap' ),
+					'tags' => __( 'Legacy Taxonomy: Tags', 'SimpleMap' ),
+					'days' => __( 'Legacy Taxonomy: Days', 'SimpleMap' ),
+					'times' => __( 'Legacy Taxonomy: Times', 'SimpleMap' ),
+				);
+
+				foreach ( get_object_taxonomies( 'sm-location', 'objects' ) as $taxonomy => $tax_info ) {
+					$types['tax_' . $taxonomy] = __( 'Taxonomy: ' . $tax_info->label, 'SimpleMap' );
+				}
+
+				foreach ( $init as $key => $value ) {
+					if ( substr( $key, 0, 4 ) === 'tax_' ) {
+						$types[$key] = __( 'Taxonomy: ' . ucwords( substr( $key, strpos( $key, '-' ) + 1 ) ), 'SimpleMap' );
+					} elseif ( isset( $legacy_types[$key] ) ) {
+						$types[$key] = $legacy_types[$key];
+					}
+				}
+
+				$types = apply_filters( 'sm-data-types', $types );
+			}
+
+			return $types;
+		}
+
 		// Imports a CSV file to WordPress
 		function import_csv() {
-			global $simple_map, $sm_locations, $wpdb, $current_user;
-			
+			global $simple_map, $sm_locations, $wpdb, $current_user, $blog_id;
+
 			// Define Importing Constant
 			define( 'WP_IMPORTING', true );
-			
+
 			if ( isset( $_POST['sm-action'] ) && 'import-csv' == $_POST['sm-action'] && isset( $_POST['step'] ) && 2 == $_POST['step'] ) {
 				?>
 				<div class="wrap">
-						
+
 					<?php
 					// Title
 					$sm_page_title = apply_filters( 'sm-import-export-page-title', 'SimpleMap: Import. Step One' );
-					
+
 					// Toolbar
 					$simple_map->show_toolbar( $sm_page_title );
 					?>
-				
+
 					<div id="dashboard-widgets-wrap" class="clear">
-				
-						<div id='dashboard-widgets' class='metabox-holder'>
-						
-							<div class='postbox-container' >
-							
-								<div id='normal-sortables' class='meta-box-sortables ui-sortable'>
-								
+
+						<div id="dashboard-widgets" class="metabox-holder">
+
+							<div class="postbox-container" >
+
+								<div id="normal-sortables" class="meta-box-sortables ui-sortable">
+
 									<div class="postbox">
-						
+
 										<h3><?php _e('CSV Import: Step Two: Importing CSV', 'SimpleMap'); ?></h3>
-										
+
 										<div class="inside" style="padding: 0 10px 10px 10px;">
+
 										<?php
 
 										// Include CSV library
-										include_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
-										if ( file_exists( $_POST['file_location'] ) && $csv = new parseCSV() ) {
-											
-											$csv->auto( SIMPLEMAP_PATH . '/sm-temp-csv.csv' );
-											
+										require_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
+
+										$file_location = WP_PLUGIN_DIR . '/sm-temp-csv-' . $blog_id . '.csv';
+
+										if ( file_exists( $file_location ) && $csv = new smParseCSV() ) {
+											$csv->auto( $file_location );
+
 											if ( isset( $csv->data ) ) {
-											
-												echo "<ol style='list-style-type:decimal'>";
+												echo '<ol style="list-style-type:decimal">';
 
 												/* We're going to do some pre-processing to prevent WP's wp_get_unique_slug from pinging the database
-												 * a ridiculous amount of times in the even that this file is importing several thousand locations with
+												 * a ridiculous amount of times in the event that this file is importing several thousand locations with
 												 * same name (like a franchise).
 												 */
 												$post_names = array();
-												
-												foreach( $csv->data as $row => $location ) {
-																							
+
+												$taxes = $simple_map->get_taxonomy_settings();
+												foreach ( $taxes as $taxonomy => $tax_info ) {
+													$taxes[$taxonomy] = $tax_info['field'];
+												}
+
+												$types = $this->get_location_data_types( current( $csv->data ) );
+												$columns = array();
+												foreach ( $types as $key => $value ) {
+													$taxonomy = null;
+
+													// If custom taxonomies don't exist, register them temporarily in the event that we need to import them.
+													if ( substr( $key, 0, 7 ) === 'tax_sm-' ) {
+														$taxonomy = substr( $key, 4 );
+														$taxes[$taxonomy] = $key;
+													}
+													// Allow legacy taxonomy column names
+													elseif ( array_search( $key, $taxes ) ) {
+														$taxonomy = $key;
+													}
+
+													if ( isset( $taxonomy ) ) {
+														$sm_locations->register_location_taxonomy( $taxonomy, $simple_map->get_taxonomy_settings( $taxonomy ) );
+													}
+
+													$columns[$key] = str_replace( 'col_', '', array_search( $key, $_POST ) );
+												}
+
+												$active_taxes = get_object_taxonomies( 'sm-location' );
+												$taxes = array_intersect_key( $taxes, array_flip( $active_taxes ) );
+
+												foreach ( $csv->data as $row => $location ) {
 													// Give me 20 seconds for each location. That should be more than enough time.
 													set_time_limit ( 20 );
 
@@ -214,71 +293,78 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 													$location = array_values( $location );
 
 													// Use the information the user gave me via select boxes to map columns to correct attributes
-													foreach( $sm_locations->get_location_data_types() as $key => $value ) {
-														
-														$bang = str_replace( 'col_', '', array_search( $key, $_POST ) );
-														
-														if ( isset( $location[$bang] ) )
-															$to_insert[$key] = trim( $location[$bang] );
-														else
+													foreach ( $columns as $key => $column ) {
+														if ( isset( $location[$column] ) ) {
+															$to_insert[$key] = trim( $location[$column] );
+														}
+														else {
 															$to_insert[$key] = '';
-						
+														}
+													}
+
+													// Combine legacy taxonomy fields into new taxonomy fields.
+													$legacy_taxes = $simple_map->get_taxonomy_settings();
+													foreach ( $legacy_taxes as $taxonomy => $legacy_taxonomy ) {
+														$old_key = $legacy_taxonomy['field'];
+														$key = 'tax_' . $taxonomy;
+														if ( isset( $to_insert[$old_key] ) ) {
+															$to_insert += array( $key => '' );
+															$to_insert[$key] = implode( ',', array_filter( array( $to_insert[$key], $to_insert[$old_key] ) ) );
+															unset( $to_insert[$old_key] );
+														}
 													}
 
 													// Prep and insert
 													if ( isset( $to_insert ) ) {
-														
-														$options = get_option( 'SimpleMap_options' );
+														$options = $simple_map->get_options();
 														$geocoded = '';
 
 														// Maybe geo encode
-														if ( ( '' == $to_insert['lat'] || '' == $to_insert['lng'] || 0 == $to_insert['lat'] || 0 == $to_insert['lng'] ) && '' != $options['api_key'] ) {
-																														
-															if ( $geo = $simple_map->geocode_location( $to_insert['address'], $to_insert['city'], $to_insert['state'], $to_insert['zip'], $to_insert['country'], $options['api_key'] ) ) {
-																
+														if ( ( empty( $to_insert['lat'] ) || empty( $to_insert['lng'] ) ) ) {
+															if ( $geo = $simple_map->geocode_location( $to_insert['address'], $to_insert['city'], $to_insert['state'], $to_insert['zip'], $to_insert['country'], '' ) ) {
 																$geocoded = __( 'geocoded and ', 'SimpleMap' );
-																
-																if ( isset( $geo['lat'] ) )
+
+																if ( isset( $geo['lat'] ) ) {
 																	$to_insert['lat'] = $geo['lat'];
-						
-																if ( isset( $geo['lng'] ) )
+																}
+
+																if ( isset( $geo['lng'] ) ) {
 																	$to_insert['lng'] = $geo['lng'];
+																}
 															}
 														}
 
 														// Prevent dup names before getting to wp_unique_slug function
-														
+														$clean_name = sanitize_title( $to_insert['name'] );
+
 														// Start by check to see if this post's name has been used before
-														if ( isset( $post_names[sanitize_title( $to_insert['name'] )] ) ) {
-															
+														if ( isset( $post_names[$clean_name] ) ) {
+
 															// Set the int to the value of the post_name key (this is set the first time we import a post with this title).
-															$post_names_int = $post_names[sanitize_title( $to_insert['name'] )];
-															
+															$post_names_int = $post_names[$clean_name];
+
 															// Just to be safe, lets make sure the incremented name doesn't exist. Loop till we find one available.
-															while( isset( $post_names[sanitize_title( $to_insert['name'] ) . '-' . $post_names_int] ) ) {
+															while( isset( $post_names[$clean_name . '-' . $post_names_int] ) ) {
 																$post_names_int++;
 															}
-															
+
 															// Set the new unique slug
-															$unique_title = sanitize_title( $to_insert['name'] ) . '-' . $post_names_int;
-															
+															$unique_title = $clean_name . '-' . $post_names_int;
+
 															// Add the post_name to the post attributes array we're about to insert
 															$vars['post_name'] = $unique_title;
-															
-															// Update the original slug for this title with the new int
-															$post_names[sanitize_title( $to_insert['name'] )] = $post_names[$unique_title] = $post_names_int;
 
+															// Update the original slug for this title with the new int
+															$post_names[$clean_name] = $post_names[$unique_title] = $post_names_int;
 														} else {
-															
 															// If we made it here, its the first time we're inserting a post with this title (this import anyway).
 															// Add it to the post attributes array we're about to send to wp_insert_post
-															$vars['post_name'] = sanitize_title( $to_insert['name'] );
-															
+															$vars['post_name'] = $clean_name;
+
 															// Log this title as used in the post_names array with an int of 1
-															$post_names[sanitize_title( $to_insert['name'] )] = 1;
-															
+															$post_names[$clean_name] = 1;
 														}
-														
+
 														// Prep for WordPress function
 														wp_get_current_user();
 														$vars['post_title'] = $wpdb->prepare( $to_insert['name'] );
@@ -286,7 +372,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 														$vars['post_type'] = 'sm-location';
 														$vars['post_status'] = 'publish';
 														$vars['post_content'] = $wpdb->prepare( $to_insert['description'] );
-														
+
 														// Insert into WordPress post table
 														if ( $id = wp_insert_post( $vars ) ) {
 															update_post_meta( $id, 'location_address', $wpdb->prepare( $to_insert['address'] ) );
@@ -302,86 +388,45 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 															update_post_meta( $id, 'location_special', $wpdb->prepare( $to_insert['special'] ) );
 															update_post_meta( $id, 'location_lat', $wpdb->prepare( $to_insert['lat'] ) );
 															update_post_meta( $id, 'location_lng', $wpdb->prepare( $to_insert['lng'] ) );
-														
-															// Do categories
-															if ( isset( $to_insert['category'] ) ) {
-																
-																// Place comma seperatred CSV categories into array
-																$cats = explode( ',', $to_insert['category'] );
-												
-																// Loop through array. If category exists, assoc it with the location
-																// If category doesn't exist, create it and associate it.
-																foreach( (array) $cats as $key => $name ) {
-																	
-																	$name = trim( $name );
-																	
-																	// Skip it if we have bad data
-																	if ( '' != $name || ! empty( $name ) ) {
-																	
+
+															foreach ( $taxes as $taxonomy => $tax_field ) {
+																if ( isset( $to_insert[$tax_field] ) ) {
+																	// Place comma separated values into array
+																	$terms = explode( ',', $to_insert[$tax_field] );
+
+																	// Loop through array. If term does not exist, create it.
+																	// Then associate the term with the location.
+																	foreach ( (array) $terms as $key => $name ) {
+																		$name = trim( $name );
+
+																		// Skip it if we have bad data
+																		if ( empty( $name ) ) {
+																			continue;
+																		}
+
 																		// Grab or create and grab the category ID
-																		if ( ! $cat_obj = get_term_by( 'name', $name, 'sm-category' ) ) {
-																			$cat_array = wp_insert_term( $name, 'sm-category' );
-																			$category_id = $cat_array['term_id'];
+																		if ( $term_obj = get_term_by( 'name', $name, $taxonomy ) ) {
+																			$term_id = $term_obj->term_id;
 																		} else {
-																			$category_id = $cat_obj->term_id;
-																		}
-																																				
-																		// This is just a failsafe. It also gives us access to vars teh WP API created rather than from the CSV
-																		if ( $category = get_term( (int) $category_id, 'sm-category' ) ) {
-						
-	
-																			if ( ! is_wp_error( $category ) ) {
-																				
-																				// Associate (last var appends term to rather than replaces existing terms)
-																				wp_set_object_terms( $id , $category->name, 'sm-category', true );
-																				unset( $category );
-																			
+																			$term_array = wp_insert_term( $name, $taxonomy );
+																			if ( is_wp_error( $term_array ) ) {
+																				continue;
 																			}
-																		
+																			$term_id = $term_array['term_id'];
+																		}
+
+																		// This is just a failsafe. It also gives us access to vars the WP API created rather than from the CSV
+																		if ( ! is_wp_error( $term_id ) && $term = get_term( (int) $term_id, $taxonomy ) ) {
+																			if ( ! is_wp_error( $term ) ) {
+																				// Associate (last var appends term to rather than replaces existing terms)
+																				wp_set_object_terms( $id, $term->name, $taxonomy, true );
+																				unset( $term );
+																			}
 																		}
 																	}
 																}
 															}
-															
-															// Do Tags
-															if ( isset( $to_insert['tags'] ) ) {
-																
-																// Place comma seperatred CSV tags into array
-																$tags = explode( ',', $to_insert['tags'] );
-																
-																// Loop through array. If tag exists, assoc it with the location
-																// If category doesn't exist, create it and associate it.
-																foreach( (array) $tags as $key => $name ) {
-																	
-																	$name = trim( $name );
-																	
-																	// Skip it if we have bad data
-																	if ( '' != $name || ! empty( $name ) ) {
-																		
-																		// Grab or create and grab the tag ID
-																		if ( ! $tag_obj = get_term_by( 'name', $name, 'sm-tag' ) ) {
-																			$tag_array = wp_insert_term( $name, 'sm-tag' );
-																			$tag_id = $tag_array['term_id'];
-																		} else {
-																			$tag_id = $tag_obj->term_id;
-																		}
-																		
-																		// This is just a failsafe. It also gives us access to vars teh WP API created rather than from the CSV
-																		if ( ! is_wp_error( $tag_id ) && $tag = get_term( (int) $tag_id, 'sm-tag' ) ) {
-	
-																			if ( ! is_wp_error( $tag ) ) {
-																			
-																				// Associate (last var appends term to rather than replaces existing terms)
-																				wp_set_object_terms( $id , $tag->name, 'sm-tag', true );
-																				unset( $tag );
-																			
-																			}
-																		
-																		}
-																	}
-																}
-															}
-															
+
 															echo "<li>" . sprintf( esc_attr( $to_insert['name'] ) . __( ' was successfully %simported', 'SimpleMap' ), $geocoded ) . "</li>";
 														} else {
 															echo "<li>" . esc_attr( $to_insert['name'] ) . __( ' failed to import properly', 'SimpleMap' ) . "</li>";
@@ -390,17 +435,16 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 														unset( $to_insert );
 														unset( $geocoded );
 													}
-													
 												}
-												
+
 												echo "</ul>";
 												echo "<h2>" . sprintf( __( 'View them <a href="%s">here</a>', 'SimpleMap' ), admin_url( 'edit.php?post_type=sm-location' ) ) . "</h2>";
 											}
-											
+
 											// Import is finished, delete csv and redirect to edit locaitons page
-											if ( file_exists( $_POST['file_location'] ) )
-												unlink( $_POST['file_location'] );
-												
+											if ( file_exists( $file_location ) ) {
+												unlink( $file_location );
+											}
 										}
 										?>
 									</div>
@@ -409,18 +453,19 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 						</div>
 					</div>
 					<?php
-				
 			}
 		}
-		
+
 		// Generates the CSV Preview
 		function do_csv_preview() {
-			global $simple_map;
-			$options = get_option( 'SimpleMap_options' );
-			
+			global $simple_map, $blog_id;
+			$options = $simple_map->get_options();
+
+			/*
 			if ( !isset( $options['api_key'] ) )
 				$options['api_key'] = '';
-				
+			*/
+
 			extract( $options );
 
 			?>
@@ -454,19 +499,18 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 										// Include CSV library
 										include_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
 
-										if ( move_uploaded_file( $_FILES['simplemap-csv-upload']['tmp_name'], SIMPLEMAP_PATH . '/sm-temp-csv.csv' ) ) {
-										
-											if ( $csv = new parseCSV( SIMPLEMAP_PATH . '/sm-temp-csv.csv' ) ) {
-											
+										$file_location = WP_PLUGIN_DIR . '/sm-temp-csv-'. $blog_id . '.csv';
+										if ( move_uploaded_file( $_FILES['simplemap-csv-upload']['tmp_name'], $file_location ) ) {
+											if ( $csv = new smParseCSV( $file_location ) ) {
 												?>
-												<form action='' method='post'>
-												<input type='hidden' name='sm-action' value='import-csv' />
-												<input type='hidden' name='step' value='2' />
-												<input type='hidden' name='file_location' value='<?php echo SIMPLEMAP_PATH . '/sm-temp-csv.csv'; ?>' />
-												<p><input type='submit' class="button-primary" value='<?php _e( 'Import CSV', 'SimpleMap' ); ?>' /></p>
+												<form action="" method="post">
+												<input type="hidden" name="sm-action" value="import-csv" />
+												<input type="hidden" name="step" value="2" />
+												<p><input type="submit" class="button-primary" value="<?php _e( 'Import CSV', 'SimpleMap' ); ?>" /> | <a href=''><?php _e( 'Cancel', 'SimpleMap' ); ?></a></p>
 												<table>
 													<tr>
 														<?php 
+														$this->get_location_data_types( current($csv->data) );
 														foreach( $csv->titles as $col => $title ) {
 															echo "<td>" . $this->column_select( $col, $title ) . "</td>";
 														}
@@ -498,7 +542,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 												<?php
 											}
 										} else {
-											_e( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . SIMPLEMAP_PATH . '</code>' ), 'SimpleMap' );
+											_e( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . WP_PLUGIN_DIR . '</code>' ), 'SimpleMap' );
 										}
 										?>
 
@@ -518,14 +562,12 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 		
 		// This function creates a select box of all my data types to assign to this column
 		function column_select( $col, $title ) {
-			global $sm_locations;
-			
 			$select = "<select name='col_" . esc_attr( $col ) . "'>";
 			
 			$select .= "<option value='-1' >Don't Import</option>";
 
 
-			foreach( $sm_locations->get_location_data_types() as $type => $label ) {
+			foreach( $this->get_location_data_types() as $type => $label ) {
 				$select .= "<option value='" . $type . "' " . selected( trim( $type ), trim( $title ), false ) . " >" . $label . "</option>";
 			}
 			
@@ -535,11 +577,8 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 		}
 		
 		// Prints the options page
-		function print_page(){
-
-
+		function print_page() {
 			if ( isset( $_POST['sm-action'] ) && 'import-csv' == $_POST['sm-action'] ) {
-			
 				$step = isset( $_POST['step'] ) ? absint( $_POST['step'] ) : 1;
 
 				// Check for uploaded file with no errors.
@@ -555,13 +594,13 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 					}
 				}
 			} else { 
-	
-	
 				global $simple_map;
-				$options = get_option( 'SimpleMap_options' );
+				$options = $simple_map->get_options();
 				
+				/*
 				if ( !isset( $options['api_key'] ) )
 					$options['api_key'] = '';
+				*/
 					
 				extract( $options );
 	
@@ -602,7 +641,7 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 											
 											<p><?php _e('Make sure your CSV has a header row that gives the field names (in English). A good example of a header row would be as follows:', 'SimpleMap'); ?></p>
 											
-											<p><em style="color: #777; font: italic 1.1em Georgia;"><?php _e('Name, Address, Address Line 2, City, State/Province, ZIP/Postal Code, Country, Phone, Fax, URL, Category, Tags, Description, Special (1 or 0), Latitude, Longitude', 'SimpleMap'); ?></em></p>
+											<p><em style="color: #777; font: italic 1.1em Georgia;"><?php _e('Name, Address, Address Line 2, City, State/Province, ZIP/Postal Code, Country, Phone, Fax, URL, Category, Tags, Days, Times, Description, Special (1 or 0), Latitude, Longitude', 'SimpleMap'); ?></em></p>
 											
 											<p><?php _e('You can import your file with or without quotation marks around each field. However, if any of your fields contain commas, you should enclose your fields in quotation marks. Single ( \' ) or double ( " ) quotation marks will work.', 'SimpleMap') ?></p>
 										
@@ -628,15 +667,15 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 												
 												<?php
 												// Warn them if the simplemap path is not writable
-												if ( ! is_writable( SIMPLEMAP_PATH ) )
-													echo "<br />" . __( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . SIMPLEMAP_PATH . '</code>' ), 'SimpleMap' );
+												if ( ! is_writable( WP_PLUGIN_DIR ) )
+													echo "<br />" . __( sprintf( 'Please make the following directory <a href="%s">writable by WordPress</a>: %s', 'http://codex.wordpress.org/Changing_File_Permissions#Permission_Scheme_for_WordPress', '<code>' . WP_PLUGIN_DIR . '</code>' ), 'SimpleMap' );
 												?>
 												
 												</p>
 												<input type="submit" class="button-primary" value="<?php _e('Import CSV File', 'SimpleMap'); ?>" /> 
-												<?php if ( '' == $options['api_key'] ) : ?>
+												<?php /* if ( '' == $options['api_key'] ) : ?>
 													<?php printf( __( "Warning: You still need to enter an <a href='%s'>API key</a> if you need your locaitons geocoded.", 'SimpleMap' ), admin_url( "admin.php?page=simplemap" ) ); ?>
-												<?php endif; ?>
+												<?php endif; */ ?>
 											</form>
 											
 											<p style="color: #777; font: italic 1.1em Georgia;"><?php _e('Importing a file may take several seconds; please be patient.', 'SimpleMap'); ?></p>
