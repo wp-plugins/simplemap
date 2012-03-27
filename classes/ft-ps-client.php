@@ -24,19 +24,19 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 		// Constructer fires on admin page loads
 		function ft_premium_support_client( $config=array() ) {
 
-			// Populate properties
-			$this->server_url 				= isset( $config['server_url'] ) ? $config['server_url'] : false;
-			$this->product_id 				= isset( $config['product_id'] ) ? $config['product_id'] : false;
-			$this->plugin_support_page_ids 	= isset( $config['plugin_support_page_ids'] ) ? $config['plugin_support_page_ids'] : false;
-			$this->plugin_basename			= isset( $config['plugin_basename'] ) ? $config['plugin_basename'] : false;
-			$this->plugin_slug				= isset( $config['plugin_slug'] ) ? $config['plugin_slug'] : false;
-			$this->learn_more_link			= isset( $config['learn_more_link'] ) ? $config['learn_more_link'] : false;
-			$this->confirming_request 		= isset( $_GET['ft-ps-confirm-request'] ) ? $_GET['ft-ps-confirm-request'] : false;
-			$this->receiving_sso 			= isset( $_POST['ft-ps-receiving-sso'] ) ? $_POST['ft-ps-receiving-sso'] : false;
-			$this->site_url					= site_url();
+		// Populate properties
+		$this->server_url 				= isset( $config['server_url'] ) ? $config['server_url'] : false;
+		$this->product_id 				= isset( $config['product_id'] ) ? $config['product_id'] : false;
+		$this->plugin_support_page_ids 	= isset( $config['plugin_support_page_ids'] ) ? $config['plugin_support_page_ids'] : false;
+		$this->plugin_basename			= isset( $config['plugin_basename'] ) ? $config['plugin_basename'] : false;
+		$this->plugin_slug				= isset( $config['plugin_slug'] ) ? $config['plugin_slug'] : false;
+		$this->learn_more_link			= isset( $config['learn_more_link'] ) ? $config['learn_more_link'] : false;
+		$this->confirming_request 		= isset( $_GET['ft-ps-confirm-request'] ) ? $_GET['ft-ps-confirm-request'] : false;
+		$this->receiving_sso 			= isset( $_POST['ft-ps-receiving-sso'] ) ? $_POST['ft-ps-receiving-sso'] : false;
+		$this->site_url					= site_url();
 
-			// Register actions
-			add_action( 'admin_head', array( &$this, 'init' ) );
+		// Register actions
+		add_action( 'admin_head', array( &$this, 'init' ) );
 			add_action( 'init', array( &$this, 'check_premium_upgrades' ) );
 
 		}
@@ -162,7 +162,7 @@ if ( ! class_exists( 'FT_Premium_Support_Client' ) ) {
 				$ft_ps_client_auto_update = new FT_Premium_Support_PluginUpdate_Checker( $this->server_url . '?ft-pss-upgrade-request=1&ft-pss-upgrade-request-product-id=' . $this->product_id . '&ft-pss-upgrade-request-site=' . $this->site_url, $this->plugin_basename, 'simplemap', 1 	);
 
                         // Maybe Nag Renewal
-                        $this->maybe_trigger_renewal_nag(); 
+                        //$this->maybe_trigger_renewal_nag(); 
 		
 		}
 

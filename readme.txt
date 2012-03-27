@@ -5,7 +5,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 2.4.4
+Stable tag: 2.4.4.1
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
@@ -77,6 +77,10 @@ Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do s
 Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/simplemap?forum_id=10) if you have a bug to report. Otherwise, you may access premium support inside the plugin dashboard.
 
 == Changelog ==
+
+= 2.4.5 =
+* Fixed regression that broke export
+* Removed accidental subscription notice meant for version of plugin released to premium members.
 
 = 2.4.4 =
 * Added filters to menu item permissions

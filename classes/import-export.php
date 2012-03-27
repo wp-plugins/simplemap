@@ -18,13 +18,15 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 				// Grab locations
 				$content = array();
 				set_time_limit( 0 );
-				while ( $locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => 200 ) ) ) {
+				$location_offset = 0;
+                                while ( $locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => 200, 'offset' => $location_offset ) ) ) {
 					// Include CSV library
 					require_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
 
 					$taxonomies = get_object_taxonomies( 'sm-location' );
 
 					foreach ( $locations as $key => $location ) {
+                                                $location_offset++;
 						$location_data = array(
 							'name' => esc_attr( $location->post_title ),
 							'address' => esc_attr( get_post_meta( $location->ID, 'location_address', true ) ),
