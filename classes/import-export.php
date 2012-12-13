@@ -18,15 +18,12 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 				// Grab locations
 				$content = array();
 				set_time_limit( 0 );
-				$location_offset = 0;
-                                while ( $locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => 200, 'offset' => $location_offset ) ) ) {
+				$locations = query_posts( array( 'post_status' => 'publish', 'post_type' => 'sm-location', 'posts_per_page' => -1 ) );
 					// Include CSV library
 					require_once( SIMPLEMAP_PATH . '/classes/parsecsv.lib.php' );
-
 					$taxonomies = get_object_taxonomies( 'sm-location' );
 
 					foreach ( $locations as $key => $location ) {
-                                                $location_offset++;
 						$location_data = array(
 							'name' => esc_attr( $location->post_title ),
 							'address' => esc_attr( get_post_meta( $location->ID, 'location_address', true ) ),
@@ -56,8 +53,6 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 
 						$content[] = $location_data;
 					}
-
-				}
 
 				if ( ! empty( $content ) ) {
 					$csv = new smParseCSV();
@@ -369,27 +364,27 @@ if ( !class_exists( 'SM_Import_Export' ) ){
 
 														// Prep for WordPress function
 														wp_get_current_user();
-														$vars['post_title'] = $wpdb->prepare( $to_insert['name'] );
+														$vars['post_title'] = $to_insert['name'];
 														$vars['post_author'] = $current_user->ID;
 														$vars['post_type'] = 'sm-location';
 														$vars['post_status'] = 'publish';
-														$vars['post_content'] = $wpdb->prepare( $to_insert['description'] );
+														$vars['post_content'] = $to_insert['description'];
 
 														// Insert into WordPress post table
 														if ( $id = wp_insert_post( $vars ) ) {
-															update_post_meta( $id, 'location_address', $wpdb->prepare( $to_insert['address'] ) );
-															update_post_meta( $id, 'location_address2', $wpdb->prepare( $to_insert['address2'] ) );
-															update_post_meta( $id, 'location_city', $wpdb->prepare( $to_insert['city'] ) );
-															update_post_meta( $id, 'location_state', $wpdb->prepare( $to_insert['state'] ) );
-															update_post_meta( $id, 'location_zip', $wpdb->prepare( $to_insert['zip'] ) );
-															update_post_meta( $id, 'location_country', $wpdb->prepare( $to_insert['country'] ) );
-															update_post_meta( $id, 'location_phone', $wpdb->prepare( $to_insert['phone'] ) );
-															update_post_meta( $id, 'location_fax', $wpdb->prepare( $to_insert['fax'] ) );
-															update_post_meta( $id, 'location_email', $wpdb->prepare( $to_insert['email'] ) );
-															update_post_meta( $id, 'location_url', $wpdb->prepare( $to_insert['url'] ) );
-															update_post_meta( $id, 'location_special', $wpdb->prepare( $to_insert['special'] ) );
-															update_post_meta( $id, 'location_lat', $wpdb->prepare( $to_insert['lat'] ) );
-															update_post_meta( $id, 'location_lng', $wpdb->prepare( $to_insert['lng'] ) );
+															update_post_meta( $id, 'location_address', $to_insert['address'] );
+															update_post_meta( $id, 'location_address2', $to_insert['address2'] );
+															update_post_meta( $id, 'location_city', $to_insert['city'] );
+															update_post_meta( $id, 'location_state', $to_insert['state'] );
+															update_post_meta( $id, 'location_zip', $to_insert['zip'] );
+															update_post_meta( $id, 'location_country', $to_insert['country'] );
+															update_post_meta( $id, 'location_phone', $to_insert['phone'] );
+															update_post_meta( $id, 'location_fax', $to_insert['fax'] );
+															update_post_meta( $id, 'location_email', $to_insert['email'] );
+															update_post_meta( $id, 'location_url', $to_insert['url'] );
+															update_post_meta( $id, 'location_special', $to_insert['special'] );
+															update_post_meta( $id, 'location_lat', $to_insert['lat'] );
+															update_post_meta( $id, 'location_lng', $to_insert['lng'] );
 
 															foreach ( $taxes as $taxonomy => $tax_field ) {
 																if ( isset( $to_insert[$tax_field] ) ) {

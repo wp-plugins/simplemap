@@ -1,23 +1,22 @@
 === SimpleMap Store Locator ===
 
-Contributors: blepoxp, fullthrottledevelopment
+Contributors: hallsofmontezuma, fullthrottledevelopment
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTJBYXGQFSW64
 Tags: map, maps, store locator, database, locations, stores, Google maps, locator
-Requires at least: 3.0
-Tested up to: 3.3
-Stable tag: 2.4.4.1
+Requires at least: 2.8
+Tested up to: 3.5
+Stable tag: 2.4.5
 
 SimpleMap is an easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
 == Description ==
 
-http://www.youtube.com/watch?v=JznXI0YrqpY
-
 SimpleMap is a *powerful* and *easy-to-use* international store locator plugin. It has an intuitive interface and is completely customizable. Its search features make it easy for your users to find your locations quickly.
+
+Please note: SimpleMap has some compatibility problems with WordPress MU.
 
 Key features include:
 
-* Uses Google Maps API v 3
 * Manage locations from any country supported by Google Maps
 * Manage an unlimited number of locations
 * Put a Google Map on any page or post that gives instant results to users
@@ -25,6 +24,7 @@ Key features include:
 * Customize the appearance of the map and results with your own themes
 * Use a familiar interface that fits seamlessly into the WordPress admin area
 * Import and export your database as a CSV file
+* Quick Edit function allows for real-time updates to the location database
 * Make certain locations stand out with a customizable tag (Most Popular, Ten-Year Member, etc.)
 * Easy-to-use settings page means you don't need to know any code to customize your map
 
@@ -53,7 +53,7 @@ With SimpleMap, you can easily put a store locator on your WordPress site in sec
 
 You must have:
 
-* WordPress 3.0 or later
+* WordPress 2.8 or later
 * PHP 5 (or PHP 4 with the SimpleXML extension loaded), DOMDocument class
 
 = How do I put SimpleMap on my website? =
@@ -68,6 +68,10 @@ If the search form is showing up, but the map is blank, it's probably a Javascri
 
 This is meant to flag certain locations with a specific label. It shows up in the search results with a gold star next to it. Originally this was developed for an organization that wanted to highlight people that had been members for more than ten years. It could be used for something like that, or for "Favorite Spots," or "Free Wi-Fi," or anything you want. You can also leave it blank to disable it.
 
+= Why can't my map load more than 100 search results at a time? =
+
+On most browsers, loading more than 100 locations at once will really slow things down. In some cases, such as a slower internet connection, it can crash the browser completely. I put that limit on there to prevent that from happening.
+
 = Can I suggest a feature for SimpleMap? =
 
 Of course! Visit [the SimpleMap home page](http://simplemap-plugin.com/) to do so.
@@ -79,9 +83,7 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 == Changelog ==
 
 = 2.4.5 =
-* Fixed regression that broke export
-* Removed accidental subscription notice meant for version of plugin released to premium members.
-
+* Compatibility fixes for WordPress 3.5
 = 2.4.4 =
 * Added filters to menu item permissions
 * Don't display map updating image if map is hidden
@@ -92,7 +94,7 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 * Passing current WordPress post/page ID to search script
 * Fixed bug that created memory errors when large amount of locations were deleted at once
 * Fixed bug that created memory errors on medium size DBs during export. Still need to refactor for large exports
-* Change locations from heirarchical to non-hierarchical to avoid poor WP query
+* Change locations from hierarchical to non-hierarchical to avoid poor WP query
 * Fixed error that prevented permalink map from rendering in IE
 
 = 2.4.3 =
@@ -122,6 +124,7 @@ Please visit [the SimpleMap forums at WordPress.org](http://wordpress.org/tags/s
 * Fixed bad tabbing that snuck into the code
 * Fixed autoload bug introduced in 2.4
 * Fixed taxonomy shortcodes.
+
 
 = 2.4 =
 * Added ability to turn on location permalinks
@@ -373,10 +376,6 @@ To give it a name that shows up in the **Theme** drop-down menu (instead of the 
 Theme Name: YOUR THEME NAME HERE
 */`
 
-== Upgrade Notice ==
-
-= 2.4 =
-* Major upgrades. .org version is jumping from 2.2.2 to 2.4: See http://gln.to/yuwu8 for details
 == Other Notes ==
 
 Planned for future releases:

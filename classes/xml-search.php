@@ -88,8 +88,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					}
 				}
 
-				$sql = $wpdb->prepare( "
-					SELECT
+				$sql = "SELECT
 						lat_tbl.meta_value AS lat,
 						lng_tbl.meta_value AS lng,
 						$distance_select
@@ -109,10 +108,7 @@ if ( !class_exists( 'SM_XML_Search' ) ){
 					GROUP BY
 						posts.ID
 						$distance_having
-					ORDER BY
-						" . apply_filters( 'sm-location-sort-order', $distance_order . ' posts.post_name ASC', $input ) . "
-					$limit
-				" );
+					ORDER BY " . apply_filters( 'sm-location-sort-order', $distance_order . ' posts.post_name ASC', $input ) . " " . $limit;
 
 				$sql = apply_filters( 'sm-xml-search-locations-sql', $sql );
 

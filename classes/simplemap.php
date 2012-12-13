@@ -568,7 +568,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				wp_enqueue_style( 'simplemap-map-style', $style_url );
 
 				// Scripts
-				wp_enqueue_script( 'simplemap-master-js', site_url() . '?simplemap-master-js=1&smpid=' . $post->ID, array( 'jquery' ) );
+				wp_enqueue_script( 'simplemap-master-js', get_home_url() . '?simplemap-master-js=1&smpid=' . $post->ID, array( 'jquery' ) );
 
 				// Google API v3 does not need a key
 				$url_params = array(
@@ -593,7 +593,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 				// SimpleMap General options
 				if ( isset( $_GET['page'] ) && 'simplemap' == $_GET['page'] )
-					wp_enqueue_script( 'simplemap-general-options-js', site_url() . '/?simplemap-general-options-js', array( 'jquery' ) );
+					wp_enqueue_script( 'simplemap-general-options-js', get_home_url() . '/?simplemap-general-options-js', array( 'jquery' ) );
 
 				// Google API v3 does not need a key
 				$url_params = array(
@@ -679,7 +679,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 			var noresults_text			= '<?php echo apply_filters( 'sm-no-results-found-text', __( 'No results found.', 'SimpleMap' ) ); ?>';
 			var default_domain 			= '<?php echo esc_js( $options['default_domain'] ); ?>';
 			var address_format 			= '<?php echo esc_js( $options['address_format'] ); ?>';
-			var siteurl					= '<?php echo esc_js( site_url() ); ?>';
+			var siteurl					= '<?php echo esc_js( get_home_url() ); ?>';
 			var map;
 			var geocoder;
 			var autoload				= '<?php echo esc_js( $options['autoload'] ); ?>';
@@ -1076,7 +1076,7 @@ if ( !class_exists( 'Simple_Map' ) ) {
 					var results = document.getElementById('results');
 					results.innerHTML = '';
 
-					var markers = jQuery( data );
+					var markers = jQuery( eval( data ) );
 					if (markers.length == 0) {
 						results.innerHTML = '<h3>' + noresults_text + '</h3>';
 						map.setCenter( searchData.center );
@@ -2295,6 +2295,8 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				'zoom_level'				=> '',
 				'map_type'					=> '',
 				'powered_by'				=> '', 
+				'sm_day'					=> '',
+				'sm_time'					=> ''
 			);
 
 			return apply_filters( 'sm-default-shortcode-atts', $atts );

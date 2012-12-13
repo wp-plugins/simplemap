@@ -674,7 +674,7 @@ if ( !class_exists( 'SM_Locations' ) ) {
 			
 			if ( is_object( $current_screen ) && 'edit-sm-location' == $current_screen->id ) {
 				
-				$sql = $wpdb->prepare( 'SELECT ID FROM `' . $wpdb->posts . '` WHERE post_type = "sm-location" AND post_status = "publish" LIMIT 10000' );
+				$sql = 'SELECT ID FROM `' . $wpdb->posts . '` WHERE post_type = "sm-location" AND post_status = "publish" LIMIT 10000';
 				if ( 10000 == count( $wpdb->get_results( $sql ) ) ) {
 					$query->query_vars['posts_per_page'] = $query->query_vars['posts_per_archive_page'] = 1000;
 					add_action( 'in_admin_footer', array( &$this, 'print_excessive_locations_message' ) );

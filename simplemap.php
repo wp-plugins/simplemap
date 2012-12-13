@@ -1,11 +1,10 @@
 <?php
 /*
 Plugin Name: SimpleMap
-Version: 2.4.4.1
+Version: 2.4.5
 Plugin URI: http://simplemap-plugin.com/
-Author: Glenn Ansley
+Author: Michael Torbert
 Author URI: http://fullthrottledevelopment.com/
-Primary Developer: Glenn Ansley (glenn@fullthrottledevelopment.com)
 Description: An easy-to-use international store locator plugin that uses Google Maps to display information directly on your WordPress site.
 
 This plugin was originally created by Alison Barrett (http://alisothegeek.com/). FullThrottle took over development at v 1.2.3
@@ -20,7 +19,7 @@ if ( version_compare( $wp_version, "2.8", "<" ) )
 #### CONSTANTS ####
 
 	// Plugin Version Number
-	define( 'SIMPLEMAP_VERSION', '2.4.4.1' );
+	define( 'SIMPLEMAP_VERSION', '2.4.5' );
 
 	if ( !defined( 'WP_PLUGIN_DIR' ) ) {
 		define( 'WP_PLUGIN_DIR', ABSPATH . 'wp-content/plugins' );
