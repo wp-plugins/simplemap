@@ -1139,7 +1139,11 @@ if ( !class_exists( 'Simple_Map' ) ) {
 						// If initial load of map, zoom to default settings
 						map.setZoom(parseInt(zoom_level));
 					}
-
+                    
+					// Paranoia - fix container sizing bug -- pdb
+					google.maps.event.addListener(map, "idle", function(){
+						google.maps.event.trigger(map, 'resize');
+					});
 				});
 			}
 
@@ -1176,11 +1180,34 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				marker.title = locationData.name;
 				markersArray.push(marker);
 
-				var mapwidth = Number(stringFilter(map_width));
-				var mapheight = Number(stringFilter(map_height));
-
-				var maxbubblewidth = Math.round(mapwidth / 1.5);
-				var maxbubbleheight = Math.round(mapheight / 2.2);
+				var mapwidth;
+				var mapheight;
+				var maxbubblewidth;
+				var maxbubbleheight;
+				
+				mapwidth = document.getElementById("simplemap");
+				if ( typeof mapwidth != 'undefined' ) {
+					mapwidth = mapwidth.offsetWidth;
+				} else {
+					if ( typeof map_width != 'undefined' ) {
+						mapwidth = Number(stringFilter(map_width));						
+					} else {
+						mapwidth = 400;
+					}
+				}
+				
+				mapheight = document.getElementById("simplemap");
+				if ( typeof mapheight != 'undefined' ) {
+					mapheight = mapheight.offsetHeight;
+				} else {
+					if ( typeof map_height != 'undefined' ) {
+						mapheight = Number(stringFilter(map_height));						
+					} else {
+						mapheight = 200;
+					}
+				}
+				maxbubblewidth = Math.round(mapwidth / 1.5);
+				maxbubbleheight = Math.round(mapheight / 2.2);
 
 				var fontsize = 12;
 				var lineheight = 12;
@@ -1223,8 +1250,12 @@ if ( !class_exists( 'Simple_Map' ) ) {
 				if (totalheight > maxbubbleheight) {
 					totalheight = maxbubbleheight;
 				}
+				
+				if ( isNaN( totalheight ) || totalheight > maxbubbleheight ) {
+					totalheight = maxbubbleheight;
+				}
 
-				var html = '<div class="markertext" style="height: ' + totalheight + 'px; overflow-y: auto; overflow-x: hidden;">';
+				var html = '<div class="markertext" style="max-width: ' + maxbubblewidth + 'px; height: ' + totalheight + 'px; overflow-y: auto; overflow-x: hidden;">';
 				html += '<h3 style="margin-top: 0; padding-top: 0; border-top: none;">';
 
 				if ( '' != locationData.permalink ) {
@@ -1335,10 +1366,22 @@ if ( !class_exists( 'Simple_Map' ) ) {
 
 				google.maps.event.addListener(marker, 'click', function() {
 					clearInfoWindows();
+					var infowidth = 0;
+					if ( maxbubblewidth <= 100 ) {
+						infowidth = document.getElementById("simplemap");
+						if ( typeof infowidth != 'undefined' ) {
+							infowidth = infowidth.offsetWidth;
+						} else {
+							infowidth = 400;
+						}
+					    infowidth = infowidth * (maxbubblewidth / 100.0);
+					}
+					if ( infowidth < maxbubblewidth ) infowidth = maxbubblewidth;
+					infowidth = parseInt(infowidth) + 'px';
 					var infowindow = new google.maps.InfoWindow({
-						maxWidth: maxbubblewidth,
+						maxWidth: infowidth,
 						content: html
-					});
+					});				
 					infowindow.open(map, marker);
 					infowindowsArray.push(infowindow);
 					window.location = '#map_top';
